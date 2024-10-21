@@ -1,0 +1,13 @@
+### GET request to example server
+POST http://localhost:8080/services/CertificateStatusUpdateForCare
+Content-Type: text/xml
+SOAPAction: ""
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v3="http://riv.se/clinicalprocess/healthcond/certificate/certificatestatusupdateforcareresponder/v3">
+	<soapenv:Header/>
+	<soapenv:Body>
+		<v3:CertificateStatusUpdateForCare>
+			<!-- Add your request elements here -->
+		</v3:CertificateStatusUpdateForCare>
+	</soapenv:Body>
+</soapenv:Envelope>
