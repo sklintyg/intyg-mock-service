@@ -3,18 +3,22 @@ plugins {
     id 'war'
     id 'org.springframework.boot' version '3.4.0-SNAPSHOT'
     id 'io.spring.dependency-management' version '1.1.6'
+    id 'application'
 }
-
-def applicationDir = "${rootProject.projectDir}/devops/dev"
 
 ext {
     cxfVersion = "4.0.5"
     jaxb2Version = "3.0.0"
     rivtaClinicalprocessSchemasVersion = "4.0.5.3"
+
+    springbootMavenBomVersion = "3.4.0-SNAPSHOT"
+
+    applicationDir = "${rootProject.projectDir}/devops/dev"
 }
 
 group = 'se.inera.intyg'
 version = '0.0.1-SNAPSHOT'
+mainClassName = 'se.inera.intyg.intygmockservice.IntygMockServiceApplication'
 
 java {
     toolchain {
@@ -22,63 +26,27 @@ java {
     }
 }
 
-repositories {
-    mavenLocal()
-    maven { url "https://nexus.drift.inera.se/repository/it-public/" }
-    mavenCentral()
-    maven { url 'https://repo.spring.io/milestone' }
-    maven { url 'https://repo.spring.io/snapshot' }
+allprojects {
+    repositories {
+        mavenLocal()
+        maven { url "https://nexus.drift.inera.se/repository/it-public/" }
+        mavenCentral()
+        maven { url 'https://repo.spring.io/milestone' }
+        maven { url 'https://repo.spring.io/snapshot' }
+    }
 }
 
 tasks.withType(JavaCompile) {
     options.annotationProcessorPath = configurations.annotationProcessor
 }
 
-dependencies {
-    implementation 'com.fasterxml.jackson.core:jackson-databind'
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'io.spring.dependency-management'
 
-    implementation "org.apache.cxf:cxf-spring-boot-starter-jaxws:${cxfVersion}"
-    implementation "org.apache.cxf:cxf-rt-features-logging:${cxfVersion}"
-
-    implementation 'org.springframework.boot:spring-boot-starter'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0"
-
-    implementation "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
-
-    implementation 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
-}
-
-bootRun {
-    systemProperty("application.dir", "${rootProject.projectDir}/devops/dev")
-    systemProperty("spring.profiles.active", "dev")
-    systemProperty("spring.config.additional-location", "file:${applicationDir}/config/")
-}
-
-tasks.register("appRunDebug") {
-    println("######## Running in Debug mode ########")
-    doFirst {
-        bootRun.configure {
-            jvmArgs = [
-                    "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=18889",
-            ]
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.boot:spring-boot-dependencies:${springbootMavenBomVersion}"
         }
     }
-    finalizedBy("bootRun")
-}
-
-tasks.register("appRun") {
-    println("######## Running in normal mode ########")
-    finalizedBy("bootRun")
 }
