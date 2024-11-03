@@ -5,6 +5,8 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.6'
 }
 
+def applicationDir = "${rootProject.projectDir}/devops/dev"
+
 ext {
     cxfVersion = "4.0.5"
     jaxb2Version = "3.0.0"
@@ -33,10 +35,16 @@ tasks.withType(JavaCompile) {
 }
 
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     implementation "org.apache.cxf:cxf-spring-boot-starter-jaxws:${cxfVersion}"
+    implementation "org.apache.cxf:cxf-rt-features-logging:${cxfVersion}"
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0"
 
     implementation "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
 
@@ -50,4 +58,27 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+bootRun {
+    systemProperty("application.dir", "${rootProject.projectDir}/devops/dev")
+    systemProperty("spring.profiles.active", "dev")
+    systemProperty("spring.config.additional-location", "file:${applicationDir}/config/")
+}
+
+tasks.register("appRunDebug") {
+    println("######## Running in Debug mode ########")
+    doFirst {
+        bootRun.configure {
+            jvmArgs = [
+                    "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=18889",
+            ]
+        }
+    }
+    finalizedBy("bootRun")
+}
+
+tasks.register("appRun") {
+    println("######## Running in normal mode ########")
+    finalizedBy("bootRun")
 }
