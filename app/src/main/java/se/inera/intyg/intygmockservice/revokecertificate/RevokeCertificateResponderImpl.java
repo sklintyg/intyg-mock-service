@@ -1,5 +1,6 @@
 package se.inera.intyg.intygmockservice.revokecertificate;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.revokecertificate.converter.RevokeCertificateConverter;
@@ -11,16 +12,12 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class RevokeCertificateResponderImpl implements RevokeCertificateResponderInterface {
 
     private final RevokeCertificateRepository repository;
     private final RevokeCertificateConverter converter;
-
-    public RevokeCertificateResponderImpl(RevokeCertificateRepository repository, RevokeCertificateConverter converter) {
-        this.repository = repository;
-        this.converter = converter;
-    }
 
     @Override
     public RevokeCertificateResponseType revokeCertificate(String logicalAddress, RevokeCertificateType revokeCertificate) {

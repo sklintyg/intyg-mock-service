@@ -16,7 +16,7 @@ import se.inera.intyg.intygmockservice.revokecertificate.repository.RevokeCertif
 @RestController
 @RequestMapping("/api/revoke-certificate")
 @RequiredArgsConstructor
-@Tag(name = "Revoke Certificate", description = "API for managing certificate revocations")
+@Tag(name = "RevokeCertificate", description = "API for managing certificate revocations")
 public class RevokeCertificateController {
 
     private final RevokeCertificateRepository repository;

@@ -2,13 +2,21 @@ package se.inera.intyg.intygmockservice.common.converter;
 
 import jakarta.xml.bind.JAXBElement;
 import java.util.List;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import se.inera.intyg.intygmockservice.common.dto.CodeTypeDTO;
 import se.inera.intyg.intygmockservice.common.dto.IntygDTO;
-import se.inera.intyg.intygmockservice.common.dto.IntygDTO.Svar;
+import se.inera.intyg.intygmockservice.common.dto.IntygDTO.RelationDTO;
+import se.inera.intyg.intygmockservice.common.dto.IntygDTO.SvarDTO;
+import se.inera.intyg.intygmockservice.common.dto.IntygDTO.SvarDTO.DelsvarDTO;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.CVType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.DatePeriodType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvRelation;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Relation;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Svar;
 
 @Component
 @RequiredArgsConstructor
@@ -19,7 +27,7 @@ public class IntygConverter {
     private final IntygIdConverter intygIdConverter;
 
     public IntygDTO convert(Intyg source) {
-        IntygDTO intyg = new IntygDTO();
+        final var intyg = new IntygDTO();
 
         intyg.setIntygsId(intygIdConverter.convert(source.getIntygsId()));
         intyg.setTyp(convertTyp(source.getTyp()));
@@ -29,55 +37,54 @@ public class IntygConverter {
         intyg.setPatient(patientConverter.convert(source.getPatient()));
         intyg.setSkapadAv(hosPersonalConverter.convert(source.getSkapadAv()));
         intyg.setRelation(
-            source.getRelation().stream().map(this::convertRelation).toList()
+            Stream.ofNullable(source.getRelation()).flatMap(List::stream)
+                .map(this::convertRelation)
+                .toList()
         );
         intyg.setSvar(convertSvarList(source.getSvar()));
 
         return intyg;
     }
 
-    public IntygDTO.Relation convertRelation(se.riv.clinicalprocess.healthcond.certificate.v3.Relation source) {
-        if (source == null) {
-            return null;
-        }
-        IntygDTO.Relation target = new IntygDTO.Relation();
+    public RelationDTO convertRelation(Relation source) {
+        final var target = new RelationDTO();
         target.setTyp(convertTyp(source.getTyp()));
         target.setIntygsId(intygIdConverter.convert(source.getIntygsId()));
         return target;
     }
 
-    private IntygDTO.Typ convertTyp(
-        se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg source) {
-        IntygDTO.Typ target = new IntygDTO.Typ();
+    private CodeTypeDTO convertTyp(TypAvIntyg source) {
+        final var target = new CodeTypeDTO();
         target.setCode(source.getCode());
         target.setCodeSystem(source.getCodeSystem());
         target.setDisplayName(source.getDisplayName());
         return target;
     }
 
-    private IntygDTO.Relation.TypAvRelation convertTyp(
-        se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvRelation source) {
-        IntygDTO.Relation.TypAvRelation target = new IntygDTO.Relation.TypAvRelation();
+    private CodeTypeDTO convertTyp(TypAvRelation source) {
+        final var target = new CodeTypeDTO();
         target.setCode(source.getCode());
         target.setCodeSystem(source.getCodeSystem());
         target.setDisplayName(source.getDisplayName());
         return target;
     }
 
-    private List<Svar> convertSvarList(List<se.riv.clinicalprocess.healthcond.certificate.v3.Svar> source) {
-        return source.stream().map(this::convertSvar).toList();
+    private List<SvarDTO> convertSvarList(List<Svar> source) {
+        return Stream.ofNullable(source).flatMap(List::stream)
+            .map(this::convertSvar)
+            .toList();
     }
 
-    private IntygDTO.Svar convertSvar(se.riv.clinicalprocess.healthcond.certificate.v3.Svar source) {
-        IntygDTO.Svar target = new IntygDTO.Svar();
+    private SvarDTO convertSvar(Svar source) {
+        final var target = new SvarDTO();
         target.setId(source.getId());
         target.setInstans(String.valueOf(source.getInstans()));
         target.setDelsvar(source.getDelsvar().stream().map(this::convertDelsvar).toList());
         return target;
     }
 
-    private IntygDTO.Svar.Delsvar convertDelsvar(se.riv.clinicalprocess.healthcond.certificate.v3.Svar.Delsvar source) {
-        IntygDTO.Svar.Delsvar target = new IntygDTO.Svar.Delsvar();
+    private DelsvarDTO convertDelsvar(Svar.Delsvar source) {
+        final var target = new DelsvarDTO();
         target.setId(source.getId());
         if (source.getContent().size() > 1 && source.getContent().get(1) instanceof JAXBElement<?> jaxbElement) {
             if (jaxbElement.getValue() instanceof CVType cvType) {
@@ -97,16 +104,16 @@ public class IntygConverter {
         return target;
     }
 
-    private IntygDTO.Svar.Delsvar.Cv convertCv(CVType source) {
-        IntygDTO.Svar.Delsvar.Cv target = new IntygDTO.Svar.Delsvar.Cv();
+    private CodeTypeDTO convertCv(CVType source) {
+        final var target = new CodeTypeDTO();
         target.setCode(source.getCode());
         target.setCodeSystem(source.getCodeSystem());
         target.setDisplayName(source.getDisplayName());
         return target;
     }
 
-    private IntygDTO.Svar.Delsvar.DatePeriod convertDatePeriod(DatePeriodType source) {
-        IntygDTO.Svar.Delsvar.DatePeriod target = new IntygDTO.Svar.Delsvar.DatePeriod();
+    private DelsvarDTO.DatePeriod convertDatePeriod(DatePeriodType source) {
+        final var target = new DelsvarDTO.DatePeriod();
         target.setStart(source.getStart());
         target.setEnd(source.getEnd());
         return target;

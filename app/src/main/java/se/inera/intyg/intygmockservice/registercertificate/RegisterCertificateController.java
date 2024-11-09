@@ -15,7 +15,7 @@ import se.inera.intyg.intygmockservice.registercertificate.repository.RegisterCe
 @RestController
 @RequestMapping("/api/register-certificate")
 @RequiredArgsConstructor
-@Tag(name = "Register Certificate", description = "API for managing certificate registrations")
+@Tag(name = "RegisterCertificate", description = "API for managing certificate registrations")
 public class RegisterCertificateController {
 
     private final RegisterCertificateConverter converter;

@@ -1,70 +1,56 @@
 package se.inera.intyg.intygmockservice.common.dto;
 
+import java.util.List;
 import lombok.Data;
 
 @Data
 public class HoSPersonalDTO {
 
-    private PersonalId personalId;
+    private PersonalIdDTO personalId;
     private String fullstandigtNamn;
     private String forskrivarkod;
-    private Befattning befattning;
-    private Enhet enhet;
+    private List<CodeTypeDTO> befattning;
+    private EnhetDTO enhet;
 
     @Data
-    public static class PersonalId {
+    public static class PersonalIdDTO {
 
         private String root;
         private String extension;
     }
 
     @Data
-    public static class Befattning {
+    public static class EnhetDTO {
 
-        private String code;
-        private String codeSystem;
-        private String displayName;
-    }
-
-    @Data
-    public static class Enhet {
-
-        private Enhet.EnhetsId enhetsId;
-        private Enhet.Arbetsplatskod arbetsplatskod;
+        private HsaIdDTO enhetsId;
+        private ArbetsplatskodDTO arbetsplatskod;
         private String enhetsnamn;
         private String postadress;
         private String postnummer;
         private String postort;
         private String telefonnummer;
         private String epost;
-        private Enhet.Vardgivare vardgivare;
+        private VardgivareDTO vardgivare;
 
         @Data
-        public static class EnhetsId {
+        public static class ArbetsplatskodDTO {
 
             private String root;
             private String extension;
         }
 
         @Data
-        public static class Arbetsplatskod {
+        public static class VardgivareDTO {
 
-            private String root;
-            private String extension;
-        }
-
-        @Data
-        public static class Vardgivare {
-
-            private Enhet.Vardgivare.VardgivareId vardgivareId;
+            private HsaIdDTO vardgivareId;
             private String vardgivarnamn;
+        }
 
-            @Data
-            public static class VardgivareId {
+        @Data
+        public static class HsaIdDTO {
 
-                private String root;
-                private String extension;
-            }
+            private String root;
+            private String extension;
         }
     }
 }

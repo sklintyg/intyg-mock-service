@@ -3,7 +3,7 @@ package se.inera.intyg.intygmockservice.sendmessagetorecipient.converter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.intygmockservice.common.converter.HoSPersonalConverter;
-import se.inera.intyg.intygmockservice.common.dto.CodeType;
+import se.inera.intyg.intygmockservice.common.dto.CodeTypeDTO;
 import se.inera.intyg.intygmockservice.common.dto.IntygDTO.IntygsId;
 import se.inera.intyg.intygmockservice.common.dto.PatientDTO.PersonId;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
@@ -31,7 +31,7 @@ public class SendMessageToRecipientConverter {
         patientPersonId.setExtension(source.getPatientPersonId().getExtension());
         dto.setPatientPersonId(patientPersonId);
 
-        final var amne = new CodeType();
+        final var amne = new CodeTypeDTO();
         amne.setCode(source.getAmne().getCode());
         amne.setCodeSystem(source.getAmne().getCodeSystem());
         amne.setDisplayName(source.getAmne().getDisplayName());

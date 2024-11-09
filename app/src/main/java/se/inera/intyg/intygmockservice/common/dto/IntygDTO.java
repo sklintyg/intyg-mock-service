@@ -9,14 +9,14 @@ import lombok.Data;
 public class IntygDTO {
 
     private IntygsId intygsId;
-    private Typ typ;
+    private CodeTypeDTO typ;
     private LocalDateTime signeringstidpunkt;
     private LocalDateTime skickatTidpunkt;
-    private List<Relation> relation;
+    private List<RelationDTO> relation;
     private String version;
     private PatientDTO patient;
     private HoSPersonalDTO skapadAv;
-    private List<Svar> svar;
+    private List<SvarDTO> svar;
 
     @Data
     public static class IntygsId {
@@ -26,50 +26,26 @@ public class IntygDTO {
     }
 
     @Data
-    public static class Typ {
+    public static class RelationDTO {
 
-        private String code;
-        private String codeSystem;
-        private String displayName;
-    }
-
-    @Data
-    public static class Relation {
-
-        private TypAvRelation typ;
+        private CodeTypeDTO typ;
         private IntygsId intygsId;
-
-        @Data
-        public static class TypAvRelation {
-
-            private String code;
-            private String codeSystem;
-            private String displayName;
-        }
     }
 
     @Data
-    public static class Svar {
+    public static class SvarDTO {
 
         private String id;
         private String instans;
-        private List<Delsvar> delsvar;
+        private List<DelsvarDTO> delsvar;
 
         @Data
-        public static class Delsvar {
+        public static class DelsvarDTO {
 
             private String id;
-            private Cv cv;
+            private CodeTypeDTO cv;
             private String value;
             private DatePeriod datePeriod;
-
-            @Data
-            public static class Cv {
-
-                private String code;
-                private String codeSystem;
-                private String displayName;
-            }
 
             @Data
             public static class DatePeriod {

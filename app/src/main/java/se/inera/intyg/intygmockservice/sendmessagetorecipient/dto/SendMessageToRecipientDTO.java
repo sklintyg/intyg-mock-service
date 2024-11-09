@@ -2,7 +2,7 @@ package se.inera.intyg.intygmockservice.sendmessagetorecipient.dto;
 
 import java.time.LocalDateTime;
 import lombok.Data;
-import se.inera.intyg.intygmockservice.common.dto.CodeType;
+import se.inera.intyg.intygmockservice.common.dto.CodeTypeDTO;
 import se.inera.intyg.intygmockservice.common.dto.HoSPersonalDTO;
 import se.inera.intyg.intygmockservice.common.dto.IntygDTO.IntygsId;
 import se.inera.intyg.intygmockservice.common.dto.PatientDTO.PersonId;
@@ -15,7 +15,7 @@ public class SendMessageToRecipientDTO {
     private LocalDateTime skickatTidpunkt;
     private IntygsId intygsId;
     private PersonId patientPersonId;
-    private CodeType amne;
+    private CodeTypeDTO amne;
     private String rubrik;
     private String meddelande;
     private HoSPersonalDTO skickatAv;

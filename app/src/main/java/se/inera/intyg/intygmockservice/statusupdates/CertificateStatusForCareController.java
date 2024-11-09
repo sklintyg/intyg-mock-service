@@ -15,23 +15,23 @@ import se.inera.intyg.intygmockservice.statusupdates.repository.CertificateStatu
 @RestController()
 @RequestMapping("/api/certificate-status-for-care")
 @RequiredArgsConstructor
-@Tag(name = "Certificate Status For Care", description = "API for managing certificate status updates for care")
+@Tag(name = "CertificateStatusForCare", description = "API for managing certificate status updates for care")
 public class CertificateStatusForCareController {
 
-  private final CertificateStatusUpdateForCareConverter converter;
-  private final CertificateStatusUpdateForCareRepository repository;
+    private final CertificateStatusUpdateForCareConverter converter;
+    private final CertificateStatusUpdateForCareRepository repository;
 
-  @Operation(summary = "Get all certificate status updates", description = "Retrieve all certificate status updates for care")
-  @GetMapping
-  public List<CertificateStatusUpdateForCareDTO> getAllCertificateStatusUpdates() {
-    return repository.findAll().stream()
-        .map(converter::convert)
-        .toList();
-  }
+    @Operation(summary = "Get all certificate status updates", description = "Retrieve all certificate status updates for care")
+    @GetMapping
+    public List<CertificateStatusUpdateForCareDTO> getAllCertificateStatusUpdates() {
+        return repository.findAll().stream()
+            .map(converter::convert)
+            .toList();
+    }
 
-  @Operation(summary = "Delete all certificate status updates", description = "Delete all certificate status updates for care")
-  @DeleteMapping
-  public void deleteAllCertificateStatusUpdates() {
-    repository.deleteAll();
-  }
+    @Operation(summary = "Delete all certificate status updates", description = "Delete all certificate status updates for care")
+    @DeleteMapping
+    public void deleteAllCertificateStatusUpdates() {
+        repository.deleteAll();
+    }
 }

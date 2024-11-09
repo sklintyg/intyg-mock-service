@@ -1,5 +1,6 @@
 package se.inera.intyg.intygmockservice.sendmessagetorecipient;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.converter.SendMessageToRecipientConverter;
@@ -11,16 +12,12 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class SendMessageToRecipientResponderImpl implements SendMessageToRecipientResponderInterface {
 
     private final SendMessageToRecipientRepository repository;
     private final SendMessageToRecipientConverter converter;
-
-    public SendMessageToRecipientResponderImpl(SendMessageToRecipientRepository repository, SendMessageToRecipientConverter converter) {
-        this.repository = repository;
-        this.converter = converter;
-    }
 
     @Override
     public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress,
