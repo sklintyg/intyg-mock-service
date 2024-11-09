@@ -13,13 +13,13 @@ public class CertificateStatusUpdateForCareConverter {
     private final IntygConverter intygConverter;
 
     public CertificateStatusUpdateForCareDTO convert(CertificateStatusUpdateForCareType source) {
-        CertificateStatusUpdateForCareDTO target = new CertificateStatusUpdateForCareDTO();
+        final var target = new CertificateStatusUpdateForCareDTO();
 
         // Convert Intyg
         target.setIntyg(intygConverter.convert(source.getIntyg()));
 
         // Convert Handelse
-        CertificateStatusUpdateForCareDTO.Handelse handelse = new CertificateStatusUpdateForCareDTO.Handelse();
+        final var handelse = new CertificateStatusUpdateForCareDTO.Handelse();
         handelse.setHandelsekod(convertHandelsekod(source.getHandelse().getHandelsekod()));
         handelse.setTidpunkt(source.getHandelse().getTidpunkt().toString());
         target.setHandelse(handelse);
@@ -29,17 +29,19 @@ public class CertificateStatusUpdateForCareConverter {
         target.setMottagnaFragor(convertFragor(source.getMottagnaFragor()));
 
         // Convert HanteratAv
-        CertificateStatusUpdateForCareDTO.HanteratAv hanteratAv = new CertificateStatusUpdateForCareDTO.HanteratAv();
-        hanteratAv.setRoot(source.getHanteratAv().getRoot());
-        hanteratAv.setExtension(source.getHanteratAv().getExtension());
-        target.setHanteratAv(hanteratAv);
+        if (source.getHanteratAv() != null) {
+            final var hanteratAv = new CertificateStatusUpdateForCareDTO.HanteratAv();
+            hanteratAv.setRoot(source.getHanteratAv().getRoot());
+            hanteratAv.setExtension(source.getHanteratAv().getExtension());
+            target.setHanteratAv(hanteratAv);
+        }
 
         return target;
     }
 
     private CertificateStatusUpdateForCareDTO.Handelse.Handelsekod convertHandelsekod(
         se.riv.clinicalprocess.healthcond.certificate.types.v3.Handelsekod source) {
-        CertificateStatusUpdateForCareDTO.Handelse.Handelsekod target = new CertificateStatusUpdateForCareDTO.Handelse.Handelsekod();
+        final var target = new CertificateStatusUpdateForCareDTO.Handelse.Handelsekod();
         target.setCode(source.getCode());
         target.setCodeSystem(source.getCodeSystem());
         target.setDisplayName(source.getDisplayName());
@@ -48,7 +50,7 @@ public class CertificateStatusUpdateForCareConverter {
 
     private CertificateStatusUpdateForCareDTO.Fragor convertFragor(
         se.riv.clinicalprocess.healthcond.certificate.v3.Arenden source) {
-        CertificateStatusUpdateForCareDTO.Fragor target = new CertificateStatusUpdateForCareDTO.Fragor();
+        final var target = new CertificateStatusUpdateForCareDTO.Fragor();
         target.setTotalt(source.getTotalt());
         target.setEjBesvarade(source.getEjBesvarade());
         target.setBesvarade(source.getBesvarade());
