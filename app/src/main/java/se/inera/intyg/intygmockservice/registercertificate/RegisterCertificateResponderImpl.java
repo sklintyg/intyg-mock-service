@@ -30,7 +30,11 @@ public class RegisterCertificateResponderImpl implements RegisterCertificateResp
 
         final var registerCertificateDTO = converter.convert(registerCertificateType);
 
-        log.atInfo().setMessage("Register certificate received")
+        log.atInfo().setMessage(
+                "Register certificate '%s' received".formatted(
+                    registerCertificateDTO.getIntyg().getIntygsId().getExtension()
+                )
+            )
             .addKeyValue("event.logical_address", logicalAddress)
             .addKeyValue("event.certificate.id",
                 registerCertificateDTO.getIntyg().getIntygsId().getExtension()

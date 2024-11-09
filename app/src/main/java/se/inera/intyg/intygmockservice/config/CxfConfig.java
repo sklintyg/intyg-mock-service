@@ -8,6 +8,9 @@ import org.springframework.context.annotation.Configuration;
 import se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateResponderImpl;
 import se.inera.intyg.intygmockservice.registercertificate.converter.RegisterCertificateConverter;
 import se.inera.intyg.intygmockservice.registercertificate.repository.RegisterCertificateRepository;
+import se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateResponderImpl;
+import se.inera.intyg.intygmockservice.revokecertificate.converter.RevokeCertificateConverter;
+import se.inera.intyg.intygmockservice.revokecertificate.repository.RevokeCertificateRepository;
 import se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareResponderImpl;
 import se.inera.intyg.intygmockservice.statusupdates.converter.CertificateStatusUpdateForCareConverter;
 import se.inera.intyg.intygmockservice.statusupdates.repository.CertificateStatusUpdateForCareRepository;
@@ -40,6 +43,19 @@ public class CxfConfig {
 
         endpoint.publish(
             "/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21"
+        );
+        return endpoint;
+    }
+
+    @Bean
+    public EndpointImpl revokeCertificateEndpoint(RevokeCertificateConverter converter,
+        RevokeCertificateRepository repository) {
+        final var endpoint = new EndpointImpl(bus,
+            new RevokeCertificateResponderImpl(repository, converter)
+        );
+
+        endpoint.publish(
+            "/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21"
         );
         return endpoint;
     }

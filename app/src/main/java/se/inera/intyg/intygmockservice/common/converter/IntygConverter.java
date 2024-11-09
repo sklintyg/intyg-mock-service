@@ -2,6 +2,7 @@ package se.inera.intyg.intygmockservice.common.converter;
 
 import jakarta.xml.bind.JAXBElement;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.intygmockservice.common.dto.IntygDTO;
 import se.inera.intyg.intygmockservice.common.dto.IntygDTO.Svar;
@@ -10,18 +11,23 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.DatePeriodType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
 
 @Component
+@RequiredArgsConstructor
 public class IntygConverter {
+
+    private final HoSPersonalConverter hosPersonalConverter;
+    private final PatientConverter patientConverter;
+    private final IntygIdConverter intygIdConverter;
 
     public IntygDTO convert(Intyg source) {
         IntygDTO intyg = new IntygDTO();
 
-        intyg.setIntygsId(convertIntygsId(source.getIntygsId()));
+        intyg.setIntygsId(intygIdConverter.convert(source.getIntygsId()));
         intyg.setTyp(convertTyp(source.getTyp()));
         intyg.setVersion(source.getVersion());
         intyg.setSigneringstidpunkt(source.getSigneringstidpunkt());
         intyg.setSkickatTidpunkt(source.getSkickatTidpunkt());
-        intyg.setPatient(convertPatient(source.getPatient()));
-        intyg.setSkapadAv(convertSkapadAv(source.getSkapadAv()));
+        intyg.setPatient(patientConverter.convert(source.getPatient()));
+        intyg.setSkapadAv(hosPersonalConverter.convert(source.getSkapadAv()));
         intyg.setRelation(
             source.getRelation().stream().map(this::convertRelation).toList()
         );
@@ -36,15 +42,7 @@ public class IntygConverter {
         }
         IntygDTO.Relation target = new IntygDTO.Relation();
         target.setTyp(convertTyp(source.getTyp()));
-        target.setIntygsId(convertIntygsId(source.getIntygsId()));
-        return target;
-    }
-
-    private IntygDTO.IntygsId convertIntygsId(
-        se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId source) {
-        IntygDTO.IntygsId target = new IntygDTO.IntygsId();
-        target.setRoot(source.getRoot());
-        target.setExtension(source.getExtension());
+        target.setIntygsId(intygIdConverter.convert(source.getIntygsId()));
         return target;
     }
 
@@ -63,103 +61,6 @@ public class IntygConverter {
         target.setCode(source.getCode());
         target.setCodeSystem(source.getCodeSystem());
         target.setDisplayName(source.getDisplayName());
-        return target;
-    }
-
-    private IntygDTO.Patient convertPatient(
-        se.riv.clinicalprocess.healthcond.certificate.v3.Patient source) {
-        IntygDTO.Patient target = new IntygDTO.Patient();
-        target.setPersonId(convertPersonId(source.getPersonId()));
-        target.setFornamn(source.getFornamn());
-        target.setEfternamn(source.getEfternamn());
-        target.setPostadress(source.getPostadress());
-        target.setPostnummer(source.getPostnummer());
-        target.setPostort(source.getPostort());
-        return target;
-    }
-
-    private IntygDTO.Patient.PersonId convertPersonId(
-        se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId source) {
-        IntygDTO.Patient.PersonId target = new IntygDTO.Patient.PersonId();
-        target.setRoot(source.getRoot());
-        target.setExtension(source.getExtension());
-        return target;
-    }
-
-    private IntygDTO.SkapadAv convertSkapadAv(
-        se.riv.clinicalprocess.healthcond.certificate.v3.HosPersonal source) {
-        IntygDTO.SkapadAv target = new IntygDTO.SkapadAv();
-        target.setPersonalId(convertPersonalId(source.getPersonalId()));
-        target.setFullstandigtNamn(source.getFullstandigtNamn());
-        target.setForskrivarkod(source.getForskrivarkod());
-        target.setBefattning(
-            source.getBefattning().stream().map(this::convertBefattning).findFirst().orElse(null)
-        );
-        target.setEnhet(convertEnhet(source.getEnhet()));
-        return target;
-    }
-
-    private IntygDTO.SkapadAv.PersonalId convertPersonalId(
-        se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId source) {
-        IntygDTO.SkapadAv.PersonalId target = new IntygDTO.SkapadAv.PersonalId();
-        target.setRoot(source.getRoot());
-        target.setExtension(source.getExtension());
-        return target;
-    }
-
-    private IntygDTO.SkapadAv.Befattning convertBefattning(
-        se.riv.clinicalprocess.healthcond.certificate.types.v3.Befattning source) {
-        IntygDTO.SkapadAv.Befattning target = new IntygDTO.SkapadAv.Befattning();
-        target.setCode(source.getCode());
-        target.setCodeSystem(source.getCodeSystem());
-        target.setDisplayName(source.getDisplayName());
-        return target;
-    }
-
-    private IntygDTO.SkapadAv.Enhet convertEnhet(
-        se.riv.clinicalprocess.healthcond.certificate.v3.Enhet source) {
-        IntygDTO.SkapadAv.Enhet target = new IntygDTO.SkapadAv.Enhet();
-        target.setEnhetsId(convertEnhetsId(source.getEnhetsId()));
-        target.setArbetsplatskod(convertArbetsplatskod(source.getArbetsplatskod()));
-        target.setEnhetsnamn(source.getEnhetsnamn());
-        target.setPostadress(source.getPostadress());
-        target.setPostnummer(source.getPostnummer());
-        target.setPostort(source.getPostort());
-        target.setTelefonnummer(source.getTelefonnummer());
-        target.setEpost(source.getEpost());
-        target.setVardgivare(convertVardgivare(source.getVardgivare()));
-        return target;
-    }
-
-    private IntygDTO.SkapadAv.Enhet.EnhetsId convertEnhetsId(
-        se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId source) {
-        IntygDTO.SkapadAv.Enhet.EnhetsId target = new IntygDTO.SkapadAv.Enhet.EnhetsId();
-        target.setRoot(source.getRoot());
-        target.setExtension(source.getExtension());
-        return target;
-    }
-
-    private IntygDTO.SkapadAv.Enhet.Arbetsplatskod convertArbetsplatskod(
-        se.riv.clinicalprocess.healthcond.certificate.types.v3.ArbetsplatsKod source) {
-        IntygDTO.SkapadAv.Enhet.Arbetsplatskod target = new IntygDTO.SkapadAv.Enhet.Arbetsplatskod();
-        target.setRoot(source.getRoot());
-        target.setExtension(source.getExtension());
-        return target;
-    }
-
-    private IntygDTO.SkapadAv.Enhet.Vardgivare convertVardgivare(
-        se.riv.clinicalprocess.healthcond.certificate.v3.Vardgivare source) {
-        IntygDTO.SkapadAv.Enhet.Vardgivare target = new IntygDTO.SkapadAv.Enhet.Vardgivare();
-        target.setVardgivareId(convertVardgivareId(source.getVardgivareId()));
-        target.setVardgivarnamn(source.getVardgivarnamn());
-        return target;
-    }
-
-    private IntygDTO.SkapadAv.Enhet.Vardgivare.VardgivareId convertVardgivareId(
-        se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId source) {
-        IntygDTO.SkapadAv.Enhet.Vardgivare.VardgivareId target = new IntygDTO.SkapadAv.Enhet.Vardgivare.VardgivareId();
-        target.setRoot(source.getRoot());
-        target.setExtension(source.getExtension());
         return target;
     }
 
