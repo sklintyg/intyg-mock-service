@@ -35,6 +35,8 @@ See swagger documentation at <http://localhost:18888/swagger-ui/index.html>.
 
 ## How to configure Intygstjänster to use the mock service
 
-| Application | SOAP Webservice                | Local environment (application-dev.properties)    | Test environment (configmap.yaml)                 | 
-|-------------|--------------------------------|---------------------------------------------------|---------------------------------------------------|
-| Webcert     | CertificateStatusUpdateForCare | certificatestatusupdateforcare.ws.endpoint.v3.url | CERTIFICATESTATUSUPDATEFORCARE_WS_ENDPOINT_V3_URL |
+| Application  | SOAP Webservice                | Local environment (application-dev.properties)    | Test environment (configmap.yaml)                 | 
+|--------------|--------------------------------|---------------------------------------------------|---------------------------------------------------|
+| Webcert      | CertificateStatusUpdateForCare | certificatestatusupdateforcare.ws.endpoint.v3.url | CERTIFICATESTATUSUPDATEFORCARE_WS_ENDPOINT_V3_URL |
+| Intygstjanst | RegisterCertificate            | registercertificatev3.endpoint.url                | REGISTERCERTIFICATEV3_ENDPOINT_URL                |
+

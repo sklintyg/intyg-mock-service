@@ -1,0 +1,144 @@
+### POST a register certificate
+POST http://localhost:18888/services/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21
+Content-Type: text/xml
+SOAPAction: ""
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
+		xmlns:ns1="urn:riv:itintegration:registry:1"
+		xmlns:ns5="urn:riv:clinicalprocess:healthcond:certificate:3.2"
+		xmlns:ns2="urn:riv:clinicalprocess:healthcond:certificate:3"
+		xmlns:ns4="urn:riv:clinicalprocess:healthcond:certificate:types:3"
+		xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+		xmlns:ns3="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3">
+	<soapenv:Header>
+		<ns1:LogicalAddress>FK</ns1:LogicalAddress>
+	</soapenv:Header>
+	<soapenv:Body>
+		<ns3:RegisterCertificate>
+			<ns3:svarPa>
+				<ns2:meddelande-id>hittepa-meddelande-id</ns2:meddelande-id>
+			</ns3:svarPa>
+			<ns3:intyg>
+				<ns2:intygs-id>
+					<ns4:root>TSTNMT2321000156-ALMC</ns4:root>
+					<ns4:extension>d9096ad2-1a33-424b-b265-fd6d0cd9b631</ns4:extension>
+				</ns2:intygs-id>
+				<ns2:typ>
+					<ns4:code>IGRAV</ns4:code>
+					<ns4:codeSystem>b64ea353-e8f6-4832-b563-fc7d46f29548</ns4:codeSystem>
+					<ns4:displayName>Intyg om graviditet</ns4:displayName>
+				</ns2:typ>
+				<ns2:version>1.0</ns2:version>
+				<ns2:signeringstidpunkt>2024-11-09T07:40:13</ns2:signeringstidpunkt>
+				<ns2:skickatTidpunkt>2024-11-09T07:40:13</ns2:skickatTidpunkt>
+				<ns2:patient>
+					<ns2:person-id>
+						<ns4:root>1.2.752.129.2.1.3.1</ns4:root>
+						<ns4:extension>191212121212</ns4:extension>
+					</ns2:person-id>
+					<ns2:fornamn></ns2:fornamn>
+					<ns2:efternamn></ns2:efternamn>
+					<ns2:postadress></ns2:postadress>
+					<ns2:postnummer></ns2:postnummer>
+					<ns2:postort></ns2:postort>
+				</ns2:patient>
+				<ns2:skapadAv>
+					<ns2:personal-id>
+						<ns4:root>1.2.752.129.2.1.4.1</ns4:root>
+						<ns4:extension>TSTNMT2321000156-DRAA</ns4:extension>
+					</ns2:personal-id>
+					<ns2:fullstandigtNamn>Ajla Doktor</ns2:fullstandigtNamn>
+					<ns2:forskrivarkod>0000000</ns2:forskrivarkod>
+					<ns2:befattning>
+						<ns4:code>204010</ns4:code>
+						<ns4:codeSystem>1.2.752.129.2.2.1.4</ns4:codeSystem>
+						<ns4:displayName>LÃ¤kare ej legitimerad, allmÃ¤ntjÃ¤nstgÃ¶ring</ns4:displayName>
+					</ns2:befattning>
+					<ns2:enhet>
+						<ns2:enhets-id>
+							<ns4:root>1.2.752.129.2.1.4.1</ns4:root>
+							<ns4:extension>TSTNMT2321000156-ALMC</ns4:extension>
+						</ns2:enhets-id>
+						<ns2:arbetsplatskod>
+							<ns4:root>1.2.752.29.4.71</ns4:root>
+							<ns4:extension>1234567890</ns4:extension>
+						</ns2:arbetsplatskod>
+						<ns2:enhetsnamn>Alfa Medicincentrum</ns2:enhetsnamn>
+						<ns2:postadress>Storgatan 1</ns2:postadress>
+						<ns2:postnummer>12345</ns2:postnummer>
+						<ns2:postort>SmÃ¥mÃ¥la</ns2:postort>
+						<ns2:telefonnummer>0101234567890</ns2:telefonnummer>
+						<ns2:epost>AlfaMC@webcert.invalid.se</ns2:epost>
+						<ns2:vardgivare>
+							<ns2:vardgivare-id>
+								<ns4:root>1.2.752.129.2.1.4.1</ns4:root>
+								<ns4:extension>TSTNMT2321000156-ALFA</ns4:extension>
+							</ns2:vardgivare-id>
+							<ns2:vardgivarnamn>Alfa Regionen</ns2:vardgivarnamn>
+						</ns2:vardgivare>
+					</ns2:enhet>
+				</ns2:skapadAv>
+				<ns2:svar id="54">
+					<ns2:delsvar id="54.1">2025-02-19</ns2:delsvar>
+				</ns2:svar>
+				<ns5:underskrift>
+					<ds:Signature>
+						<ds:SignedInfo>
+							<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+							<ds:SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha256"/>
+							<ds:Reference URI="">
+								<ds:Transforms>
+									<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+									<ds:Transform Algorithm="http://www.w3.org/TR/1999/REC-xslt-19991116">
+										<xsl:stylesheet version="1.0" xmlns:ns60="urn:riv:informationsecurity:auditing:log:2" xmlns:ns4="urn:riv:clinicalprocess:healthcond:certificate:types:1" xmlns:ns3="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns53="urn:riv:infrastructure:directory:privatepractitioner:GetPrivatePractitionerResponder:1" xmlns:ns6="urn:riv:clinicalprocess:healthcond:certificate:CertificateStatusUpdateForCareResponder:1" xmlns:ns5="urn:riv:clinicalprocess:healthcond:certificate:types:3" xmlns:ns52="urn:riv:infrastructure:directory:privatepractitioner:1" xmlns:ns51="urn:riv:infrastructure:directory:authorizationmanagement:GetCredentialsForPersonIncludingProtectedPersonResponder:2.1" xmlns:ns8="urn:riv:clinicalprocess:healthcond:certificate:CertificateStatusUpdateForCareResponder:3" xmlns:ns50="urn:riv:infrastructure:directory:authorizationmanagement:GetCredentialsForPersonIncludingProtectedPersonResponder:2" xmlns:ns7="urn:riv:clinicalprocess:healthcond:certificate:3" xmlns:ns13="urn:riv:clinicalprocess:healthcond:certificate:CreateDraftCertificateResponder:3" xmlns:ns57="urn:riv:strategicresourcemanagement:persons:person:3" xmlns:ns12="urn:riv:clinicalprocess:healthcond:certificate:CreateDraftCertificateResponder:1" xmlns:ns56="urn:riv:infrastructure:directory:privatepractitioner:GetPrivatePractitionerTermsResponder:1" xmlns:ns9="urn:riv:clinicalprocess:healthcond:certificate:3.2" xmlns:ns11="urn:riv:clinicalprocess:healthcond:certificate:CertificateStatusUpdateForCareResponder:3.2" xmlns:ns55="urn:riv:infrastructure:directory:privatepractitioner:terms:1" xmlns:ns10="urn:riv:clinicalprocess:healthcond:certificate:3.4" xmlns:ns54="urn:riv:infrastructure:directory:privatepractitioner:ValidatePrivatePractitionerResponder:1" xmlns:ns17="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1" xmlns:ns16="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareResponder:3" xmlns:ns15="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareResponder:1" xmlns:ns59="urn:riv:strategicresourcemanagement:persons:person:GetPersonsForProfileResponder:3" xmlns:ns14="urn:riv:clinicalprocess:healthcond:certificate:3.3" xmlns:ns58="urn:riv:strategicresourcemanagement:persons:person:3.1" xmlns:ns19="urn:riv:clinicalprocess:healthcond:certificate:GetCertificateResponder:2" xmlns:ns18="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3" xmlns:ns42="urn:riv:infrastructure:directory:employee:2.1" xmlns:ns41="urn:riv:infrastructure:directory:employee:2" xmlns:ns40="urn:riv:infrastructure:directory:employee:2.2" xmlns:ns46="urn:riv:infrastructure:directory:authorizationmanagement:2" xmlns:ns45="urn:riv:infrastructure:directory:authorizationmanagement:2.1" xmlns:dsf="http://www.w3.org/2002/06/xmldsig-filter2" xmlns:ns44="urn:riv:infrastructure:directory:authorizationmanagement:2.3" xmlns:ns43="urn:riv:infrastructure:directory:authorizationmanagement:GetHospLastUpdateResponder:1" xmlns:ns49="urn:riv:infrastructure:directory:authorizationmanagement:GetHospCredentialsForPersonResponder:1" xmlns:ns48="urn:riv:infrastructure:directory:authorizationmanagement:HandleHospCertificationPersonResponder:1" xmlns:ns47="urn:riv:infrastructure:directory:authorizationmanagement:2.2" xmlns:ns82="http://www.w3.org/2005/08/addressing" xmlns:ns81="urn:local:se:intygstjanster:services:RegisterTSDiabetesResponder:1" xmlns:ns80="urn:local:se:intygstjanster:services:GetTSDiabetesResponder:1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ns31="urn:riv:infrastructure:directory:organization:GetUnitResponder:3" xmlns:ns75="urn:riv:insuranceprocess:healthreporting:ReceiveMedicalCertificateQuestionResponder:1" xmlns:ns30="urn:riv:clinicalprocess:healthcond:rehabilitation:1" xmlns:ns74="urn:riv:insuranceprocess:healthreporting:ReceiveMedicalCertificateAnswerResponder:1" xmlns:ns73="urn:riv:insuranceprocess:healthreporting:SetCertificateStatusResponder:1" xmlns:ns72="urn:riv:insuranceprocess:healthreporting:SendMedicalCertificateQuestionResponder:1" xmlns:ns35="urn:riv:infrastructure:directory:organization:2" xmlns:ns79="urn:local:se:intygstjanster:services:RegisterTSBasResponder:1" xmlns:ns34="urn:riv:infrastructure:directory:organization:GetHealthCareUnitMembersResponder:2" xmlns:ns78="urn:local:se:intygstjanster:services:types:1" xmlns:ns33="urn:riv:infrastructure:directory:organization:GetUnitResponder:3.1" xmlns:ns77="urn:local:se:intygstjanster:services:GetTSBasResponder:1" xmlns:ns32="urn:riv:infrastructure:directory:organization:3" xmlns:ns76="urn:local:se:intygstjanster:services:1" xmlns:ns39="urn:riv:infrastructure:directory:employee:GetEmployeeIncludingProtectedPersonResponder:2" xmlns:ns38="urn:riv:infrastructure:directory:organization:GetHealthCareProviderResponder:1" xmlns:ns37="urn:riv:infrastructure:directory:organization:GetHealthCareUnitResponder:2" xmlns:ns36="urn:riv:infrastructure:directory:organization:2.1" xmlns:ns71="urn:riv:insuranceprocess:healthreporting:SendMedicalCertificateResponder:1" xmlns:ns70="urn:riv:insuranceprocess:healthreporting:SendMedicalCertificateAnswerResponder:1" xmlns:ns20="urn:riv:clinicalprocess:healthcond:certificate:SendMessageToCareResponder:2" xmlns:ns64="urn:riv:insuranceprocess:healthreporting:GetCertificateResponder:1" xmlns:ns63="urn:riv:insuranceprocess:healthreporting:2" xmlns:ns62="urn:riv:insuranceprocess:healthreporting:mu7263:3" xmlns:ns61="urn:riv:informationsecurity:auditing:log:StoreLogResponder:2" xmlns:ns24="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizenResponder:4" xmlns:ns68="urn:riv:insuranceprocess:healthreporting:RevokeMedicalCertificateResponder:1" xmlns:ns23="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizenResponder:3" xmlns:ns67="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3" xmlns:ns22="urn:riv:clinicalprocess:healthcond:certificate:SendCertificateToRecipientResponder:2" xmlns:ns66="urn:riv:insuranceprocess:healthreporting:ListCertificatesResponder:1" xmlns:ns21="urn:riv:clinicalprocess:healthcond:certificate:SendMessageToRecipientResponder:2" xmlns:ns65="urn:riv:insuranceprocess:certificate:1" xmlns:ns28="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareWithQAResponder:3" xmlns:ns27="urn:riv:clinicalprocess:healthcond:certificate:ListSickLeavesForCareResponder:1" xmlns:ns26="urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:2" xmlns:ns25="urn:riv:clinicalprocess:healthcond:certificate:RevokeCertificateResponder:2" xmlns:ns69="urn:riv:insuranceprocess:healthreporting:medcertqa:1" xmlns:ns29="urn:riv:clinicalprocess:healthcond:certificate:types:2">
+											<xsl:output indent="no" omit-xml-declaration="yes"/>
+											<xsl:strip-space elements="*"/>
+											<xsl:template match="*">
+												<xsl:element name="{local-name(.)}">
+													<xsl:apply-templates select="node()|@*"/>
+												</xsl:element>
+											</xsl:template>
+											<xsl:template match="@*">
+												<xsl:copy/>
+											</xsl:template>
+										</xsl:stylesheet>
+									</ds:Transform>
+									<ds:Transform Algorithm="http://www.w3.org/2002/06/xmldsig-filter2">
+										<dsf:XPath Filter="intersect" xmlns:ns60="urn:riv:informationsecurity:auditing:log:2" xmlns:ns4="urn:riv:clinicalprocess:healthcond:certificate:types:1" xmlns:ns3="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns53="urn:riv:infrastructure:directory:privatepractitioner:GetPrivatePractitionerResponder:1" xmlns:ns6="urn:riv:clinicalprocess:healthcond:certificate:CertificateStatusUpdateForCareResponder:1" xmlns:ns5="urn:riv:clinicalprocess:healthcond:certificate:types:3" xmlns:ns52="urn:riv:infrastructure:directory:privatepractitioner:1" xmlns:ns51="urn:riv:infrastructure:directory:authorizationmanagement:GetCredentialsForPersonIncludingProtectedPersonResponder:2.1" xmlns:ns8="urn:riv:clinicalprocess:healthcond:certificate:CertificateStatusUpdateForCareResponder:3" xmlns:ns50="urn:riv:infrastructure:directory:authorizationmanagement:GetCredentialsForPersonIncludingProtectedPersonResponder:2" xmlns:ns7="urn:riv:clinicalprocess:healthcond:certificate:3" xmlns:ns13="urn:riv:clinicalprocess:healthcond:certificate:CreateDraftCertificateResponder:3" xmlns:ns57="urn:riv:strategicresourcemanagement:persons:person:3" xmlns:ns12="urn:riv:clinicalprocess:healthcond:certificate:CreateDraftCertificateResponder:1" xmlns:ns56="urn:riv:infrastructure:directory:privatepractitioner:GetPrivatePractitionerTermsResponder:1" xmlns:ns9="urn:riv:clinicalprocess:healthcond:certificate:3.2" xmlns:ns11="urn:riv:clinicalprocess:healthcond:certificate:CertificateStatusUpdateForCareResponder:3.2" xmlns:ns55="urn:riv:infrastructure:directory:privatepractitioner:terms:1" xmlns:ns10="urn:riv:clinicalprocess:healthcond:certificate:3.4" xmlns:ns54="urn:riv:infrastructure:directory:privatepractitioner:ValidatePrivatePractitionerResponder:1" xmlns:ns17="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1" xmlns:ns16="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareResponder:3" xmlns:ns15="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareResponder:1" xmlns:ns59="urn:riv:strategicresourcemanagement:persons:person:GetPersonsForProfileResponder:3" xmlns:ns14="urn:riv:clinicalprocess:healthcond:certificate:3.3" xmlns:ns58="urn:riv:strategicresourcemanagement:persons:person:3.1" xmlns:ns19="urn:riv:clinicalprocess:healthcond:certificate:GetCertificateResponder:2" xmlns:ns18="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3" xmlns:ns42="urn:riv:infrastructure:directory:employee:2.1" xmlns:ns41="urn:riv:infrastructure:directory:employee:2" xmlns:ns40="urn:riv:infrastructure:directory:employee:2.2" xmlns:ns46="urn:riv:infrastructure:directory:authorizationmanagement:2" xmlns:ns45="urn:riv:infrastructure:directory:authorizationmanagement:2.1" xmlns:dsf="http://www.w3.org/2002/06/xmldsig-filter2" xmlns:ns44="urn:riv:infrastructure:directory:authorizationmanagement:2.3" xmlns:ns43="urn:riv:infrastructure:directory:authorizationmanagement:GetHospLastUpdateResponder:1" xmlns:ns49="urn:riv:infrastructure:directory:authorizationmanagement:GetHospCredentialsForPersonResponder:1" xmlns:ns48="urn:riv:infrastructure:directory:authorizationmanagement:HandleHospCertificationPersonResponder:1" xmlns:ns47="urn:riv:infrastructure:directory:authorizationmanagement:2.2" xmlns:ns82="http://www.w3.org/2005/08/addressing" xmlns:ns81="urn:local:se:intygstjanster:services:RegisterTSDiabetesResponder:1" xmlns:ns80="urn:local:se:intygstjanster:services:GetTSDiabetesResponder:1" xmlns:ns31="urn:riv:infrastructure:directory:organization:GetUnitResponder:3" xmlns:ns75="urn:riv:insuranceprocess:healthreporting:ReceiveMedicalCertificateQuestionResponder:1" xmlns:ns30="urn:riv:clinicalprocess:healthcond:rehabilitation:1" xmlns:ns74="urn:riv:insuranceprocess:healthreporting:ReceiveMedicalCertificateAnswerResponder:1" xmlns:ns73="urn:riv:insuranceprocess:healthreporting:SetCertificateStatusResponder:1" xmlns:ns72="urn:riv:insuranceprocess:healthreporting:SendMedicalCertificateQuestionResponder:1" xmlns:ns35="urn:riv:infrastructure:directory:organization:2" xmlns:ns79="urn:local:se:intygstjanster:services:RegisterTSBasResponder:1" xmlns:ns34="urn:riv:infrastructure:directory:organization:GetHealthCareUnitMembersResponder:2" xmlns:ns78="urn:local:se:intygstjanster:services:types:1" xmlns:ns33="urn:riv:infrastructure:directory:organization:GetUnitResponder:3.1" xmlns:ns77="urn:local:se:intygstjanster:services:GetTSBasResponder:1" xmlns:ns32="urn:riv:infrastructure:directory:organization:3" xmlns:ns76="urn:local:se:intygstjanster:services:1" xmlns:ns39="urn:riv:infrastructure:directory:employee:GetEmployeeIncludingProtectedPersonResponder:2" xmlns:ns38="urn:riv:infrastructure:directory:organization:GetHealthCareProviderResponder:1" xmlns:ns37="urn:riv:infrastructure:directory:organization:GetHealthCareUnitResponder:2" xmlns:ns36="urn:riv:infrastructure:directory:organization:2.1" xmlns:ns71="urn:riv:insuranceprocess:healthreporting:SendMedicalCertificateResponder:1" xmlns:ns70="urn:riv:insuranceprocess:healthreporting:SendMedicalCertificateAnswerResponder:1" xmlns:ns20="urn:riv:clinicalprocess:healthcond:certificate:SendMessageToCareResponder:2" xmlns:ns64="urn:riv:insuranceprocess:healthreporting:GetCertificateResponder:1" xmlns:ns63="urn:riv:insuranceprocess:healthreporting:2" xmlns:ns62="urn:riv:insuranceprocess:healthreporting:mu7263:3" xmlns:ns61="urn:riv:informationsecurity:auditing:log:StoreLogResponder:2" xmlns:ns24="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizenResponder:4" xmlns:ns68="urn:riv:insuranceprocess:healthreporting:RevokeMedicalCertificateResponder:1" xmlns:ns23="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizenResponder:3" xmlns:ns67="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3" xmlns:ns22="urn:riv:clinicalprocess:healthcond:certificate:SendCertificateToRecipientResponder:2" xmlns:ns66="urn:riv:insuranceprocess:healthreporting:ListCertificatesResponder:1" xmlns:ns21="urn:riv:clinicalprocess:healthcond:certificate:SendMessageToRecipientResponder:2" xmlns:ns65="urn:riv:insuranceprocess:certificate:1" xmlns:ns28="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareWithQAResponder:3" xmlns:ns27="urn:riv:clinicalprocess:healthcond:certificate:ListSickLeavesForCareResponder:1" xmlns:ns26="urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:2" xmlns:ns25="urn:riv:clinicalprocess:healthcond:certificate:RevokeCertificateResponder:2" xmlns:ns69="urn:riv:insuranceprocess:healthreporting:medcertqa:1" xmlns:ns29="urn:riv:clinicalprocess:healthcond:certificate:types:2">
+											//extension[text()='d9096ad2-1a33-424b-b265-fd6d0cd9b631']/../..
+										</dsf:XPath>
+									</ds:Transform>
+									<ds:Transform Algorithm="http://www.w3.org/2002/06/xmldsig-filter2">
+										<dsf:XPath Filter="subtract" xmlns:ns60="urn:riv:informationsecurity:auditing:log:2" xmlns:ns4="urn:riv:clinicalprocess:healthcond:certificate:types:1" xmlns:ns3="urn:riv:clinicalprocess:healthcond:certificate:1" xmlns:ns53="urn:riv:infrastructure:directory:privatepractitioner:GetPrivatePractitionerResponder:1" xmlns:ns6="urn:riv:clinicalprocess:healthcond:certificate:CertificateStatusUpdateForCareResponder:1" xmlns:ns5="urn:riv:clinicalprocess:healthcond:certificate:types:3" xmlns:ns52="urn:riv:infrastructure:directory:privatepractitioner:1" xmlns:ns51="urn:riv:infrastructure:directory:authorizationmanagement:GetCredentialsForPersonIncludingProtectedPersonResponder:2.1" xmlns:ns8="urn:riv:clinicalprocess:healthcond:certificate:CertificateStatusUpdateForCareResponder:3" xmlns:ns50="urn:riv:infrastructure:directory:authorizationmanagement:GetCredentialsForPersonIncludingProtectedPersonResponder:2" xmlns:ns7="urn:riv:clinicalprocess:healthcond:certificate:3" xmlns:ns13="urn:riv:clinicalprocess:healthcond:certificate:CreateDraftCertificateResponder:3" xmlns:ns57="urn:riv:strategicresourcemanagement:persons:person:3" xmlns:ns12="urn:riv:clinicalprocess:healthcond:certificate:CreateDraftCertificateResponder:1" xmlns:ns56="urn:riv:infrastructure:directory:privatepractitioner:GetPrivatePractitionerTermsResponder:1" xmlns:ns9="urn:riv:clinicalprocess:healthcond:certificate:3.2" xmlns:ns11="urn:riv:clinicalprocess:healthcond:certificate:CertificateStatusUpdateForCareResponder:3.2" xmlns:ns55="urn:riv:infrastructure:directory:privatepractitioner:terms:1" xmlns:ns10="urn:riv:clinicalprocess:healthcond:certificate:3.4" xmlns:ns54="urn:riv:infrastructure:directory:privatepractitioner:ValidatePrivatePractitionerResponder:1" xmlns:ns17="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:1" xmlns:ns16="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareResponder:3" xmlns:ns15="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareResponder:1" xmlns:ns59="urn:riv:strategicresourcemanagement:persons:person:GetPersonsForProfileResponder:3" xmlns:ns14="urn:riv:clinicalprocess:healthcond:certificate:3.3" xmlns:ns58="urn:riv:strategicresourcemanagement:persons:person:3.1" xmlns:ns19="urn:riv:clinicalprocess:healthcond:certificate:GetCertificateResponder:2" xmlns:ns18="urn:riv:clinicalprocess:healthcond:certificate:RegisterCertificateResponder:3" xmlns:ns42="urn:riv:infrastructure:directory:employee:2.1" xmlns:ns41="urn:riv:infrastructure:directory:employee:2" xmlns:ns40="urn:riv:infrastructure:directory:employee:2.2" xmlns:ns46="urn:riv:infrastructure:directory:authorizationmanagement:2" xmlns:ns45="urn:riv:infrastructure:directory:authorizationmanagement:2.1" xmlns:dsf="http://www.w3.org/2002/06/xmldsig-filter2" xmlns:ns44="urn:riv:infrastructure:directory:authorizationmanagement:2.3" xmlns:ns43="urn:riv:infrastructure:directory:authorizationmanagement:GetHospLastUpdateResponder:1" xmlns:ns49="urn:riv:infrastructure:directory:authorizationmanagement:GetHospCredentialsForPersonResponder:1" xmlns:ns48="urn:riv:infrastructure:directory:authorizationmanagement:HandleHospCertificationPersonResponder:1" xmlns:ns47="urn:riv:infrastructure:directory:authorizationmanagement:2.2" xmlns:ns82="http://www.w3.org/2005/08/addressing" xmlns:ns81="urn:local:se:intygstjanster:services:RegisterTSDiabetesResponder:1" xmlns:ns80="urn:local:se:intygstjanster:services:GetTSDiabetesResponder:1" xmlns:ns31="urn:riv:infrastructure:directory:organization:GetUnitResponder:3" xmlns:ns75="urn:riv:insuranceprocess:healthreporting:ReceiveMedicalCertificateQuestionResponder:1" xmlns:ns30="urn:riv:clinicalprocess:healthcond:rehabilitation:1" xmlns:ns74="urn:riv:insuranceprocess:healthreporting:ReceiveMedicalCertificateAnswerResponder:1" xmlns:ns73="urn:riv:insuranceprocess:healthreporting:SetCertificateStatusResponder:1" xmlns:ns72="urn:riv:insuranceprocess:healthreporting:SendMedicalCertificateQuestionResponder:1" xmlns:ns35="urn:riv:infrastructure:directory:organization:2" xmlns:ns79="urn:local:se:intygstjanster:services:RegisterTSBasResponder:1" xmlns:ns34="urn:riv:infrastructure:directory:organization:GetHealthCareUnitMembersResponder:2" xmlns:ns78="urn:local:se:intygstjanster:services:types:1" xmlns:ns33="urn:riv:infrastructure:directory:organization:GetUnitResponder:3.1" xmlns:ns77="urn:local:se:intygstjanster:services:GetTSBasResponder:1" xmlns:ns32="urn:riv:infrastructure:directory:organization:3" xmlns:ns76="urn:local:se:intygstjanster:services:1" xmlns:ns39="urn:riv:infrastructure:directory:employee:GetEmployeeIncludingProtectedPersonResponder:2" xmlns:ns38="urn:riv:infrastructure:directory:organization:GetHealthCareProviderResponder:1" xmlns:ns37="urn:riv:infrastructure:directory:organization:GetHealthCareUnitResponder:2" xmlns:ns36="urn:riv:infrastructure:directory:organization:2.1" xmlns:ns71="urn:riv:insuranceprocess:healthreporting:SendMedicalCertificateResponder:1" xmlns:ns70="urn:riv:insuranceprocess:healthreporting:SendMedicalCertificateAnswerResponder:1" xmlns:ns20="urn:riv:clinicalprocess:healthcond:certificate:SendMessageToCareResponder:2" xmlns:ns64="urn:riv:insuranceprocess:healthreporting:GetCertificateResponder:1" xmlns:ns63="urn:riv:insuranceprocess:healthreporting:2" xmlns:ns62="urn:riv:insuranceprocess:healthreporting:mu7263:3" xmlns:ns61="urn:riv:informationsecurity:auditing:log:StoreLogResponder:2" xmlns:ns24="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizenResponder:4" xmlns:ns68="urn:riv:insuranceprocess:healthreporting:RevokeMedicalCertificateResponder:1" xmlns:ns23="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCitizenResponder:3" xmlns:ns67="urn:riv:insuranceprocess:healthreporting:RegisterMedicalCertificateResponder:3" xmlns:ns22="urn:riv:clinicalprocess:healthcond:certificate:SendCertificateToRecipientResponder:2" xmlns:ns66="urn:riv:insuranceprocess:healthreporting:ListCertificatesResponder:1" xmlns:ns21="urn:riv:clinicalprocess:healthcond:certificate:SendMessageToRecipientResponder:2" xmlns:ns65="urn:riv:insuranceprocess:certificate:1" xmlns:ns28="urn:riv:clinicalprocess:healthcond:certificate:ListCertificatesForCareWithQAResponder:3" xmlns:ns27="urn:riv:clinicalprocess:healthcond:certificate:ListSickLeavesForCareResponder:1" xmlns:ns26="urn:riv:clinicalprocess:healthcond:certificate:SetCertificateStatusResponder:2" xmlns:ns25="urn:riv:clinicalprocess:healthcond:certificate:RevokeCertificateResponder:2" xmlns:ns69="urn:riv:insuranceprocess:healthreporting:medcertqa:1" xmlns:ns29="urn:riv:clinicalprocess:healthcond:certificate:types:2">
+											//*[local-name() = 'skickatTidpunkt']|//*[local-name() = 'relation']|//*[local-name() = 'status']|//*[local-name() =
+											'underskrift']
+										</dsf:XPath>
+									</ds:Transform>
+									<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+								</ds:Transforms>
+								<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"/>
+								<ds:DigestValue>y+TeeruAiwbj6JQ1m3Us3SDbFwGTblpMyQ4l8Oibj4M=</ds:DigestValue>
+							</ds:Reference>
+						</ds:SignedInfo>
+						<ds:SignatureValue>
+							fCJ6+DfS8shZUxFuaiDOExiAQZsio/+eAlJVlhkxR/f8de3wZnqWACIXy7mLEtVg/2bvhIljJhYU0Xbxc4ts+XltQ68HiXLtaGuv410BGXIPqRSkgpBOt4PUxVqFieBxXi9TFZI/cR2U3B9ez4XBJZ2+u9aV06D7LKdyjDWE24g=
+						</ds:SignatureValue>
+						<ds:KeyInfo>
+							<ds:X509Data>
+								<ds:X509Certificate>
+									MIICSjCCAbOgAwIBAgIECXEBjDANBgkqhkiG9w0BAQsFADBYMQswCQYDVQQGEwJTRTENMAsGA1UECBMEVGVzdDENMAsGA1UEBxMEVGVzdDENMAsGA1UEChMEVGVzdDENMAsGA1UECxMEVGVzdDENMAsGA1UEAxMEVGVzdDAeFw0xODEwMTUxMzA0NDRaFw0yODEwMTIxMzA0NDRaMFgxCzAJBgNVBAYTAlNFMQ0wCwYDVQQIEwRUZXN0MQ0wCwYDVQQHEwRUZXN0MQ0wCwYDVQQKEwRUZXN0MQ0wCwYDVQQLEwRUZXN0MQ0wCwYDVQQDEwRUZXN0MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCIxf1C12hBqkeG0K+sc2HtyfgZ81FODkkWrtavbfFbSIPEu/mjbxAVEIlwFk+kFM9s/RE9SBPGdvkJsRaR3Ls+JVpsVGxYnjN7F/K+qqk7LSRY6Wy7QzP9cY5uCODe3+ZeCFLda7WLOjLDRDq+vHhPTjgP0UQRozICjeRuowx69QIDAQABoyEwHzAdBgNVHQ4EFgQU92RmXIvRBJ68H/VKQSxAEbEe5eQwDQYJKoZIhvcNAQELBQADgYEAS76np3wn7qUfB+nQLnf+BMNblNagog5lOw5QCnLK6/kgpNnth3HcBijqP/GgYt73GOOL1KJXrR7vJu+j7sK10OYmUzZPU1ZAbFjieqx/XaNsT15CxCKS0njwWjAc2+N8asN/NH3dpEZ4t/Svg3iNqe2XRNRmpOUebc17VxqhhJA=
+								</ds:X509Certificate>
+							</ds:X509Data>
+						</ds:KeyInfo>
+					</ds:Signature>
+				</ns5:underskrift>
+			</ns3:intyg>
+		</ns3:RegisterCertificate>
+	</soapenv:Body>
+</soapenv:Envelope>
+
+### GET register certificate
+GET http://localhost:18888/api/register-certificate
+
+### DELETE all register certificate
+DELETE http://localhost:18888/api/register-certificate
