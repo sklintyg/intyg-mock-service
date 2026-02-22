@@ -1,6 +1,6 @@
 package se.inera.intyg.intygmockservice.statusupdates;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import java.io.IOException;
@@ -40,15 +40,15 @@ class CertificateStatusUpdateForCareIT {
         final var response = restTemplate.getForEntity(REST_PATH, CertificateStatusUpdateForCareDTO[].class);
         final var items = response.getBody();
 
-        assertThat(items).hasSize(1);
-        assertThat(items[0].getIntyg().getIntygsId().getExtension()).isEqualTo("it-status-update-001");
+        assertEquals(1, items.length);
+        assertEquals("it-status-update-001", items[0].getIntyg().getIntygsId().getExtension());
     }
 
     @Test
     void shouldReturnEmptyListWhenNoStatusUpdateReceived() {
         final var response = restTemplate.getForEntity(REST_PATH, CertificateStatusUpdateForCareDTO[].class);
 
-        assertThat(response.getBody()).isEmpty();
+        assertEquals(0, response.getBody().length);
     }
 
     @Test
@@ -58,7 +58,7 @@ class CertificateStatusUpdateForCareIT {
         restTemplate.delete(REST_PATH);
 
         final var response = restTemplate.getForEntity(REST_PATH, CertificateStatusUpdateForCareDTO[].class);
-        assertThat(response.getBody()).isEmpty();
+        assertEquals(0, response.getBody().length);
     }
 
     private void postSoap(String resourcePath) throws IOException {

@@ -1,6 +1,6 @@
 package se.inera.intyg.intygmockservice.revokecertificate;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import java.io.IOException;
@@ -40,15 +40,15 @@ class RevokeCertificateIT {
         final var response = restTemplate.getForEntity(REST_PATH, RevokeCertificateDTO[].class);
         final var items = response.getBody();
 
-        assertThat(items).hasSize(1);
-        assertThat(items[0].getIntygsId().getExtension()).isEqualTo("it-revoke-cert-001");
+        assertEquals(1, items.length);
+        assertEquals("it-revoke-cert-001", items[0].getIntygsId().getExtension());
     }
 
     @Test
     void shouldReturnEmptyListWhenNoCertificateRevoked() {
         final var response = restTemplate.getForEntity(REST_PATH, RevokeCertificateDTO[].class);
 
-        assertThat(response.getBody()).isEmpty();
+        assertEquals(0, response.getBody().length);
     }
 
     @Test
@@ -58,7 +58,7 @@ class RevokeCertificateIT {
         restTemplate.delete(REST_PATH);
 
         final var response = restTemplate.getForEntity(REST_PATH, RevokeCertificateDTO[].class);
-        assertThat(response.getBody()).isEmpty();
+        assertEquals(0, response.getBody().length);
     }
 
     private void postSoap(String resourcePath) throws IOException {
