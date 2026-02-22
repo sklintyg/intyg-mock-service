@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateIT" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-02-22T18:50:41" hostname="AM-RWG9F9YX2L" time="0.042">
+  <properties/>
+  <testcase name="shouldReturnEmptyListWhenNoCertificateRegistered()" classname="se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateIT" time="0.013"/>
+  <testcase name="shouldDeleteAllRegisteredCertificates()" classname="se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateIT" time="0.015"/>
+  <testcase name="shouldStoreRegisteredCertificateViaSoap()" classname="se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateIT" time="0.014"/>
+  <system-out><![CDATA[{"@timestamp":"2026-02-22T18:50:41.264345Z","log.level":"INFO","process.pid":91671,"process.thread.name":"http-nio-auto-1-exec-2","service.name":"intyg-mock-service","log.logger":"se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateResponderImpl","message":"Register certificate 'it-register-cert-001' received","event.logical_address":"FK","event.certificate.id":"it-register-cert-001","event.answered.message.id":"-","ecs.version":"8.11"}
+{"@timestamp":"2026-02-22T18:50:41.277906Z","log.level":"INFO","process.pid":91671,"process.thread.name":"http-nio-auto-1-exec-6","service.name":"intyg-mock-service","log.logger":"se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateResponderImpl","message":"Register certificate 'it-register-cert-001' received","event.logical_address":"FK","event.certificate.id":"it-register-cert-001","event.answered.message.id":"-","ecs.version":"8.11"}
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -6,12 +6,15 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygmockservice.storelog.converter.StoreLogTypeConverter;
 import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO;
 import se.inera.intyg.intygmockservice.storelog.repository.StoreLogTypeRepository;
 
 @RestController
+@RequestMapping("/api/store-log")
 @Tag(name = "StoreLog", description = "API for managing store logs")
 @RequiredArgsConstructor
 public class StoreLogController {
@@ -37,7 +40,7 @@ public class StoreLogController {
     // new endpoint that returns logs related to a specific user
     @Operation(summary = "Get all store logs for a specific user", description = "Retrieve a list of all store logs for a specific user")
     @GetMapping("/user/{userId}")
-    public List<LogTypeDTO> getStoreLogsByUserId(String userId) {
+    public List<LogTypeDTO> getStoreLogsByUserId(@PathVariable String userId) {
         return storeLogTypeRepository.findByUserId(userId).stream()
             .map(storeLogTypeConverter::convertToLogTypeDTO)
             .flatMap(List::stream)

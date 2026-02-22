@@ -7,4 +7,4 @@ pluginManagement {
 }
 rootProject.name = 'intyg-mock-service'
 
-include 'app'
+include 'app', 'integration-test'

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareIT" tests="3" skipped="0" failures="0" errors="0" timestamp="2026-02-22T18:50:41" hostname="AM-RWG9F9YX2L" time="0.042">
+  <properties/>
+  <testcase name="shouldDeleteAllStatusUpdates()" classname="se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareIT" time="0.019"/>
+  <testcase name="shouldStoreStatusUpdateViaSoap()" classname="se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareIT" time="0.015"/>
+  <testcase name="shouldReturnEmptyListWhenNoStatusUpdateReceived()" classname="se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareIT" time="0.007"/>
+  <system-out><![CDATA[{"@timestamp":"2026-02-22T18:50:41.296767Z","log.level":"INFO","process.pid":91671,"process.thread.name":"http-nio-auto-1-exec-9","service.name":"intyg-mock-service","log.logger":"se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareResponderImpl","message":"Certificate 'it-status-update-001' received status update of type 'SKAPAT'","event.logical_address":"TSTNMT2321000156-ALMC","event.certificate.id":"it-status-update-001","event.type":"SKAPAT","event.handled_by":"TSTNMT2321000156-DRAA","ecs.version":"8.11"}
+{"@timestamp":"2026-02-22T18:50:41.314190Z","log.level":"INFO","process.pid":91671,"process.thread.name":"http-nio-auto-1-exec-3","service.name":"intyg-mock-service","log.logger":"se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareResponderImpl","message":"Certificate 'it-status-update-001' received status update of type 'SKAPAT'","event.logical_address":"TSTNMT2321000156-ALMC","event.certificate.id":"it-status-update-001","event.type":"SKAPAT","event.handled_by":"TSTNMT2321000156-DRAA","ecs.version":"8.11"}
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

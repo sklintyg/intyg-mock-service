@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<meta http-equiv="x-ua-compatible" content="IE=edge"/>
+<title>Test results - RevokeCertificateIT</title>
+<link href="../css/base-style.css" rel="stylesheet" type="text/css"/>
+<link href="../css/style.css" rel="stylesheet" type="text/css"/>
+<script src="../js/report.js" type="text/javascript"></script>
+</head>
+<body>
+<div id="content">
+<h1>RevokeCertificateIT</h1>
+<div class="breadcrumbs">
+<a href="../index.html">all</a> &gt; 
+<a href="../packages/se.inera.intyg.intygmockservice.revokecertificate.html">se.inera.intyg.intygmockservice.revokecertificate</a> &gt; RevokeCertificateIT</div>
+<div id="summary">
+<table>
+<tr>
+<td>
+<div class="summaryGroup">
+<table>
+<tr>
+<td>
+<div class="infoBox" id="tests">
+<div class="counter">3</div>
+<p>tests</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="failures">
+<div class="counter">0</div>
+<p>failures</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="ignored">
+<div class="counter">0</div>
+<p>ignored</p>
+</div>
+</td>
+<td>
+<div class="infoBox" id="duration">
+<div class="counter">0.761s</div>
+<p>duration</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</td>
+<td>
+<div class="infoBox success" id="successRate">
+<div class="percent">100%</div>
+<p>successful</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="tabs">
+<ul class="tabLinks">
+<li>
+<a href="#tab0">Tests</a>
+</li>
+<li>
+<a href="#tab1">Standard output</a>
+</li>
+<li>
+<a href="#tab2">Standard error</a>
+</li>
+</ul>
+<div id="tab0" class="tab">
+<h2>Tests</h2>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Duration</th>
+<th>Result</th>
+</tr>
+</thead>
+<tr>
+<td class="success">shouldDeleteAllRevokedCertificates()</td>
+<td class="success">0.013s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">shouldReturnEmptyListWhenNoCertificateRevoked()</td>
+<td class="success">0.644s</td>
+<td class="success">passed</td>
+</tr>
+<tr>
+<td class="success">shouldStoreRevokedCertificateViaSoap()</td>
+<td class="success">0.104s</td>
+<td class="success">passed</td>
+</tr>
+</table>
+</div>
+<div id="tab1" class="tab">
+<h2>Standard output</h2>
+<span class="code">
+<pre>{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:38.549924Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateIT&quot;,&quot;message&quot;:&quot;Starting RevokeCertificateIT using Java 21.0.8 with PID 91671 (started by mwurschmidt in \/Users\/mwurschmidt\/development\/k1\/intyg\/intyg-mock-service\/integration-test)&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:38.554138Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateIT&quot;,&quot;message&quot;:&quot;No active profile set, falling back to 1 default profile: \&quot;default\&quot;&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.357075Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.springframework.boot.web.embedded.tomcat.TomcatWebServer&quot;,&quot;message&quot;:&quot;Tomcat initialized with port 0 (http)&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.367737Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.catalina.core.StandardService&quot;,&quot;message&quot;:&quot;Starting service [Tomcat]&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.368115Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.catalina.core.StandardEngine&quot;,&quot;message&quot;:&quot;Starting Servlet engine: [Apache Tomcat\/10.1.33]&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.407785Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[\/]&quot;,&quot;message&quot;:&quot;Initializing Spring embedded WebApplicationContext&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.408737Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext&quot;,&quot;message&quot;:&quot;Root WebApplicationContext: initialization completed in 846 ms&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.602563Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean&quot;,&quot;message&quot;:&quot;Creating Service {http:\/\/statusupdates.intygmockservice.intyg.inera.se\/}CertificateStatusUpdateForCareResponderImplService from class se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponderInterface&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.891124Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.cxf.endpoint.ServerImpl&quot;,&quot;message&quot;:&quot;Setting the server's publish address to be \/clinicalprocess\/healthcond\/certificate\/CertificateStatusUpdateForCare\/3\/rivtabp21&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.896529Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean&quot;,&quot;message&quot;:&quot;Creating Service {http:\/\/registercertificate.intygmockservice.intyg.inera.se\/}RegisterCertificateResponderImplService from class se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponderInterface&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.923371Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.cxf.endpoint.ServerImpl&quot;,&quot;message&quot;:&quot;Setting the server's publish address to be \/clinicalprocess\/healthcond\/certificate\/RegisterCertificate\/3\/rivtabp21&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.924658Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean&quot;,&quot;message&quot;:&quot;Creating Service {http:\/\/revokecertificate.intygmockservice.intyg.inera.se\/}RevokeCertificateResponderImplService from class se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponderInterface&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.945887Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.cxf.endpoint.ServerImpl&quot;,&quot;message&quot;:&quot;Setting the server's publish address to be \/clinicalprocess\/healthcond\/certificate\/RevokeCertificate\/2\/rivtabp21&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.947304Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean&quot;,&quot;message&quot;:&quot;Creating Service {http:\/\/sendmessagetorecipient.intygmockservice.intyg.inera.se\/}SendMessageToRecipientResponderImplService from class se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.968512Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.cxf.endpoint.ServerImpl&quot;,&quot;message&quot;:&quot;Setting the server's publish address to be \/clinicalprocess\/healthcond\/certificate\/SendMessageToRecipient\/2\/rivtabp21&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.970455Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.cxf.wsdl.service.factory.ReflectionServiceFactoryBean&quot;,&quot;message&quot;:&quot;Creating Service {http:\/\/storelog.intygmockservice.intyg.inera.se\/}StoreLogResponderImplService from class se.riv.informationsecurity.auditing.log.StoreLog.v2.rivtabp21.StoreLogResponderInterface&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:39.983949Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.cxf.endpoint.ServerImpl&quot;,&quot;message&quot;:&quot;Setting the server's publish address to be \/informationsecurity\/auditing\/log\/StoreLog\/v2\/rivtabp21&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:40.272917Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.springframework.boot.actuate.endpoint.web.EndpointLinksResolver&quot;,&quot;message&quot;:&quot;Exposing 1 endpoint beneath base path '\/actuator'&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:40.385014Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.springframework.boot.web.embedded.tomcat.TomcatWebServer&quot;,&quot;message&quot;:&quot;Tomcat started on port 50940 (http) with context path '\/'&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:40.394760Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;Test worker&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateIT&quot;,&quot;message&quot;:&quot;Started RevokeCertificateIT in 2.033 seconds (process running for 2.667)&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:40.972170Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;http-nio-auto-1-exec-1&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.apache.catalina.core.ContainerBase.[Tomcat].[localhost].[\/]&quot;,&quot;message&quot;:&quot;Initializing Spring DispatcherServlet 'dispatcherServlet'&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:40.972520Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;http-nio-auto-1-exec-1&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.springframework.web.servlet.DispatcherServlet&quot;,&quot;message&quot;:&quot;Initializing Servlet 'dispatcherServlet'&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:40.973354Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;http-nio-auto-1-exec-1&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;org.springframework.web.servlet.DispatcherServlet&quot;,&quot;message&quot;:&quot;Completed initialization in 1 ms&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:41.153282Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;http-nio-auto-1-exec-4&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateResponderImpl&quot;,&quot;message&quot;:&quot;Certificate 'it-revoke-cert-001' revoked with message 'Revoked for integration test'&quot;,&quot;event.logical_address&quot;:&quot;FK&quot;,&quot;event.certificate.id&quot;:&quot;it-revoke-cert-001&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+{&quot;@timestamp&quot;:&quot;2026-02-22T18:50:41.190903Z&quot;,&quot;log.level&quot;:&quot;INFO&quot;,&quot;process.pid&quot;:91671,&quot;process.thread.name&quot;:&quot;http-nio-auto-1-exec-7&quot;,&quot;service.name&quot;:&quot;intyg-mock-service&quot;,&quot;log.logger&quot;:&quot;se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateResponderImpl&quot;,&quot;message&quot;:&quot;Certificate 'it-revoke-cert-001' revoked with message 'Revoked for integration test'&quot;,&quot;event.logical_address&quot;:&quot;FK&quot;,&quot;event.certificate.id&quot;:&quot;it-revoke-cert-001&quot;,&quot;ecs.version&quot;:&quot;8.11&quot;}
+</pre>
+</span>
+</div>
+<div id="tab2" class="tab">
+<h2>Standard error</h2>
+<span class="code">
+<pre>Mockito is currently self-attaching to enable the inline-mock-maker. This will no longer work in future releases of the JDK. Please add Mockito as an agent to your build what is described in Mockito's documentation: https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#0.3
+WARNING: A Java agent has been loaded dynamically (/Users/mwurschmidt/.gradle/caches/modules-2/files-2.1/net.bytebuddy/byte-buddy-agent/1.15.10/e8eb255b2c378b9a6c7341e7b0e12f0a5636377/byte-buddy-agent-1.15.10.jar)
+WARNING: If a serviceability tool is in use, please run with -XX:+EnableDynamicAgentLoading to hide this warning
+WARNING: If a serviceability tool is not in use, please run with -Djdk.instrument.traceUsage for more information
+WARNING: Dynamic loading of agents will be disallowed by default in a future release
+</pre>
+</span>
+</div>
+</div>
+<div id="footer">
+<p>
+<div>
+<label class="hidden" id="label-for-line-wrapping-toggle" for="line-wrapping-toggle">Wrap lines
+<input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
+</label>
+</div>Generated by 
+<a href="http://www.gradle.org">Gradle 8.10.2</a> at 22 Feb 2026, 19:50:42</p>
+</div>
+</div>
+</body>
+</html>
