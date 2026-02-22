@@ -13,8 +13,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0"
-
+    implementation "codes.rafael.jaxb2_commons:jaxb2-basics:${jaxb2Version}"
+    
     implementation "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
+    implementation "se.riv.informationsecurity.auditing.log:informationsecurity-auditing-log-schemas:${informationSecurityAuditingLogSchemas}"
 
     implementation 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

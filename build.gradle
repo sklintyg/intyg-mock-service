@@ -8,6 +8,7 @@ plugins {
 
 ext {
     cxfVersion = "4.0.5"
+    informationSecurityAuditingLogSchemas = "2.0.1.2"
     jaxb2Version = "3.0.0"
     rivtaClinicalprocessSchemasVersion = "4.0.5.3"
 
