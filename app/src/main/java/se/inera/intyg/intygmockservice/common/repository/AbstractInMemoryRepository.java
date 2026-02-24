@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 public abstract class AbstractInMemoryRepository<T> {
 
@@ -22,5 +23,10 @@ public abstract class AbstractInMemoryRepository<T> {
 
     public void deleteAll() {
         repository.clear();
+    }
+
+    public void removeIf(Predicate<T> predicate) {
+        repository.values().forEach(list -> list.removeIf(predicate));
+        repository.entrySet().removeIf(entry -> entry.getValue().isEmpty());
     }
 }

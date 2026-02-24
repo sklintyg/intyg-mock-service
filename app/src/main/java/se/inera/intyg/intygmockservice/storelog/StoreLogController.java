@@ -9,9 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import se.inera.intyg.intygmockservice.storelog.converter.StoreLogTypeConverter;
 import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO;
-import se.inera.intyg.intygmockservice.storelog.repository.StoreLogTypeRepository;
 
 @RestController
 @RequestMapping("/api/store-log")
@@ -19,31 +17,41 @@ import se.inera.intyg.intygmockservice.storelog.repository.StoreLogTypeRepositor
 @RequiredArgsConstructor
 public class StoreLogController {
 
-    private final StoreLogTypeRepository storeLogTypeRepository;
-    private final StoreLogTypeConverter storeLogTypeConverter;
+    private final StoreLogService storeLogService;
 
-    @Operation(summary = "Get all store logs", description = "Retrieve a list of all store logs")
+    @Operation(summary = "Get all store logs", description = "Retrieve a list of all stored audit log entries")
     @GetMapping
     public List<LogTypeDTO> getAllStoreLogs() {
-        return storeLogTypeRepository.findAll().stream()
-            .map(storeLogTypeConverter::convertToLogTypeDTO)
-            .flatMap(List::stream)
-            .toList();
+        return storeLogService.getAll();
     }
 
-    @Operation(summary = "Delete all store logs", description = "Delete all store logs from the repository")
-    @DeleteMapping
-    public void deleteAllStoreLogs() {
-        storeLogTypeRepository.deleteAll();
-    }
-
-    // new endpoint that returns logs related to a specific user
-    @Operation(summary = "Get all store logs for a specific user", description = "Retrieve a list of all store logs for a specific user")
+    @Operation(summary = "Get store logs by user", description = "Retrieve all audit log entries for a specific user ID")
     @GetMapping("/user/{userId}")
     public List<LogTypeDTO> getStoreLogsByUserId(@PathVariable String userId) {
-        return storeLogTypeRepository.findByUserId(userId).stream()
-            .map(storeLogTypeConverter::convertToLogTypeDTO)
-            .flatMap(List::stream)
-            .toList();
+        return storeLogService.getByUserId(userId);
+    }
+
+    @Operation(summary = "Get store logs by certificate", description = "Retrieve all audit log entries for a specific certificate ID (matched against activityLevel)")
+    @GetMapping("/certificate/{certificateId}")
+    public List<LogTypeDTO> getStoreLogsByCertificateId(@PathVariable String certificateId) {
+        return storeLogService.getByCertificateId(certificateId);
+    }
+
+    @Operation(summary = "Delete all store logs", description = "Delete all store log entries from the repository")
+    @DeleteMapping
+    public void deleteAllStoreLogs() {
+        storeLogService.deleteAll();
+    }
+
+    @Operation(summary = "Delete store logs by user", description = "Delete all audit log entries associated with a specific user ID")
+    @DeleteMapping("/user/{userId}")
+    public void deleteStoreLogsByUserId(@PathVariable String userId) {
+        storeLogService.deleteByUserId(userId);
+    }
+
+    @Operation(summary = "Delete store logs by certificate", description = "Delete all audit log entries associated with a specific certificate ID (matched against activityLevel)")
+    @DeleteMapping("/certificate/{certificateId}")
+    public void deleteStoreLogsByCertificateId(@PathVariable String certificateId) {
+        storeLogService.deleteByCertificateId(certificateId);
     }
 }

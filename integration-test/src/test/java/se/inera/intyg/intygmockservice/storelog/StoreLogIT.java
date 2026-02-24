@@ -61,6 +61,74 @@ class StoreLogIT {
         assertEquals(0, response.getBody().length);
     }
 
+    @Test
+    void shouldReturnLogsByUserId() throws IOException {
+        postSoap("soap/store-log.xml");
+
+        final var response = restTemplate.getForEntity(REST_PATH + "/user/it-user-001", LogTypeDTO[].class);
+        final var items = response.getBody();
+
+        assertEquals(1, items.length);
+        assertEquals("it-user-001", items[0].getUser().getUserId());
+    }
+
+    @Test
+    void shouldReturnEmptyListForUnknownUserId() throws IOException {
+        postSoap("soap/store-log.xml");
+
+        final var response = restTemplate.getForEntity(REST_PATH + "/user/unknown-user", LogTypeDTO[].class);
+
+        assertEquals(0, response.getBody().length);
+    }
+
+    @Test
+    void shouldReturnLogsByCertificateId() throws IOException {
+        postSoap("soap/store-log.xml");
+
+        final var response = restTemplate.getForEntity(REST_PATH + "/certificate/Enhet", LogTypeDTO[].class);
+        final var items = response.getBody();
+
+        assertEquals(1, items.length);
+        assertEquals("Enhet", items[0].getActivity().getActivityLevel());
+    }
+
+    @Test
+    void shouldReturnEmptyListForUnknownCertificateId() throws IOException {
+        postSoap("soap/store-log.xml");
+
+        final var response = restTemplate.getForEntity(REST_PATH + "/certificate/unknown-cert", LogTypeDTO[].class);
+
+        assertEquals(0, response.getBody().length);
+    }
+
+    @Test
+    void shouldDeleteLogsByUserId() throws IOException {
+        postSoap("soap/store-log.xml");
+        postSoap("soap/store-log-2.xml");
+
+        restTemplate.delete(REST_PATH + "/user/it-user-001");
+
+        final var response = restTemplate.getForEntity(REST_PATH, LogTypeDTO[].class);
+        final var items = response.getBody();
+
+        assertEquals(1, items.length);
+        assertEquals("it-user-002", items[0].getUser().getUserId());
+    }
+
+    @Test
+    void shouldDeleteLogsByCertificateId() throws IOException {
+        postSoap("soap/store-log.xml");
+        postSoap("soap/store-log-2.xml");
+
+        restTemplate.delete(REST_PATH + "/certificate/Enhet");
+
+        final var response = restTemplate.getForEntity(REST_PATH, LogTypeDTO[].class);
+        final var items = response.getBody();
+
+        assertEquals(1, items.length);
+        assertEquals("Avdelning", items[0].getActivity().getActivityLevel());
+    }
+
     private void postSoap(String resourcePath) throws IOException {
         final var resource = new ClassPathResource(resourcePath);
         final var body = resource.getContentAsString(StandardCharsets.UTF_8);

@@ -2,6 +2,7 @@ package se.inera.intyg.intygmockservice.storelog;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.storelog.converter.StoreLogTypeConverter;
 import se.inera.intyg.intygmockservice.storelog.repository.StoreLogTypeRepository;
 import se.riv.informationsecurity.auditing.log.StoreLog.v2.rivtabp21.StoreLogResponderInterface;
@@ -9,6 +10,7 @@ import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogResp
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType;
 import se.riv.informationsecurity.auditing.log.v2.ResultType;
 
+@Service
 @RequiredArgsConstructor
 @Slf4j
 public class StoreLogResponderImpl implements StoreLogResponderInterface {
