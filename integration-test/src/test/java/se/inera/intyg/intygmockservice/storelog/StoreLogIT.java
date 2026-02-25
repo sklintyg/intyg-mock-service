@@ -1,10 +1,13 @@
 package se.inera.intyg.intygmockservice.storelog;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +45,39 @@ class StoreLogIT {
 
         assertEquals(1, items.length);
         assertEquals("it-log-001", items[0].getLogId());
+    }
+
+    @Test
+    void shouldStoreAllFieldsMatchingSoapMessage() throws IOException {
+        postSoap("soap/store-log.xml");
+
+        final var log = restTemplate.getForEntity(REST_PATH, LogTypeDTO[].class).getBody()[0];
+        final var resource = log.getResources().get(0);
+
+        assertAll(
+            () -> assertEquals("it-log-001", log.getLogId()),
+            () -> assertEquals("WEBCERT", log.getSystem().getSystemId()),
+            () -> assertEquals("Webcert", log.getSystem().getSystemName()),
+            () -> assertEquals("Läsa", log.getActivity().getActivityType()),
+            () -> assertEquals("Enhet", log.getActivity().getActivityLevel()),
+            () -> assertNull(log.getActivity().getActivityArgs()),
+            () -> assertEquals(LocalDateTime.of(2024, 11, 9, 7, 40, 13), log.getActivity().getStartDate()),
+            () -> assertNull(log.getActivity().getPurpose()),
+            () -> assertEquals("it-user-001", log.getUser().getUserId()),
+            () -> assertEquals("Läkare", log.getUser().getAssignment()),
+            () -> assertEquals("TSTNMT2321000156-ALFA", log.getUser().getCareProvider().getCareProviderId()),
+            () -> assertEquals("Alfa Regionen", log.getUser().getCareProvider().getCareProviderName()),
+            () -> assertEquals("TSTNMT2321000156-ALMC", log.getUser().getCareUnit().getCareUnitId()),
+            () -> assertEquals("Alfa Medicincentrum", log.getUser().getCareUnit().getCareUnitName()),
+            () -> assertEquals(1, log.getResources().size()),
+            () -> assertEquals("Intyg", resource.getResourceType()),
+            () -> assertEquals("1.2.752.129.2.1.3.1", resource.getPatient().getRoot()),
+            () -> assertEquals("191212121212", resource.getPatient().getExtension()),
+            () -> assertEquals("TSTNMT2321000156-ALFA", resource.getCareProvider().getCareProviderId()),
+            () -> assertEquals("Alfa Regionen", resource.getCareProvider().getCareProviderName()),
+            () -> assertEquals("TSTNMT2321000156-ALMC", resource.getCareUnit().getCareUnitId()),
+            () -> assertEquals("Alfa Medicincentrum", resource.getCareUnit().getCareUnitName())
+        );
     }
 
     @Test
