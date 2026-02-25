@@ -5,6 +5,33 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
+test {
+    enabled = false
+}
+
+testing {
+    suites {
+        integrationTest(JvmTestSuite) {
+            useJUnitJupiter()
+
+            sources {
+                java {
+                    srcDirs = ['src/test/java']
+                }
+                resources {
+                    srcDirs = ['src/test/resources']
+                }
+            }
+            configurations {
+                integrationTestAnnotationProcessor.extendsFrom testAnnotationProcessor
+                integrationTestImplementation.extendsFrom testImplementation
+                integrationTestCompileOnly.extendsFrom testCompileOnly
+            }
+            targets.all {
+                testTask.configure {
+                    shouldRunAfter(test)
+                }
+            }
+        }
+    }
 }

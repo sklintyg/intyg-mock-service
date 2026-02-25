@@ -1,6 +1,12 @@
 plugins {
-    id 'org.springframework.boot' version "3.4.0-SNAPSHOT"
+    id 'org.springframework.boot' version "3.5.10"
 }
+
+tasks.named('bootJar') {
+    archiveFileName.set('app.jar')
+}
+
+def applicationDir = "${rootProject.projectDir}/devops/dev"
 
 dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
@@ -14,7 +20,7 @@ dependencies {
 
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0"
     implementation "codes.rafael.jaxb2_commons:jaxb2-basics:${jaxb2Version}"
-    
+
     implementation "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     implementation "se.riv.informationsecurity.auditing.log:informationsecurity-auditing-log-schemas:${informationSecurityAuditingLogSchemas}"
 
@@ -23,14 +29,6 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-}
-
-jar {
-    enabled = true
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }
 
 bootRun {
