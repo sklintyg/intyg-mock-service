@@ -19,32 +19,71 @@ import se.inera.intyg.intygmockservice.registercertificate.dto.RegisterCertifica
 @Tag(name = "RegisterCertificate", description = "API for managing certificate registrations")
 public class RegisterCertificateController {
 
-    private final RegisterCertificateService registerCertificateService;
+  private final RegisterCertificateService registerCertificateService;
 
-    @Operation(
-        summary = "Get all registered certificates",
-        description = "Retrieve all registered certificates")
-    @GetMapping
-    public List<RegisterCertificateDTO> getAllRegisteredCertificates() {
-        return registerCertificateService.getAll();
-    }
+  @Operation(
+      summary = "Get all registered certificates",
+      description = "Retrieve all registered certificates")
+  @GetMapping
+  public List<RegisterCertificateDTO> getAllRegisteredCertificates() {
+    return registerCertificateService.getAll();
+  }
 
-    @Operation(
-        summary = "Get registered certificate as XML",
-        description = "Retrieve a registered certificate as raw XML by certificate ID")
-    @GetMapping(value = "/{certificateId}/xml", produces = MediaType.APPLICATION_XML_VALUE)
-    public ResponseEntity<String> getCertificateAsXml(@PathVariable final String certificateId) {
-        return registerCertificateService
-            .getAsXml(certificateId)
-            .map(xml -> ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(xml))
-            .orElseGet(() -> ResponseEntity.notFound().build());
-    }
+  @Operation(
+      summary = "Get registered certificate as XML",
+      description = "Retrieve a registered certificate as raw XML by certificate ID")
+  @GetMapping(value = "/{certificateId}/xml", produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity<String> getCertificateAsXml(@PathVariable final String certificateId) {
+    return registerCertificateService
+        .getAsXml(certificateId)
+        .map(xml -> ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(xml))
+        .orElseGet(() -> ResponseEntity.notFound().build());
+  }
 
-    @Operation(
-        summary = "Delete all registered certificates",
-        description = "Delete all registered certificates")
-    @DeleteMapping
-    public void deleteAllRegisteredCertificates() {
-        registerCertificateService.deleteAll();
-    }
+  @Operation(
+      summary = "Get registered certificate by ID",
+      description = "Retrieve a registered certificate as DTO by certificate ID")
+  @GetMapping("/{certificateId}")
+  public ResponseEntity<RegisterCertificateDTO> getCertificateById(
+      @PathVariable final String certificateId) {
+    return registerCertificateService
+        .getById(certificateId)
+        .map(ResponseEntity::ok)
+        .orElseGet(() -> ResponseEntity.notFound().build());
+  }
+
+  @Operation(
+      summary = "Get registered certificates by logical address",
+      description = "Retrieve all registered certificates stored under a given logical address")
+  @GetMapping("/logical-address/{logicalAddress}")
+  public List<RegisterCertificateDTO> getCertificatesByLogicalAddress(
+      @PathVariable final String logicalAddress) {
+    return registerCertificateService.getByLogicalAddress(logicalAddress);
+  }
+
+  @Operation(
+      summary = "Get registered certificates by person ID",
+      description =
+          "Retrieve all registered certificates for a patient person ID. Hyphens are normalised (191212121212 == 19121212-1212)")
+  @GetMapping("/person/{personId}")
+  public List<RegisterCertificateDTO> getCertificatesByPersonId(
+      @PathVariable final String personId) {
+    return registerCertificateService.getByPersonId(personId);
+  }
+
+  @Operation(
+      summary = "Delete all registered certificates",
+      description = "Delete all registered certificates")
+  @DeleteMapping
+  public void deleteAllRegisteredCertificates() {
+    registerCertificateService.deleteAll();
+  }
+
+  @Operation(
+      summary = "Delete registered certificate by ID",
+      description = "Delete a specific registered certificate by certificate ID")
+  @DeleteMapping("/{certificateId}")
+  public void deleteCertificateById(@PathVariable final String certificateId) {
+    registerCertificateService.deleteById(certificateId);
+  }
 }

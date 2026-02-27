@@ -39,6 +39,10 @@ public abstract class AbstractInMemoryRepository<T> {
     return repository.values().stream().flatMap(List::stream).toList();
   }
 
+  public List<T> findByKey(String key) {
+    return repository.getOrDefault(key, List.of());
+  }
+
   public void deleteAll() {
     repository.clear();
     insertionOrder.clear();

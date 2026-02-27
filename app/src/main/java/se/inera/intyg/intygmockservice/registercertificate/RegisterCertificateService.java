@@ -41,12 +41,35 @@ public class RegisterCertificateService {
     return repository.findAll().stream().map(converter::convert).toList();
   }
 
+  public Optional<RegisterCertificateDTO> getById(final String certificateId) {
+    return repository.findByCertificateId(certificateId).map(converter::convert);
+  }
+
   public Optional<String> getAsXml(final String certificateId) {
     return repository.findByCertificateId(certificateId).map(this::marshalToXml);
   }
 
+  public List<RegisterCertificateDTO> getByLogicalAddress(final String logicalAddress) {
+    return repository.findByLogicalAddress(logicalAddress).stream()
+        .map(converter::convert)
+        .toList();
+  }
+
+  public List<RegisterCertificateDTO> getByPersonId(final String personId) {
+    final var normalized = normalizePersonId(personId);
+    return repository.findByPersonId(normalized).stream().map(converter::convert).toList();
+  }
+
   public void deleteAll() {
     repository.deleteAll();
+  }
+
+  public void deleteById(final String certificateId) {
+    repository.deleteById(certificateId);
+  }
+
+  private static String normalizePersonId(final String personId) {
+    return personId == null ? null : personId.replace("-", "");
   }
 
   private String marshalToXml(final RegisterCertificateType type) {

@@ -93,6 +93,104 @@ class RegisterCertificateIT {
         404, response.getStatusCode().value(), "Expected HTTP 404 for non-existent certificate ID");
   }
 
+  @Test
+  void shouldReturnCertificateByIdAsDto() throws IOException {
+    postSoap("soap/register-certificate.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/it-register-cert-001", RegisterCertificateDTO.class);
+
+    assertEquals(200, response.getStatusCode().value());
+    assertEquals(
+        "it-register-cert-001", response.getBody().getIntyg().getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldReturn404WhenCertificateNotFoundById() {
+    final var response =
+        restTemplate.getForEntity(REST_PATH + "/nonexistent", RegisterCertificateDTO.class);
+
+    assertEquals(404, response.getStatusCode().value());
+  }
+
+  @Test
+  void shouldDeleteCertificateById() throws IOException {
+    postSoap("soap/register-certificate.xml");
+    postSoap("soap/register-certificate-2.xml");
+
+    restTemplate.delete(REST_PATH + "/it-register-cert-001");
+
+    final var response = restTemplate.getForEntity(REST_PATH, RegisterCertificateDTO[].class);
+    final var items = response.getBody();
+
+    assertEquals(1, items.length);
+    assertEquals("it-register-cert-002", items[0].getIntyg().getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldReturnCertificatesByLogicalAddress() throws IOException {
+    postSoap("soap/register-certificate.xml");
+    postSoap("soap/register-certificate-2.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/logical-address/FK", RegisterCertificateDTO[].class);
+    final var items = response.getBody();
+
+    assertEquals(1, items.length);
+    assertEquals("it-register-cert-001", items[0].getIntyg().getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldReturnEmptyListForUnknownLogicalAddress() throws IOException {
+    postSoap("soap/register-certificate.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/logical-address/UNKNOWN", RegisterCertificateDTO[].class);
+
+    assertEquals(0, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnCertificatesByPersonId() throws IOException {
+    postSoap("soap/register-certificate.xml");
+    postSoap("soap/register-certificate-2.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/person/191212121212", RegisterCertificateDTO[].class);
+    final var items = response.getBody();
+
+    assertEquals(1, items.length);
+    assertEquals("it-register-cert-001", items[0].getIntyg().getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldNormalisePersonIdWithHyphen() throws IOException {
+    postSoap("soap/register-certificate.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/person/19121212-1212", RegisterCertificateDTO[].class);
+    final var items = response.getBody();
+
+    assertEquals(1, items.length);
+    assertEquals("it-register-cert-001", items[0].getIntyg().getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldReturnEmptyListForUnknownPersonId() throws IOException {
+    postSoap("soap/register-certificate.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/person/000000000000", RegisterCertificateDTO[].class);
+
+    assertEquals(0, response.getBody().length);
+  }
+
   private void postSoap(String resourcePath) throws IOException {
     final var resource = new ClassPathResource(resourcePath);
     final var body = resource.getContentAsString(StandardCharsets.UTF_8);

@@ -1,5 +1,6 @@
 package se.inera.intyg.intygmockservice.registercertificate.repository;
 
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
@@ -19,5 +20,26 @@ public class RegisterCertificateRepository
     return findAll().stream()
         .filter(t -> certificateId.equals(t.getIntyg().getIntygsId().getExtension()))
         .findFirst();
+  }
+
+  public List<RegisterCertificateType> findByLogicalAddress(final String logicalAddress) {
+    return findByKey(logicalAddress);
+  }
+
+  public List<RegisterCertificateType> findByPersonId(final String normalizedPersonId) {
+    return findAll().stream()
+        .filter(
+            t ->
+                normalizedPersonId.equals(
+                    normalize(t.getIntyg().getPatient().getPersonId().getExtension())))
+        .toList();
+  }
+
+  public void deleteById(final String certificateId) {
+    removeIf(t -> certificateId.equals(t.getIntyg().getIntygsId().getExtension()));
+  }
+
+  private static String normalize(final String personId) {
+    return personId == null ? null : personId.replace("-", "");
   }
 }

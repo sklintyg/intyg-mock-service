@@ -1,8 +1,17 @@
 ### GET register certificate
 GET http://localhost:18888/api/register-certificate
 
+### GET register certificate
+GET http://localhost:18888/api/register-certificate/4c96f5f0-9c74-4e1a-95c8-51e8aae45caf
+
 ### GET register certificate as xml
-GET http://localhost:18888/api/register-certificate/88cc03c8-9099-4c2e-a8e2-3accae213484/xml
+GET http://localhost:18888/api/register-certificate/4c96f5f0-9c74-4e1a-95c8-51e8aae45caf/xml
+
+### GET register certificate as xml
+GET http://localhost:18888/api/register-certificate/person/191212121212
+
+### GET register certificate as xml
+GET http://localhost:18888/api/register-certificate/logical-address/FKASSA
 
 ### DELETE all register certificate
 DELETE http://localhost:18888/api/register-certificate
