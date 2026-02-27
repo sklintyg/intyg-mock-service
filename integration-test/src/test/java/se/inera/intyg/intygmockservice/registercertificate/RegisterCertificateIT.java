@@ -1,6 +1,7 @@
 package se.inera.intyg.intygmockservice.registercertificate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import java.io.IOException;
@@ -21,54 +22,86 @@ import se.inera.intyg.intygmockservice.registercertificate.dto.RegisterCertifica
 @SpringBootTest(classes = IntygMockServiceApplication.class, webEnvironment = RANDOM_PORT)
 class RegisterCertificateIT {
 
-    private static final String SOAP_PATH =
-        "/services/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21";
-    private static final String REST_PATH = "/api/register-certificate";
+  private static final String SOAP_PATH =
+      "/services/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21";
+  private static final String REST_PATH = "/api/register-certificate";
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+  @Autowired private TestRestTemplate restTemplate;
 
-    @BeforeEach
-    void cleanUp() {
-        restTemplate.delete(REST_PATH);
-    }
+  @BeforeEach
+  void cleanUp() {
+    restTemplate.delete(REST_PATH);
+  }
 
-    @Test
-    void shouldStoreRegisteredCertificateViaSoap() throws IOException {
-        postSoap("soap/register-certificate.xml");
+  @Test
+  void shouldStoreRegisteredCertificateViaSoap() throws IOException {
+    postSoap("soap/register-certificate.xml");
 
-        final var response = restTemplate.getForEntity(REST_PATH, RegisterCertificateDTO[].class);
-        final var items = response.getBody();
+    final var response = restTemplate.getForEntity(REST_PATH, RegisterCertificateDTO[].class);
+    final var items = response.getBody();
 
-        assertEquals(1, items.length);
-        assertEquals("it-register-cert-001", items[0].getIntyg().getIntygsId().getExtension());
-    }
+    assertEquals(1, items.length);
+    assertEquals("it-register-cert-001", items[0].getIntyg().getIntygsId().getExtension());
+  }
 
-    @Test
-    void shouldReturnEmptyListWhenNoCertificateRegistered() {
-        final var response = restTemplate.getForEntity(REST_PATH, RegisterCertificateDTO[].class);
+  @Test
+  void shouldReturnEmptyListWhenNoCertificateRegistered() {
+    final var response = restTemplate.getForEntity(REST_PATH, RegisterCertificateDTO[].class);
 
-        assertEquals(0, response.getBody().length);
-    }
+    assertEquals(0, response.getBody().length);
+  }
 
-    @Test
-    void shouldDeleteAllRegisteredCertificates() throws IOException {
-        postSoap("soap/register-certificate.xml");
+  @Test
+  void shouldDeleteAllRegisteredCertificates() throws IOException {
+    postSoap("soap/register-certificate.xml");
 
-        restTemplate.delete(REST_PATH);
+    restTemplate.delete(REST_PATH);
 
-        final var response = restTemplate.getForEntity(REST_PATH, RegisterCertificateDTO[].class);
-        assertEquals(0, response.getBody().length);
-    }
+    final var response = restTemplate.getForEntity(REST_PATH, RegisterCertificateDTO[].class);
+    assertEquals(0, response.getBody().length);
+  }
 
-    private void postSoap(String resourcePath) throws IOException {
-        final var resource = new ClassPathResource(resourcePath);
-        final var body = resource.getContentAsString(StandardCharsets.UTF_8);
+  @Test
+  void shouldReturnCertificateAsXml() throws IOException {
+    postSoap("soap/register-certificate.xml");
 
-        final var headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_XML);
-        headers.set("SOAPAction", "\"\"");
+    final var response =
+        restTemplate.getForEntity(REST_PATH + "/it-register-cert-001/xml", String.class);
 
-        restTemplate.exchange(SOAP_PATH, HttpMethod.POST, new HttpEntity<>(body, headers), String.class);
-    }
+    assertEquals(
+        200, response.getStatusCode().value(), "Expected HTTP 200 for existing certificate");
+    assertTrue(
+        response.getHeaders().getContentType().isCompatibleWith(MediaType.APPLICATION_XML),
+        "Expected Content-Type to be application/xml but was: "
+            + response.getHeaders().getContentType());
+
+    final var expectedXml =
+        new ClassPathResource("expected/register-certificate-xml.xml")
+            .getContentAsString(StandardCharsets.UTF_8)
+            .replaceAll("\\s", "");
+    final var actualXml = response.getBody().replaceAll("\\s", "");
+
+    assertEquals(
+        expectedXml, actualXml, "XML response did not match expected XML (whitespace ignored)");
+  }
+
+  @Test
+  void shouldReturn404WhenCertificateNotFoundAsXml() {
+    final var response = restTemplate.getForEntity(REST_PATH + "/nonexistent/xml", String.class);
+
+    assertEquals(
+        404, response.getStatusCode().value(), "Expected HTTP 404 for non-existent certificate ID");
+  }
+
+  private void postSoap(String resourcePath) throws IOException {
+    final var resource = new ClassPathResource(resourcePath);
+    final var body = resource.getContentAsString(StandardCharsets.UTF_8);
+
+    final var headers = new HttpHeaders();
+    headers.setContentType(MediaType.TEXT_XML);
+    headers.set("SOAPAction", "\"\"");
+
+    restTemplate.exchange(
+        SOAP_PATH, HttpMethod.POST, new HttpEntity<>(body, headers), String.class);
+  }
 }
