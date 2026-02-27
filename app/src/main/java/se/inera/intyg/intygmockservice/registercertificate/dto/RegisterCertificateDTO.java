@@ -7,7 +7,6 @@ import se.inera.intyg.intygmockservice.common.dto.MeddelandeReferensDTO;
 @Data
 public class RegisterCertificateDTO {
 
-    private IntygDTO intyg;
-    private MeddelandeReferensDTO svarPa;
-
+  private IntygDTO intyg;
+  private MeddelandeReferensDTO svarPa;
 }

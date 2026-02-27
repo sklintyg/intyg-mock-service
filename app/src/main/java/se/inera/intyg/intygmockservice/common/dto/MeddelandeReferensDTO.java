@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class MeddelandeReferensDTO {
 
-    private String meddelandeId;
-    private String referensId;
+  private String meddelandeId;
+  private String referensId;
 }

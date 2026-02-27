@@ -25,64 +25,56 @@ import se.inera.intyg.intygmockservice.storelog.repository.StoreLogTypeRepositor
 @RequiredArgsConstructor
 public class CxfConfig {
 
-    private final Bus bus;
+  private final Bus bus;
 
-    @Bean
-    public EndpointImpl certificateStatusUpdateForCareEndpoint(CertificateStatusUpdateForCareConverter converter,
-        CertificateStatusUpdateForCareRepository repository) {
-        final var endpoint = new EndpointImpl(bus,
-            new CertificateStatusUpdateForCareResponderImpl(repository, converter)
-        );
+  @Bean
+  public EndpointImpl certificateStatusUpdateForCareEndpoint(
+      CertificateStatusUpdateForCareConverter converter,
+      CertificateStatusUpdateForCareRepository repository) {
+    final var endpoint =
+        new EndpointImpl(
+            bus, new CertificateStatusUpdateForCareResponderImpl(repository, converter));
 
-        endpoint.publish(
-            "/clinicalprocess/healthcond/certificate/CertificateStatusUpdateForCare/3/rivtabp21"
-        );
-        return endpoint;
-    }
+    endpoint.publish(
+        "/clinicalprocess/healthcond/certificate/CertificateStatusUpdateForCare/3/rivtabp21");
+    return endpoint;
+  }
 
-    @Bean
-    public EndpointImpl registerCertificateEndpoint(RegisterCertificateConverter converter,
-        RegisterCertificateRepository repository) {
-        final var endpoint = new EndpointImpl(bus,
-            new RegisterCertificateResponderImpl(repository, converter)
-        );
+  @Bean
+  public EndpointImpl registerCertificateEndpoint(
+      RegisterCertificateConverter converter, RegisterCertificateRepository repository) {
+    final var endpoint =
+        new EndpointImpl(bus, new RegisterCertificateResponderImpl(repository, converter));
 
-        endpoint.publish(
-            "/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21"
-        );
-        return endpoint;
-    }
+    endpoint.publish("/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21");
+    return endpoint;
+  }
 
-    @Bean
-    public EndpointImpl revokeCertificateEndpoint(RevokeCertificateConverter converter,
-        RevokeCertificateRepository repository) {
-        final var endpoint = new EndpointImpl(bus,
-            new RevokeCertificateResponderImpl(repository, converter)
-        );
+  @Bean
+  public EndpointImpl revokeCertificateEndpoint(
+      RevokeCertificateConverter converter, RevokeCertificateRepository repository) {
+    final var endpoint =
+        new EndpointImpl(bus, new RevokeCertificateResponderImpl(repository, converter));
 
-        endpoint.publish(
-            "/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21"
-        );
-        return endpoint;
-    }
+    endpoint.publish("/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21");
+    return endpoint;
+  }
 
-    @Bean
-    public EndpointImpl sendMessageToRecipientEndpoint(SendMessageToRecipientConverter converter,
-        SendMessageToRecipientRepository repository) {
-        final var endpoint = new EndpointImpl(bus,
-            new SendMessageToRecipientResponderImpl(repository, converter)
-        );
+  @Bean
+  public EndpointImpl sendMessageToRecipientEndpoint(
+      SendMessageToRecipientConverter converter, SendMessageToRecipientRepository repository) {
+    final var endpoint =
+        new EndpointImpl(bus, new SendMessageToRecipientResponderImpl(repository, converter));
 
-        endpoint.publish(
-            "/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21"
-        );
-        return endpoint;
-    }
+    endpoint.publish("/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21");
+    return endpoint;
+  }
 
-    @Bean
-    public EndpointImpl storeLogEndpoint(StoreLogTypeConverter converter, StoreLogTypeRepository repository) {
-        final var endpoint = new EndpointImpl(bus, new StoreLogResponderImpl(converter, repository));
-        endpoint.publish("/informationsecurity/auditing/log/StoreLog/v2/rivtabp21");
-        return endpoint;
-    }
+  @Bean
+  public EndpointImpl storeLogEndpoint(
+      StoreLogTypeConverter converter, StoreLogTypeRepository repository) {
+    final var endpoint = new EndpointImpl(bus, new StoreLogResponderImpl(converter, repository));
+    endpoint.publish("/informationsecurity/auditing/log/StoreLog/v2/rivtabp21");
+    return endpoint;
+  }
 }

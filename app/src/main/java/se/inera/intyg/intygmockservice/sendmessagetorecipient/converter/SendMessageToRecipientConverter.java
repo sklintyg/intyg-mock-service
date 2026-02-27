@@ -13,36 +13,36 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 @RequiredArgsConstructor
 public class SendMessageToRecipientConverter {
 
-    private final HoSPersonalConverter hoSPersonalConverter;
+  private final HoSPersonalConverter hoSPersonalConverter;
 
-    public SendMessageToRecipientDTO convert(SendMessageToRecipientType source) {
-        final var dto = new SendMessageToRecipientDTO();
-        dto.setLogiskAdressMottagare(source.getLogiskAdressMottagare());
-        dto.setMeddelandeId(source.getMeddelandeId());
-        dto.setSkickatTidpunkt(source.getSkickatTidpunkt());
+  public SendMessageToRecipientDTO convert(SendMessageToRecipientType source) {
+    final var dto = new SendMessageToRecipientDTO();
+    dto.setLogiskAdressMottagare(source.getLogiskAdressMottagare());
+    dto.setMeddelandeId(source.getMeddelandeId());
+    dto.setSkickatTidpunkt(source.getSkickatTidpunkt());
 
-        final var intygsId = new IntygsId();
-        intygsId.setRoot(source.getIntygsId().getRoot());
-        intygsId.setExtension(source.getIntygsId().getExtension());
-        dto.setIntygsId(intygsId);
+    final var intygsId = new IntygsId();
+    intygsId.setRoot(source.getIntygsId().getRoot());
+    intygsId.setExtension(source.getIntygsId().getExtension());
+    dto.setIntygsId(intygsId);
 
-        final var patientPersonId = new PersonId();
-        patientPersonId.setRoot(source.getPatientPersonId().getRoot());
-        patientPersonId.setExtension(source.getPatientPersonId().getExtension());
-        dto.setPatientPersonId(patientPersonId);
+    final var patientPersonId = new PersonId();
+    patientPersonId.setRoot(source.getPatientPersonId().getRoot());
+    patientPersonId.setExtension(source.getPatientPersonId().getExtension());
+    dto.setPatientPersonId(patientPersonId);
 
-        final var amne = new CodeTypeDTO();
-        amne.setCode(source.getAmne().getCode());
-        amne.setCodeSystem(source.getAmne().getCodeSystem());
-        amne.setDisplayName(source.getAmne().getDisplayName());
-        dto.setAmne(amne);
+    final var amne = new CodeTypeDTO();
+    amne.setCode(source.getAmne().getCode());
+    amne.setCodeSystem(source.getAmne().getCodeSystem());
+    amne.setDisplayName(source.getAmne().getDisplayName());
+    dto.setAmne(amne);
 
-        dto.setRubrik(source.getRubrik());
-        dto.setMeddelande(source.getMeddelande());
+    dto.setRubrik(source.getRubrik());
+    dto.setMeddelande(source.getMeddelande());
 
-        final var skickatAv = hoSPersonalConverter.convert(source.getSkickatAv());
-        dto.setSkickatAv(skickatAv);
+    final var skickatAv = hoSPersonalConverter.convert(source.getSkickatAv());
+    dto.setSkickatAv(skickatAv);
 
-        return dto;
-    }
+    return dto;
+  }
 }

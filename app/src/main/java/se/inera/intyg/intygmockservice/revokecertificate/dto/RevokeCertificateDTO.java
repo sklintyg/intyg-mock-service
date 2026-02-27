@@ -9,9 +9,9 @@ import se.inera.intyg.intygmockservice.common.dto.PatientDTO.PersonId;
 @Data
 public class RevokeCertificateDTO {
 
-    private IntygsId intygsId;
-    private HoSPersonalDTO skickadAv;
-    private PersonId patientPersonId;
-    private LocalDateTime skickatTidpunkt;
-    private String meddelande;
+  private IntygsId intygsId;
+  private HoSPersonalDTO skickadAv;
+  private PersonId patientPersonId;
+  private LocalDateTime skickatTidpunkt;
+  private String meddelande;
 }

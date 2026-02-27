@@ -8,8 +8,8 @@ import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.Revoke
 @Repository
 public class RevokeCertificateRepository extends AbstractInMemoryRepository<RevokeCertificateType> {
 
-    public RevokeCertificateRepository(
-            @Value("${app.repository.revoke-certificate.max-size:1000}") int maxSize) {
-        super(maxSize);
-    }
+  public RevokeCertificateRepository(
+      @Value("${app.repository.revoke-certificate.max-size:1000}") int maxSize) {
+    super(maxSize);
+  }
 }

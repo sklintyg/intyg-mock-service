@@ -9,17 +9,16 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Patient;
 @RequiredArgsConstructor
 public class PatientConverter {
 
-    private final PersonIdConverter personIdConverter;
+  private final PersonIdConverter personIdConverter;
 
-    public PatientDTO convert(Patient source) {
-        final var target = new PatientDTO();
-        target.setPersonId(personIdConverter.convert(source.getPersonId()));
-        target.setFornamn(source.getFornamn());
-        target.setEfternamn(source.getEfternamn());
-        target.setPostadress(source.getPostadress());
-        target.setPostnummer(source.getPostnummer());
-        target.setPostort(source.getPostort());
-        return target;
-    }
-
+  public PatientDTO convert(Patient source) {
+    final var target = new PatientDTO();
+    target.setPersonId(personIdConverter.convert(source.getPersonId()));
+    target.setFornamn(source.getFornamn());
+    target.setEfternamn(source.getEfternamn());
+    target.setPostadress(source.getPostadress());
+    target.setPostnummer(source.getPostnummer());
+    target.setPostort(source.getPostort());
+    return target;
+  }
 }

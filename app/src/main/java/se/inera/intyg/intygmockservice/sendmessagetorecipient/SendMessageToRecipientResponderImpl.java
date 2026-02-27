@@ -14,36 +14,37 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class SendMessageToRecipientResponderImpl implements SendMessageToRecipientResponderInterface {
+public class SendMessageToRecipientResponderImpl
+    implements SendMessageToRecipientResponderInterface {
 
-    private final SendMessageToRecipientRepository repository;
-    private final SendMessageToRecipientConverter converter;
+  private final SendMessageToRecipientRepository repository;
+  private final SendMessageToRecipientConverter converter;
 
-    @Override
-    public SendMessageToRecipientResponseType sendMessageToRecipient(String logicalAddress,
-        SendMessageToRecipientType sendMessageToRecipient) {
-        repository.add(logicalAddress, sendMessageToRecipient);
+  @Override
+  public SendMessageToRecipientResponseType sendMessageToRecipient(
+      String logicalAddress, SendMessageToRecipientType sendMessageToRecipient) {
+    repository.add(logicalAddress, sendMessageToRecipient);
 
-        final var response = new SendMessageToRecipientResponseType();
-        final var result = new ResultType();
-        response.setResult(result);
-        result.setResultCode(ResultCodeType.OK);
+    final var response = new SendMessageToRecipientResponseType();
+    final var result = new ResultType();
+    response.setResult(result);
+    result.setResultCode(ResultCodeType.OK);
 
-        final var sendMessageToRecipientDTO = converter.convert(sendMessageToRecipient);
+    final var sendMessageToRecipientDTO = converter.convert(sendMessageToRecipient);
 
-        log.atInfo().setMessage(
-                "Message '%s' on certificate '%s' sent to '%s' with content '%s'".formatted(
+    log.atInfo()
+        .setMessage(
+            "Message '%s' on certificate '%s' sent to '%s' with content '%s'"
+                .formatted(
                     sendMessageToRecipientDTO.getMeddelandeId(),
                     sendMessageToRecipientDTO.getIntygsId().getExtension(),
                     logicalAddress,
-                    sendMessageToRecipientDTO.getMeddelande()
-                )
-            )
-            .addKeyValue("event.logical_address", logicalAddress)
-            .addKeyValue("event.certificate.id", sendMessageToRecipientDTO.getIntygsId().getExtension())
-            .addKeyValue("event.message.id", sendMessageToRecipientDTO.getMeddelandeId())
-            .log();
+                    sendMessageToRecipientDTO.getMeddelande()))
+        .addKeyValue("event.logical_address", logicalAddress)
+        .addKeyValue("event.certificate.id", sendMessageToRecipientDTO.getIntygsId().getExtension())
+        .addKeyValue("event.message.id", sendMessageToRecipientDTO.getMeddelandeId())
+        .log();
 
-        return response;
-    }
+    return response;
+  }
 }

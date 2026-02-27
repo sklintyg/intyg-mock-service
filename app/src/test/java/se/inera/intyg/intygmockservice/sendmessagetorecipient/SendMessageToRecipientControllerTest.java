@@ -20,44 +20,41 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 @ExtendWith(MockitoExtension.class)
 class SendMessageToRecipientControllerTest {
 
-    @Mock
-    private SendMessageToRecipientRepository repository;
+  @Mock private SendMessageToRecipientRepository repository;
 
-    @Mock
-    private SendMessageToRecipientConverter converter;
+  @Mock private SendMessageToRecipientConverter converter;
 
-    @InjectMocks
-    private SendMessageToRecipientController controller;
+  @InjectMocks private SendMessageToRecipientController controller;
 
-    @Test
-    void getAllMessages_ShouldReturnAllMessages() {
-        SendMessageToRecipientType message = new SendMessageToRecipientType();
-        SendMessageToRecipientDTO messageDTO = new SendMessageToRecipientDTO();
-        when(repository.findAll()).thenReturn(Arrays.asList(message));
-        when(converter.convert(message)).thenReturn(messageDTO);
+  @Test
+  void getAllMessages_ShouldReturnAllMessages() {
+    SendMessageToRecipientType message = new SendMessageToRecipientType();
+    SendMessageToRecipientDTO messageDTO = new SendMessageToRecipientDTO();
+    when(repository.findAll()).thenReturn(Arrays.asList(message));
+    when(converter.convert(message)).thenReturn(messageDTO);
 
-        List<SendMessageToRecipientDTO> result = controller.getAllMessages();
+    List<SendMessageToRecipientDTO> result = controller.getAllMessages();
 
-        assertThat(result).containsExactly(messageDTO);
-    }
+    assertThat(result).containsExactly(messageDTO);
+  }
 
-    @Test
-    void deleteAllMessages_ShouldDeleteAllMessages() {
-        controller.deleteAllMessages();
+  @Test
+  void deleteAllMessages_ShouldDeleteAllMessages() {
+    controller.deleteAllMessages();
 
-        verify(repository, times(1)).deleteAll();
-    }
+    verify(repository, times(1)).deleteAll();
+  }
 
-    @Test
-    void getMessagesByRecipientId_ShouldReturnMessagesForRecipient() {
-        String recipientId = "recipient1";
-        SendMessageToRecipientType message = new SendMessageToRecipientType();
-        SendMessageToRecipientDTO messageDTO = new SendMessageToRecipientDTO();
-        when(repository.findByRecipientId(recipientId)).thenReturn(Arrays.asList(message));
-        when(converter.convert(message)).thenReturn(messageDTO);
+  @Test
+  void getMessagesByRecipientId_ShouldReturnMessagesForRecipient() {
+    String recipientId = "recipient1";
+    SendMessageToRecipientType message = new SendMessageToRecipientType();
+    SendMessageToRecipientDTO messageDTO = new SendMessageToRecipientDTO();
+    when(repository.findByRecipientId(recipientId)).thenReturn(Arrays.asList(message));
+    when(converter.convert(message)).thenReturn(messageDTO);
 
-        List<SendMessageToRecipientDTO> result = controller.getMessagesByRecipientId(recipientId);
+    List<SendMessageToRecipientDTO> result = controller.getMessagesByRecipientId(recipientId);
 
-        assertThat(result).containsExactly(messageDTO);
-    }
+    assertThat(result).containsExactly(messageDTO);
+  }
 }

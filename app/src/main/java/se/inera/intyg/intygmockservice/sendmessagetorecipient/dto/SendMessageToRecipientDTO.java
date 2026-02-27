@@ -10,13 +10,13 @@ import se.inera.intyg.intygmockservice.common.dto.PatientDTO.PersonId;
 @Data
 public class SendMessageToRecipientDTO {
 
-    private String logiskAdressMottagare;
-    private String meddelandeId;
-    private LocalDateTime skickatTidpunkt;
-    private IntygsId intygsId;
-    private PersonId patientPersonId;
-    private CodeTypeDTO amne;
-    private String rubrik;
-    private String meddelande;
-    private HoSPersonalDTO skickatAv;
+  private String logiskAdressMottagare;
+  private String meddelandeId;
+  private LocalDateTime skickatTidpunkt;
+  private IntygsId intygsId;
+  private PersonId patientPersonId;
+  private CodeTypeDTO amne;
+  private String rubrik;
+  private String meddelande;
+  private HoSPersonalDTO skickatAv;
 }

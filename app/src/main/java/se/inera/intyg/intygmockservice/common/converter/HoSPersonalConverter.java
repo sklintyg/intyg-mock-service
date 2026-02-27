@@ -20,75 +20,74 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.Vardgivare;
 @Component
 public class HoSPersonalConverter {
 
-    public HoSPersonalDTO convert(HosPersonal source) {
-        final var target = new HoSPersonalDTO();
-        target.setPersonalId(convertPersonalId(source.getPersonalId()));
-        target.setFullstandigtNamn(source.getFullstandigtNamn());
-        target.setForskrivarkod(source.getForskrivarkod());
-        target.setBefattning(
-            Stream.ofNullable(source.getBefattning())
-                .flatMap(Collection::stream)
-                .map(this::convertBefattning)
-                .toList()
-        );
-        target.setEnhet(convertEnhet(source.getEnhet()));
-        return target;
-    }
+  public HoSPersonalDTO convert(HosPersonal source) {
+    final var target = new HoSPersonalDTO();
+    target.setPersonalId(convertPersonalId(source.getPersonalId()));
+    target.setFullstandigtNamn(source.getFullstandigtNamn());
+    target.setForskrivarkod(source.getForskrivarkod());
+    target.setBefattning(
+        Stream.ofNullable(source.getBefattning())
+            .flatMap(Collection::stream)
+            .map(this::convertBefattning)
+            .toList());
+    target.setEnhet(convertEnhet(source.getEnhet()));
+    return target;
+  }
 
-    private PersonalIdDTO convertPersonalId(HsaId source) {
-        final var target = new PersonalIdDTO();
-        target.setRoot(source.getRoot());
-        target.setExtension(source.getExtension());
-        return target;
-    }
+  private PersonalIdDTO convertPersonalId(HsaId source) {
+    final var target = new PersonalIdDTO();
+    target.setRoot(source.getRoot());
+    target.setExtension(source.getExtension());
+    return target;
+  }
 
-    private CodeTypeDTO convertBefattning(Befattning source) {
-        final var target = new CodeTypeDTO();
-        target.setCode(source.getCode());
-        target.setCodeSystem(source.getCodeSystem());
-        target.setDisplayName(source.getDisplayName());
-        return target;
-    }
+  private CodeTypeDTO convertBefattning(Befattning source) {
+    final var target = new CodeTypeDTO();
+    target.setCode(source.getCode());
+    target.setCodeSystem(source.getCodeSystem());
+    target.setDisplayName(source.getDisplayName());
+    return target;
+  }
 
-    private EnhetDTO convertEnhet(Enhet source) {
-        final var target = new EnhetDTO();
-        target.setEnhetsId(convertEnhetsId(source.getEnhetsId()));
-        target.setArbetsplatskod(convertArbetsplatskod(source.getArbetsplatskod()));
-        target.setEnhetsnamn(source.getEnhetsnamn());
-        target.setPostadress(source.getPostadress());
-        target.setPostnummer(source.getPostnummer());
-        target.setPostort(source.getPostort());
-        target.setTelefonnummer(source.getTelefonnummer());
-        target.setEpost(source.getEpost());
-        target.setVardgivare(convertVardgivare(source.getVardgivare()));
-        return target;
-    }
+  private EnhetDTO convertEnhet(Enhet source) {
+    final var target = new EnhetDTO();
+    target.setEnhetsId(convertEnhetsId(source.getEnhetsId()));
+    target.setArbetsplatskod(convertArbetsplatskod(source.getArbetsplatskod()));
+    target.setEnhetsnamn(source.getEnhetsnamn());
+    target.setPostadress(source.getPostadress());
+    target.setPostnummer(source.getPostnummer());
+    target.setPostort(source.getPostort());
+    target.setTelefonnummer(source.getTelefonnummer());
+    target.setEpost(source.getEpost());
+    target.setVardgivare(convertVardgivare(source.getVardgivare()));
+    return target;
+  }
 
-    private HsaIdDTO convertEnhetsId(HsaId source) {
-        final var target = new HsaIdDTO();
-        target.setRoot(source.getRoot());
-        target.setExtension(source.getExtension());
-        return target;
-    }
+  private HsaIdDTO convertEnhetsId(HsaId source) {
+    final var target = new HsaIdDTO();
+    target.setRoot(source.getRoot());
+    target.setExtension(source.getExtension());
+    return target;
+  }
 
-    private ArbetsplatskodDTO convertArbetsplatskod(ArbetsplatsKod source) {
-        final var target = new ArbetsplatskodDTO();
-        target.setRoot(source.getRoot());
-        target.setExtension(source.getExtension());
-        return target;
-    }
+  private ArbetsplatskodDTO convertArbetsplatskod(ArbetsplatsKod source) {
+    final var target = new ArbetsplatskodDTO();
+    target.setRoot(source.getRoot());
+    target.setExtension(source.getExtension());
+    return target;
+  }
 
-    private VardgivareDTO convertVardgivare(Vardgivare source) {
-        final var target = new VardgivareDTO();
-        target.setVardgivareId(convertVardgivareId(source.getVardgivareId()));
-        target.setVardgivarnamn(source.getVardgivarnamn());
-        return target;
-    }
+  private VardgivareDTO convertVardgivare(Vardgivare source) {
+    final var target = new VardgivareDTO();
+    target.setVardgivareId(convertVardgivareId(source.getVardgivareId()));
+    target.setVardgivarnamn(source.getVardgivarnamn());
+    return target;
+  }
 
-    private HsaIdDTO convertVardgivareId(HsaId source) {
-        final var target = new HsaIdDTO();
-        target.setRoot(source.getRoot());
-        target.setExtension(source.getExtension());
-        return target;
-    }
+  private HsaIdDTO convertVardgivareId(HsaId source) {
+    final var target = new HsaIdDTO();
+    target.setRoot(source.getRoot());
+    target.setExtension(source.getExtension());
+    return target;
+  }
 }

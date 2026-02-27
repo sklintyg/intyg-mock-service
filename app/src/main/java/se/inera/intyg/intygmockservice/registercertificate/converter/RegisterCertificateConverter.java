@@ -12,22 +12,22 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.MeddelandeReferens;
 @RequiredArgsConstructor
 public class RegisterCertificateConverter {
 
-    private final IntygConverter intygConverter;
+  private final IntygConverter intygConverter;
 
-    public RegisterCertificateDTO convert(RegisterCertificateType source) {
-        final var target = new RegisterCertificateDTO();
+  public RegisterCertificateDTO convert(RegisterCertificateType source) {
+    final var target = new RegisterCertificateDTO();
 
-        target.setIntyg(intygConverter.convert(source.getIntyg()));
-        if (source.getSvarPa() != null) {
-            target.setSvarPa(convertMeddelandeReferens(source.getSvarPa()));
-        }
-        return target;
+    target.setIntyg(intygConverter.convert(source.getIntyg()));
+    if (source.getSvarPa() != null) {
+      target.setSvarPa(convertMeddelandeReferens(source.getSvarPa()));
     }
+    return target;
+  }
 
-    private MeddelandeReferensDTO convertMeddelandeReferens(MeddelandeReferens svarPa) {
-        final var meddelandeReferensDTO = new MeddelandeReferensDTO();
-        meddelandeReferensDTO.setMeddelandeId(svarPa.getMeddelandeId());
-        meddelandeReferensDTO.setReferensId(svarPa.getReferensId());
-        return meddelandeReferensDTO;
-    }
+  private MeddelandeReferensDTO convertMeddelandeReferens(MeddelandeReferens svarPa) {
+    final var meddelandeReferensDTO = new MeddelandeReferensDTO();
+    meddelandeReferensDTO.setMeddelandeId(svarPa.getMeddelandeId());
+    meddelandeReferensDTO.setReferensId(svarPa.getReferensId());
+    return meddelandeReferensDTO;
+  }
 }

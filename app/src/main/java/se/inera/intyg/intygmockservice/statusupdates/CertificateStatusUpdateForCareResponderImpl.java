@@ -16,43 +16,43 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class CertificateStatusUpdateForCareResponderImpl implements
-    CertificateStatusUpdateForCareResponderInterface {
+public class CertificateStatusUpdateForCareResponderImpl
+    implements CertificateStatusUpdateForCareResponderInterface {
 
-    private final CertificateStatusUpdateForCareRepository repository;
-    private final CertificateStatusUpdateForCareConverter converter;
+  private final CertificateStatusUpdateForCareRepository repository;
+  private final CertificateStatusUpdateForCareConverter converter;
 
-    @Override
-    public CertificateStatusUpdateForCareResponseType certificateStatusUpdateForCare(
-        String logicalAddress,
-        CertificateStatusUpdateForCareType certificateStatusUpdateForCareType) {
+  @Override
+  public CertificateStatusUpdateForCareResponseType certificateStatusUpdateForCare(
+      String logicalAddress,
+      CertificateStatusUpdateForCareType certificateStatusUpdateForCareType) {
 
-        repository.add(logicalAddress, certificateStatusUpdateForCareType);
+    repository.add(logicalAddress, certificateStatusUpdateForCareType);
 
-        final var response = new CertificateStatusUpdateForCareResponseType();
-        final var result = new ResultType();
-        response.setResult(result);
-        result.setResultCode(ResultCodeType.OK);
+    final var response = new CertificateStatusUpdateForCareResponseType();
+    final var result = new ResultType();
+    response.setResult(result);
+    result.setResultCode(ResultCodeType.OK);
 
-        final var statusUpdateForCareDTO = converter.convert(certificateStatusUpdateForCareType);
+    final var statusUpdateForCareDTO = converter.convert(certificateStatusUpdateForCareType);
 
-        log.atInfo().setMessage(
-                "Certificate '%s' received status update of type '%s'".formatted(
+    log.atInfo()
+        .setMessage(
+            "Certificate '%s' received status update of type '%s'"
+                .formatted(
                     statusUpdateForCareDTO.getIntyg().getIntygsId().getExtension(),
-                    statusUpdateForCareDTO.getHandelse().getHandelsekod().getCode()
-                )
-            )
-            .addKeyValue("event.logical_address", logicalAddress)
-            .addKeyValue("event.certificate.id",
-                statusUpdateForCareDTO.getIntyg().getIntygsId().getExtension()
-            )
-            .addKeyValue("event.type", statusUpdateForCareDTO.getHandelse().getHandelsekod().getCode())
-            .addKeyValue("event.handled_by", statusUpdateForCareDTO.getHanteratAv() != null
+                    statusUpdateForCareDTO.getHandelse().getHandelsekod().getCode()))
+        .addKeyValue("event.logical_address", logicalAddress)
+        .addKeyValue(
+            "event.certificate.id", statusUpdateForCareDTO.getIntyg().getIntygsId().getExtension())
+        .addKeyValue("event.type", statusUpdateForCareDTO.getHandelse().getHandelsekod().getCode())
+        .addKeyValue(
+            "event.handled_by",
+            statusUpdateForCareDTO.getHanteratAv() != null
                 ? statusUpdateForCareDTO.getHanteratAv().getExtension()
-                : null
-            )
-            .log();
+                : null)
+        .log();
 
-        return response;
-    }
+    return response;
+  }
 }

@@ -21,54 +21,54 @@ import se.inera.intyg.intygmockservice.sendmessagetorecipient.dto.SendMessageToR
 @SpringBootTest(classes = IntygMockServiceApplication.class, webEnvironment = RANDOM_PORT)
 class SendMessageToRecipientIT {
 
-    private static final String SOAP_PATH =
-        "/services/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21";
-    private static final String REST_PATH = "/api/send-message-to-recipient";
+  private static final String SOAP_PATH =
+      "/services/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21";
+  private static final String REST_PATH = "/api/send-message-to-recipient";
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+  @Autowired private TestRestTemplate restTemplate;
 
-    @BeforeEach
-    void cleanUp() {
-        restTemplate.delete(REST_PATH);
-    }
+  @BeforeEach
+  void cleanUp() {
+    restTemplate.delete(REST_PATH);
+  }
 
-    @Test
-    void shouldStoreMessageViaSoap() throws IOException {
-        postSoap("soap/send-message-to-recipient.xml");
+  @Test
+  void shouldStoreMessageViaSoap() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
 
-        final var response = restTemplate.getForEntity(REST_PATH, SendMessageToRecipientDTO[].class);
-        final var items = response.getBody();
+    final var response = restTemplate.getForEntity(REST_PATH, SendMessageToRecipientDTO[].class);
+    final var items = response.getBody();
 
-        assertEquals(1, items.length);
-        assertEquals("it-message-001", items[0].getMeddelandeId());
-    }
+    assertEquals(1, items.length);
+    assertEquals("it-message-001", items[0].getMeddelandeId());
+  }
 
-    @Test
-    void shouldReturnEmptyListWhenNoMessageSent() {
-        final var response = restTemplate.getForEntity(REST_PATH, SendMessageToRecipientDTO[].class);
+  @Test
+  void shouldReturnEmptyListWhenNoMessageSent() {
+    final var response = restTemplate.getForEntity(REST_PATH, SendMessageToRecipientDTO[].class);
 
-        assertEquals(0, response.getBody().length);
-    }
+    assertEquals(0, response.getBody().length);
+  }
 
-    @Test
-    void shouldDeleteAllMessages() throws IOException {
-        postSoap("soap/send-message-to-recipient.xml");
+  @Test
+  void shouldDeleteAllMessages() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
 
-        restTemplate.delete(REST_PATH);
+    restTemplate.delete(REST_PATH);
 
-        final var response = restTemplate.getForEntity(REST_PATH, SendMessageToRecipientDTO[].class);
-        assertEquals(0, response.getBody().length);
-    }
+    final var response = restTemplate.getForEntity(REST_PATH, SendMessageToRecipientDTO[].class);
+    assertEquals(0, response.getBody().length);
+  }
 
-    private void postSoap(String resourcePath) throws IOException {
-        final var resource = new ClassPathResource(resourcePath);
-        final var body = resource.getContentAsString(StandardCharsets.UTF_8);
+  private void postSoap(String resourcePath) throws IOException {
+    final var resource = new ClassPathResource(resourcePath);
+    final var body = resource.getContentAsString(StandardCharsets.UTF_8);
 
-        final var headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_XML);
-        headers.set("SOAPAction", "\"\"");
+    final var headers = new HttpHeaders();
+    headers.setContentType(MediaType.TEXT_XML);
+    headers.set("SOAPAction", "\"\"");
 
-        restTemplate.exchange(SOAP_PATH, HttpMethod.POST, new HttpEntity<>(body, headers), String.class);
-    }
+    restTemplate.exchange(
+        SOAP_PATH, HttpMethod.POST, new HttpEntity<>(body, headers), String.class);
+  }
 }

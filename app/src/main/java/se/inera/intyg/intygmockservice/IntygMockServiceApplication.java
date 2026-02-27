@@ -9,5 +9,4 @@ public class IntygMockServiceApplication {
   public static void main(String[] args) {
     SpringApplication.run(IntygMockServiceApplication.class, args);
   }
-
 }

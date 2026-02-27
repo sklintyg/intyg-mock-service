@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class CodeTypeDTO {
 
-    private String code;
-    private String codeSystem;
-    private String displayName;
+  private String code;
+  private String codeSystem;
+  private String displayName;
 }

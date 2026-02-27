@@ -17,41 +17,55 @@ import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO;
 @RequiredArgsConstructor
 public class StoreLogController {
 
-    private final StoreLogService storeLogService;
+  private final StoreLogService storeLogService;
 
-    @Operation(summary = "Get all store logs", description = "Retrieve a list of all stored audit log entries")
-    @GetMapping
-    public List<LogTypeDTO> getAllStoreLogs() {
-        return storeLogService.getAll();
-    }
+  @Operation(
+      summary = "Get all store logs",
+      description = "Retrieve a list of all stored audit log entries")
+  @GetMapping
+  public List<LogTypeDTO> getAllStoreLogs() {
+    return storeLogService.getAll();
+  }
 
-    @Operation(summary = "Get store logs by user", description = "Retrieve all audit log entries for a specific user ID")
-    @GetMapping("/user/{userId}")
-    public List<LogTypeDTO> getStoreLogsByUserId(@PathVariable String userId) {
-        return storeLogService.getByUserId(userId);
-    }
+  @Operation(
+      summary = "Get store logs by user",
+      description = "Retrieve all audit log entries for a specific user ID")
+  @GetMapping("/user/{userId}")
+  public List<LogTypeDTO> getStoreLogsByUserId(@PathVariable String userId) {
+    return storeLogService.getByUserId(userId);
+  }
 
-    @Operation(summary = "Get store logs by certificate", description = "Retrieve all audit log entries for a specific certificate ID (matched against activityLevel)")
-    @GetMapping("/certificate/{certificateId}")
-    public List<LogTypeDTO> getStoreLogsByCertificateId(@PathVariable String certificateId) {
-        return storeLogService.getByCertificateId(certificateId);
-    }
+  @Operation(
+      summary = "Get store logs by certificate",
+      description =
+          "Retrieve all audit log entries for a specific certificate ID (matched against activityLevel)")
+  @GetMapping("/certificate/{certificateId}")
+  public List<LogTypeDTO> getStoreLogsByCertificateId(@PathVariable String certificateId) {
+    return storeLogService.getByCertificateId(certificateId);
+  }
 
-    @Operation(summary = "Delete all store logs", description = "Delete all store log entries from the repository")
-    @DeleteMapping
-    public void deleteAllStoreLogs() {
-        storeLogService.deleteAll();
-    }
+  @Operation(
+      summary = "Delete all store logs",
+      description = "Delete all store log entries from the repository")
+  @DeleteMapping
+  public void deleteAllStoreLogs() {
+    storeLogService.deleteAll();
+  }
 
-    @Operation(summary = "Delete store logs by user", description = "Delete all audit log entries associated with a specific user ID")
-    @DeleteMapping("/user/{userId}")
-    public void deleteStoreLogsByUserId(@PathVariable String userId) {
-        storeLogService.deleteByUserId(userId);
-    }
+  @Operation(
+      summary = "Delete store logs by user",
+      description = "Delete all audit log entries associated with a specific user ID")
+  @DeleteMapping("/user/{userId}")
+  public void deleteStoreLogsByUserId(@PathVariable String userId) {
+    storeLogService.deleteByUserId(userId);
+  }
 
-    @Operation(summary = "Delete store logs by certificate", description = "Delete all audit log entries associated with a specific certificate ID (matched against activityLevel)")
-    @DeleteMapping("/certificate/{certificateId}")
-    public void deleteStoreLogsByCertificateId(@PathVariable String certificateId) {
-        storeLogService.deleteByCertificateId(certificateId);
-    }
+  @Operation(
+      summary = "Delete store logs by certificate",
+      description =
+          "Delete all audit log entries associated with a specific certificate ID (matched against activityLevel)")
+  @DeleteMapping("/certificate/{certificateId}")
+  public void deleteStoreLogsByCertificateId(@PathVariable String certificateId) {
+    storeLogService.deleteByCertificateId(certificateId);
+  }
 }

@@ -21,54 +21,57 @@ import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdate
 @SpringBootTest(classes = IntygMockServiceApplication.class, webEnvironment = RANDOM_PORT)
 class CertificateStatusUpdateForCareIT {
 
-    private static final String SOAP_PATH =
-        "/services/clinicalprocess/healthcond/certificate/CertificateStatusUpdateForCare/3/rivtabp21";
-    private static final String REST_PATH = "/api/certificate-status-for-care";
+  private static final String SOAP_PATH =
+      "/services/clinicalprocess/healthcond/certificate/CertificateStatusUpdateForCare/3/rivtabp21";
+  private static final String REST_PATH = "/api/certificate-status-for-care";
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+  @Autowired private TestRestTemplate restTemplate;
 
-    @BeforeEach
-    void cleanUp() {
-        restTemplate.delete(REST_PATH);
-    }
+  @BeforeEach
+  void cleanUp() {
+    restTemplate.delete(REST_PATH);
+  }
 
-    @Test
-    void shouldStoreStatusUpdateViaSoap() throws IOException {
-        postSoap("soap/certificate-status-update-for-care.xml");
+  @Test
+  void shouldStoreStatusUpdateViaSoap() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
 
-        final var response = restTemplate.getForEntity(REST_PATH, CertificateStatusUpdateForCareDTO[].class);
-        final var items = response.getBody();
+    final var response =
+        restTemplate.getForEntity(REST_PATH, CertificateStatusUpdateForCareDTO[].class);
+    final var items = response.getBody();
 
-        assertEquals(1, items.length);
-        assertEquals("it-status-update-001", items[0].getIntyg().getIntygsId().getExtension());
-    }
+    assertEquals(1, items.length);
+    assertEquals("it-status-update-001", items[0].getIntyg().getIntygsId().getExtension());
+  }
 
-    @Test
-    void shouldReturnEmptyListWhenNoStatusUpdateReceived() {
-        final var response = restTemplate.getForEntity(REST_PATH, CertificateStatusUpdateForCareDTO[].class);
+  @Test
+  void shouldReturnEmptyListWhenNoStatusUpdateReceived() {
+    final var response =
+        restTemplate.getForEntity(REST_PATH, CertificateStatusUpdateForCareDTO[].class);
 
-        assertEquals(0, response.getBody().length);
-    }
+    assertEquals(0, response.getBody().length);
+  }
 
-    @Test
-    void shouldDeleteAllStatusUpdates() throws IOException {
-        postSoap("soap/certificate-status-update-for-care.xml");
+  @Test
+  void shouldDeleteAllStatusUpdates() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
 
-        restTemplate.delete(REST_PATH);
+    restTemplate.delete(REST_PATH);
 
-        final var response = restTemplate.getForEntity(REST_PATH, CertificateStatusUpdateForCareDTO[].class);
-        assertEquals(0, response.getBody().length);
-    }
+    final var response =
+        restTemplate.getForEntity(REST_PATH, CertificateStatusUpdateForCareDTO[].class);
+    assertEquals(0, response.getBody().length);
+  }
 
-    private void postSoap(String resourcePath) throws IOException {
-        final var resource = new ClassPathResource(resourcePath);
-        final var body = resource.getContentAsString(StandardCharsets.UTF_8);
+  private void postSoap(String resourcePath) throws IOException {
+    final var resource = new ClassPathResource(resourcePath);
+    final var body = resource.getContentAsString(StandardCharsets.UTF_8);
 
-        final var headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_XML);
-        headers.set("SOAPAction", "\"\"");
+    final var headers = new HttpHeaders();
+    headers.setContentType(MediaType.TEXT_XML);
+    headers.set("SOAPAction", "\"\"");
 
-        restTemplate.exchange(SOAP_PATH, HttpMethod.POST, new HttpEntity<>(body, headers), String.class);
-    }
+    restTemplate.exchange(
+        SOAP_PATH, HttpMethod.POST, new HttpEntity<>(body, headers), String.class);
+  }
 }

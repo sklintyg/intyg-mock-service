@@ -19,20 +19,24 @@ import se.inera.intyg.intygmockservice.revokecertificate.repository.RevokeCertif
 @Tag(name = "RevokeCertificate", description = "API for managing certificate revocations")
 public class RevokeCertificateController {
 
-    private final RevokeCertificateRepository repository;
-    private final RevokeCertificateConverter revokeCertificateConverter;
+  private final RevokeCertificateRepository repository;
+  private final RevokeCertificateConverter revokeCertificateConverter;
 
-    @Operation(summary = "Get all revoke certificates", description = "Retrieve all revoke certificates")
-    @GetMapping
-    public List<RevokeCertificateDTO> getAllRevokeCertificates() {
-        return repository.findAll().stream()
-            .map(revokeCertificateConverter::convert)
-            .collect(Collectors.toList());
-    }
+  @Operation(
+      summary = "Get all revoke certificates",
+      description = "Retrieve all revoke certificates")
+  @GetMapping
+  public List<RevokeCertificateDTO> getAllRevokeCertificates() {
+    return repository.findAll().stream()
+        .map(revokeCertificateConverter::convert)
+        .collect(Collectors.toList());
+  }
 
-    @Operation(summary = "Delete all revoke certificates", description = "Delete all revoke certificates")
-    @DeleteMapping
-    public void deleteAllRevokeCertificates() {
-        repository.deleteAll();
-    }
+  @Operation(
+      summary = "Delete all revoke certificates",
+      description = "Delete all revoke certificates")
+  @DeleteMapping
+  public void deleteAllRevokeCertificates() {
+    repository.deleteAll();
+  }
 }

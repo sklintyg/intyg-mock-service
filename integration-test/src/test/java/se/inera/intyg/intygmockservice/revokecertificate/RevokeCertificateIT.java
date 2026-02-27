@@ -21,54 +21,54 @@ import se.inera.intyg.intygmockservice.revokecertificate.dto.RevokeCertificateDT
 @SpringBootTest(classes = IntygMockServiceApplication.class, webEnvironment = RANDOM_PORT)
 class RevokeCertificateIT {
 
-    private static final String SOAP_PATH =
-        "/services/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21";
-    private static final String REST_PATH = "/api/revoke-certificate";
+  private static final String SOAP_PATH =
+      "/services/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21";
+  private static final String REST_PATH = "/api/revoke-certificate";
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+  @Autowired private TestRestTemplate restTemplate;
 
-    @BeforeEach
-    void cleanUp() {
-        restTemplate.delete(REST_PATH);
-    }
+  @BeforeEach
+  void cleanUp() {
+    restTemplate.delete(REST_PATH);
+  }
 
-    @Test
-    void shouldStoreRevokedCertificateViaSoap() throws IOException {
-        postSoap("soap/revoke-certificate.xml");
+  @Test
+  void shouldStoreRevokedCertificateViaSoap() throws IOException {
+    postSoap("soap/revoke-certificate.xml");
 
-        final var response = restTemplate.getForEntity(REST_PATH, RevokeCertificateDTO[].class);
-        final var items = response.getBody();
+    final var response = restTemplate.getForEntity(REST_PATH, RevokeCertificateDTO[].class);
+    final var items = response.getBody();
 
-        assertEquals(1, items.length);
-        assertEquals("it-revoke-cert-001", items[0].getIntygsId().getExtension());
-    }
+    assertEquals(1, items.length);
+    assertEquals("it-revoke-cert-001", items[0].getIntygsId().getExtension());
+  }
 
-    @Test
-    void shouldReturnEmptyListWhenNoCertificateRevoked() {
-        final var response = restTemplate.getForEntity(REST_PATH, RevokeCertificateDTO[].class);
+  @Test
+  void shouldReturnEmptyListWhenNoCertificateRevoked() {
+    final var response = restTemplate.getForEntity(REST_PATH, RevokeCertificateDTO[].class);
 
-        assertEquals(0, response.getBody().length);
-    }
+    assertEquals(0, response.getBody().length);
+  }
 
-    @Test
-    void shouldDeleteAllRevokedCertificates() throws IOException {
-        postSoap("soap/revoke-certificate.xml");
+  @Test
+  void shouldDeleteAllRevokedCertificates() throws IOException {
+    postSoap("soap/revoke-certificate.xml");
 
-        restTemplate.delete(REST_PATH);
+    restTemplate.delete(REST_PATH);
 
-        final var response = restTemplate.getForEntity(REST_PATH, RevokeCertificateDTO[].class);
-        assertEquals(0, response.getBody().length);
-    }
+    final var response = restTemplate.getForEntity(REST_PATH, RevokeCertificateDTO[].class);
+    assertEquals(0, response.getBody().length);
+  }
 
-    private void postSoap(String resourcePath) throws IOException {
-        final var resource = new ClassPathResource(resourcePath);
-        final var body = resource.getContentAsString(StandardCharsets.UTF_8);
+  private void postSoap(String resourcePath) throws IOException {
+    final var resource = new ClassPathResource(resourcePath);
+    final var body = resource.getContentAsString(StandardCharsets.UTF_8);
 
-        final var headers = new HttpHeaders();
-        headers.setContentType(MediaType.TEXT_XML);
-        headers.set("SOAPAction", "\"\"");
+    final var headers = new HttpHeaders();
+    headers.setContentType(MediaType.TEXT_XML);
+    headers.set("SOAPAction", "\"\"");
 
-        restTemplate.exchange(SOAP_PATH, HttpMethod.POST, new HttpEntity<>(body, headers), String.class);
-    }
+    restTemplate.exchange(
+        SOAP_PATH, HttpMethod.POST, new HttpEntity<>(body, headers), String.class);
+  }
 }

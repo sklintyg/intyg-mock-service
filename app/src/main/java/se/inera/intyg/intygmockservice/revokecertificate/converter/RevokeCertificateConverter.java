@@ -12,20 +12,20 @@ import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.Revoke
 @RequiredArgsConstructor
 public class RevokeCertificateConverter {
 
-    private final HoSPersonalConverter hoSPersonalConverter;
-    private final IntygIdConverter intygIdConverter;
-    private final PersonIdConverter personIdConverter;
+  private final HoSPersonalConverter hoSPersonalConverter;
+  private final IntygIdConverter intygIdConverter;
+  private final PersonIdConverter personIdConverter;
 
-    public RevokeCertificateDTO convert(RevokeCertificateType source) {
-        if (source == null) {
-            return null;
-        }
-        RevokeCertificateDTO target = new RevokeCertificateDTO();
-        target.setIntygsId(intygIdConverter.convert(source.getIntygsId()));
-        target.setSkickatTidpunkt(source.getSkickatTidpunkt());
-        target.setSkickadAv(hoSPersonalConverter.convert(source.getSkickatAv()));
-        target.setMeddelande(source.getMeddelande());
-        target.setPatientPersonId(personIdConverter.convert(source.getPatientPersonId()));
-        return target;
+  public RevokeCertificateDTO convert(RevokeCertificateType source) {
+    if (source == null) {
+      return null;
     }
+    RevokeCertificateDTO target = new RevokeCertificateDTO();
+    target.setIntygsId(intygIdConverter.convert(source.getIntygsId()));
+    target.setSkickatTidpunkt(source.getSkickatTidpunkt());
+    target.setSkickadAv(hoSPersonalConverter.convert(source.getSkickatAv()));
+    target.setMeddelande(source.getMeddelande());
+    target.setPatientPersonId(personIdConverter.convert(source.getPatientPersonId()));
+    return target;
+  }
 }

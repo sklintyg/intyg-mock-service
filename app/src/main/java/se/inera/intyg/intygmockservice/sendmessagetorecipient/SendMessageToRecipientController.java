@@ -20,28 +20,29 @@ import se.inera.intyg.intygmockservice.sendmessagetorecipient.repository.SendMes
 @Tag(name = "SendMessageToRecipient", description = "APIs for sending messages to recipients")
 public class SendMessageToRecipientController {
 
-    private final SendMessageToRecipientRepository repository;
-    private final SendMessageToRecipientConverter converter;
+  private final SendMessageToRecipientRepository repository;
+  private final SendMessageToRecipientConverter converter;
 
-    @GetMapping
-    @Operation(summary = "Get all messages", description = "Retrieve all messages")
-    public List<SendMessageToRecipientDTO> getAllMessages() {
-        return repository.findAll().stream()
-            .map(converter::convert)
-            .collect(Collectors.toList());
-    }
+  @GetMapping
+  @Operation(summary = "Get all messages", description = "Retrieve all messages")
+  public List<SendMessageToRecipientDTO> getAllMessages() {
+    return repository.findAll().stream().map(converter::convert).collect(Collectors.toList());
+  }
 
-    @DeleteMapping
-    @Operation(summary = "Delete all messages", description = "Delete all messages")
-    public void deleteAllMessages() {
-        repository.deleteAll();
-    }
+  @DeleteMapping
+  @Operation(summary = "Delete all messages", description = "Delete all messages")
+  public void deleteAllMessages() {
+    repository.deleteAll();
+  }
 
-    @GetMapping("/recipient/{recipientId}")
-    @Operation(summary = "Get messages by recipient ID", description = "Retrieve messages for a specific recipient ID")
-    public List<SendMessageToRecipientDTO> getMessagesByRecipientId(@PathVariable String recipientId) {
-        return repository.findByRecipientId(recipientId).stream()
-            .map(converter::convert)
-            .collect(Collectors.toList());
-    }
+  @GetMapping("/recipient/{recipientId}")
+  @Operation(
+      summary = "Get messages by recipient ID",
+      description = "Retrieve messages for a specific recipient ID")
+  public List<SendMessageToRecipientDTO> getMessagesByRecipientId(
+      @PathVariable String recipientId) {
+    return repository.findByRecipientId(recipientId).stream()
+        .map(converter::convert)
+        .collect(Collectors.toList());
+  }
 }
