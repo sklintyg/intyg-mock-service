@@ -7,14 +7,6 @@ This document captures suggested future development items for intyg-mock-service
 
 ---
 
-## Bug Fixes
-
-### BF-01 — Fix SendMessageToRecipient GET by recipient ID
-
-The controller exposes `GET /api/send-message-to-recipient/recipient/{recipientId}` and calls `repository.findByRecipientId()`, but the repository method is not implemented and returns `null`. Implement `findByRecipientId` in `SendMessageToRecipientRepository` using a predicate over `logiskAdressMottagare`, add the missing integration test.
-
----
-
 ## REST API Parity — RevokeCertificate
 
 The three items below bring `RevokeCertificate` to the same level as `RegisterCertificate`.

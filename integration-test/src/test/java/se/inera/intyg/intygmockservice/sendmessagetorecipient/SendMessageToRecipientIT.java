@@ -60,6 +60,29 @@ class SendMessageToRecipientIT {
     assertEquals(0, response.getBody().length);
   }
 
+  @Test
+  void shouldReturnMessagesByRecipientId() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
+
+    final var response =
+        restTemplate.getForEntity(REST_PATH + "/recipient/FK", SendMessageToRecipientDTO[].class);
+    final var items = response.getBody();
+
+    assertEquals(1, items.length);
+    assertEquals("FK", items[0].getLogiskAdressMottagare());
+  }
+
+  @Test
+  void shouldReturnEmptyListForUnknownRecipientId() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/recipient/UNKNOWN", SendMessageToRecipientDTO[].class);
+
+    assertEquals(0, response.getBody().length);
+  }
+
   private void postSoap(String resourcePath) throws IOException {
     final var resource = new ClassPathResource(resourcePath);
     final var body = resource.getContentAsString(StandardCharsets.UTF_8);

@@ -1,6 +1,6 @@
 package se.inera.intyg.intygmockservice.sendmessagetorecipient.repository;
 
-import java.util.Collection;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import se.inera.intyg.intygmockservice.common.repository.AbstractInMemoryRepository;
@@ -15,7 +15,9 @@ public class SendMessageToRecipientRepository
     super(maxSize);
   }
 
-  public Collection<SendMessageToRecipientType> findByRecipientId(String recipientId) {
-    return null;
+  public List<SendMessageToRecipientType> findByRecipientId(String recipientId) {
+    return findAll().stream()
+        .filter(t -> recipientId.equals(t.getLogiskAdressMottagare()))
+        .toList();
   }
 }
