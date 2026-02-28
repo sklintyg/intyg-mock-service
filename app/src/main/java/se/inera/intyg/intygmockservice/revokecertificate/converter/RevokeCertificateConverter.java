@@ -20,12 +20,12 @@ public class RevokeCertificateConverter {
     if (source == null) {
       return null;
     }
-    RevokeCertificateDTO target = new RevokeCertificateDTO();
-    target.setIntygsId(intygIdConverter.convert(source.getIntygsId()));
-    target.setSkickatTidpunkt(source.getSkickatTidpunkt());
-    target.setSkickadAv(hoSPersonalConverter.convert(source.getSkickatAv()));
-    target.setMeddelande(source.getMeddelande());
-    target.setPatientPersonId(personIdConverter.convert(source.getPatientPersonId()));
-    return target;
+    return RevokeCertificateDTO.builder()
+        .intygsId(intygIdConverter.convert(source.getIntygsId()))
+        .skickatTidpunkt(source.getSkickatTidpunkt())
+        .skickadAv(hoSPersonalConverter.convert(source.getSkickatAv()))
+        .meddelande(source.getMeddelande())
+        .patientPersonId(personIdConverter.convert(source.getPatientPersonId()))
+        .build();
   }
 }

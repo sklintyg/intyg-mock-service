@@ -3,55 +3,62 @@ package se.inera.intyg.intygmockservice.common.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
-@Data
+@Value
+@Builder
 public class IntygDTO {
 
-  private IntygsId intygsId;
-  private CodeTypeDTO typ;
-  private LocalDateTime signeringstidpunkt;
-  private LocalDateTime skickatTidpunkt;
-  private List<RelationDTO> relation;
-  private String version;
-  private PatientDTO patient;
-  private HoSPersonalDTO skapadAv;
-  private List<SvarDTO> svar;
+  IntygsId intygsId;
+  CodeTypeDTO typ;
+  LocalDateTime signeringstidpunkt;
+  LocalDateTime skickatTidpunkt;
+  List<RelationDTO> relation;
+  String version;
+  PatientDTO patient;
+  HoSPersonalDTO skapadAv;
+  List<SvarDTO> svar;
 
-  @Data
+  @Value
+  @Builder
   public static class IntygsId {
 
-    private String root;
-    private String extension;
+    String root;
+    String extension;
   }
 
-  @Data
+  @Value
+  @Builder
   public static class RelationDTO {
 
-    private CodeTypeDTO typ;
-    private IntygsId intygsId;
+    CodeTypeDTO typ;
+    IntygsId intygsId;
   }
 
-  @Data
+  @Value
+  @Builder
   public static class SvarDTO {
 
-    private String id;
-    private String instans;
-    private List<DelsvarDTO> delsvar;
+    String id;
+    String instans;
+    List<DelsvarDTO> delsvar;
 
-    @Data
+    @Value
+    @Builder
     public static class DelsvarDTO {
 
-      private String id;
-      private CodeTypeDTO cv;
-      private String value;
-      private DatePeriod datePeriod;
+      String id;
+      CodeTypeDTO cv;
+      String value;
+      DatePeriod datePeriod;
 
-      @Data
+      @Value
+      @Builder
       public static class DatePeriod {
 
-        private LocalDate start;
-        private LocalDate end;
+        LocalDate start;
+        LocalDate end;
       }
     }
   }

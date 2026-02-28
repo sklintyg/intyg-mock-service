@@ -3,7 +3,6 @@ package se.inera.intyg.intygmockservice.sendmessagetorecipient;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +25,7 @@ public class SendMessageToRecipientController {
   @GetMapping
   @Operation(summary = "Get all messages", description = "Retrieve all messages")
   public List<SendMessageToRecipientDTO> getAllMessages() {
-    return repository.findAll().stream().map(converter::convert).collect(Collectors.toList());
+    return repository.findAll().stream().map(converter::convert).toList();
   }
 
   @DeleteMapping
@@ -41,8 +40,6 @@ public class SendMessageToRecipientController {
       description = "Retrieve messages for a specific recipient ID")
   public List<SendMessageToRecipientDTO> getMessagesByRecipientId(
       @PathVariable String recipientId) {
-    return repository.findByRecipientId(recipientId).stream()
-        .map(converter::convert)
-        .collect(Collectors.toList());
+    return repository.findByRecipientId(recipientId).stream().map(converter::convert).toList();
   }
 }

@@ -15,19 +15,16 @@ public class RegisterCertificateConverter {
   private final IntygConverter intygConverter;
 
   public RegisterCertificateDTO convert(RegisterCertificateType source) {
-    final var target = new RegisterCertificateDTO();
-
-    target.setIntyg(intygConverter.convert(source.getIntyg()));
-    if (source.getSvarPa() != null) {
-      target.setSvarPa(convertMeddelandeReferens(source.getSvarPa()));
-    }
-    return target;
+    return RegisterCertificateDTO.builder()
+        .intyg(intygConverter.convert(source.getIntyg()))
+        .svarPa(source.getSvarPa() != null ? convertMeddelandeReferens(source.getSvarPa()) : null)
+        .build();
   }
 
   private MeddelandeReferensDTO convertMeddelandeReferens(MeddelandeReferens svarPa) {
-    final var meddelandeReferensDTO = new MeddelandeReferensDTO();
-    meddelandeReferensDTO.setMeddelandeId(svarPa.getMeddelandeId());
-    meddelandeReferensDTO.setReferensId(svarPa.getReferensId());
-    return meddelandeReferensDTO;
+    return MeddelandeReferensDTO.builder()
+        .meddelandeId(svarPa.getMeddelandeId())
+        .referensId(svarPa.getReferensId())
+        .build();
   }
 }

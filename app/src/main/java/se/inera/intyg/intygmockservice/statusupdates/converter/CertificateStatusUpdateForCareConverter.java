@@ -4,7 +4,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.intygmockservice.common.converter.IntygConverter;
 import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO;
+import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO.Fragor;
+import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse;
+import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse.Handelsekod;
+import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO.HanteratAv;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Arenden;
 
 @Component
 @RequiredArgsConstructor
@@ -13,48 +18,40 @@ public class CertificateStatusUpdateForCareConverter {
   private final IntygConverter intygConverter;
 
   public CertificateStatusUpdateForCareDTO convert(CertificateStatusUpdateForCareType source) {
-    final var target = new CertificateStatusUpdateForCareDTO();
+    final var sourceHandelse = source.getHandelse();
+    final var builder =
+        CertificateStatusUpdateForCareDTO.builder()
+            .intyg(intygConverter.convert(source.getIntyg()))
+            .handelse(
+                Handelse.builder()
+                    .handelsekod(
+                        Handelsekod.builder()
+                            .code(sourceHandelse.getHandelsekod().getCode())
+                            .codeSystem(sourceHandelse.getHandelsekod().getCodeSystem())
+                            .displayName(sourceHandelse.getHandelsekod().getDisplayName())
+                            .build())
+                    .tidpunkt(sourceHandelse.getTidpunkt().toString())
+                    .build())
+            .skickadeFragor(convertFragor(source.getSkickadeFragor()))
+            .mottagnaFragor(convertFragor(source.getMottagnaFragor()));
 
-    // Convert Intyg
-    target.setIntyg(intygConverter.convert(source.getIntyg()));
-
-    // Convert Handelse
-    final var handelse = new CertificateStatusUpdateForCareDTO.Handelse();
-    handelse.setHandelsekod(convertHandelsekod(source.getHandelse().getHandelsekod()));
-    handelse.setTidpunkt(source.getHandelse().getTidpunkt().toString());
-    target.setHandelse(handelse);
-
-    // Convert Fragor
-    target.setSkickadeFragor(convertFragor(source.getSkickadeFragor()));
-    target.setMottagnaFragor(convertFragor(source.getMottagnaFragor()));
-
-    // Convert HanteratAv
     if (source.getHanteratAv() != null) {
-      final var hanteratAv = new CertificateStatusUpdateForCareDTO.HanteratAv();
-      hanteratAv.setRoot(source.getHanteratAv().getRoot());
-      hanteratAv.setExtension(source.getHanteratAv().getExtension());
-      target.setHanteratAv(hanteratAv);
+      builder.hanteratAv(
+          HanteratAv.builder()
+              .root(source.getHanteratAv().getRoot())
+              .extension(source.getHanteratAv().getExtension())
+              .build());
     }
 
-    return target;
+    return builder.build();
   }
 
-  private CertificateStatusUpdateForCareDTO.Handelse.Handelsekod convertHandelsekod(
-      se.riv.clinicalprocess.healthcond.certificate.types.v3.Handelsekod source) {
-    final var target = new CertificateStatusUpdateForCareDTO.Handelse.Handelsekod();
-    target.setCode(source.getCode());
-    target.setCodeSystem(source.getCodeSystem());
-    target.setDisplayName(source.getDisplayName());
-    return target;
-  }
-
-  private CertificateStatusUpdateForCareDTO.Fragor convertFragor(
-      se.riv.clinicalprocess.healthcond.certificate.v3.Arenden source) {
-    final var target = new CertificateStatusUpdateForCareDTO.Fragor();
-    target.setTotalt(source.getTotalt());
-    target.setEjBesvarade(source.getEjBesvarade());
-    target.setBesvarade(source.getBesvarade());
-    target.setHanterade(source.getHanterade());
-    return target;
+  private Fragor convertFragor(Arenden source) {
+    return Fragor.builder()
+        .totalt(source.getTotalt())
+        .ejBesvarade(source.getEjBesvarade())
+        .besvarade(source.getBesvarade())
+        .hanterade(source.getHanterade())
+        .build();
   }
 }

@@ -1,8 +1,10 @@
 package se.inera.intyg.intygmockservice.common.dto;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
-@Data
+@Value
+@Builder
 public class MeddelandeReferensDTO {
 
   private String meddelandeId;

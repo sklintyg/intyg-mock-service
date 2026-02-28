@@ -1,56 +1,63 @@
 package se.inera.intyg.intygmockservice.common.dto;
 
 import java.util.List;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
-@Data
+@Value
+@Builder
 public class HoSPersonalDTO {
 
-  private PersonalIdDTO personalId;
-  private String fullstandigtNamn;
-  private String forskrivarkod;
-  private List<CodeTypeDTO> befattning;
-  private EnhetDTO enhet;
+  PersonalIdDTO personalId;
+  String fullstandigtNamn;
+  String forskrivarkod;
+  List<CodeTypeDTO> befattning;
+  EnhetDTO enhet;
 
-  @Data
+  @Value
+  @Builder
   public static class PersonalIdDTO {
 
-    private String root;
-    private String extension;
+    String root;
+    String extension;
   }
 
-  @Data
+  @Value
+  @Builder
   public static class EnhetDTO {
 
-    private HsaIdDTO enhetsId;
-    private ArbetsplatskodDTO arbetsplatskod;
-    private String enhetsnamn;
-    private String postadress;
-    private String postnummer;
-    private String postort;
-    private String telefonnummer;
-    private String epost;
-    private VardgivareDTO vardgivare;
+    HsaIdDTO enhetsId;
+    ArbetsplatskodDTO arbetsplatskod;
+    String enhetsnamn;
+    String postadress;
+    String postnummer;
+    String postort;
+    String telefonnummer;
+    String epost;
+    VardgivareDTO vardgivare;
 
-    @Data
+    @Value
+    @Builder
     public static class ArbetsplatskodDTO {
 
-      private String root;
-      private String extension;
+      String root;
+      String extension;
     }
 
-    @Data
+    @Value
+    @Builder
     public static class VardgivareDTO {
 
-      private HsaIdDTO vardgivareId;
-      private String vardgivarnamn;
+      HsaIdDTO vardgivareId;
+      String vardgivarnamn;
     }
 
-    @Data
+    @Value
+    @Builder
     public static class HsaIdDTO {
 
-      private String root;
-      private String extension;
+      String root;
+      String extension;
     }
   }
 }

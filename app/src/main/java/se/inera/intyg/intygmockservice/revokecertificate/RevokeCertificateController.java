@@ -3,7 +3,6 @@ package se.inera.intyg.intygmockservice.revokecertificate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,9 +26,7 @@ public class RevokeCertificateController {
       description = "Retrieve all revoke certificates")
   @GetMapping
   public List<RevokeCertificateDTO> getAllRevokeCertificates() {
-    return repository.findAll().stream()
-        .map(revokeCertificateConverter::convert)
-        .collect(Collectors.toList());
+    return repository.findAll().stream().map(revokeCertificateConverter::convert).toList();
   }
 
   @Operation(

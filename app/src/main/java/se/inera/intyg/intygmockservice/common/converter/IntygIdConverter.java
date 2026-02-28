@@ -8,9 +8,9 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 public class IntygIdConverter {
 
   public IntygDTO.IntygsId convert(IntygId source) {
-    final var target = new IntygDTO.IntygsId();
-    target.setRoot(source.getRoot());
-    target.setExtension(source.getExtension());
-    return target;
+    return IntygDTO.IntygsId.builder()
+        .root(source.getRoot())
+        .extension(source.getExtension())
+        .build();
   }
 }

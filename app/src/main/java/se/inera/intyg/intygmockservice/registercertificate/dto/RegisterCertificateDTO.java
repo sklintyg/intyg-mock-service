@@ -1,12 +1,14 @@
 package se.inera.intyg.intygmockservice.registercertificate.dto;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 import se.inera.intyg.intygmockservice.common.dto.IntygDTO;
 import se.inera.intyg.intygmockservice.common.dto.MeddelandeReferensDTO;
 
-@Data
+@Value
+@Builder
 public class RegisterCertificateDTO {
 
-  private IntygDTO intyg;
-  private MeddelandeReferensDTO svarPa;
+  IntygDTO intyg;
+  MeddelandeReferensDTO svarPa;
 }

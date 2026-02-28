@@ -2,79 +2,79 @@ package se.inera.intyg.intygmockservice.storelog.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
-@Data
-@AllArgsConstructor
+@Value
+@Builder
 public class LogTypeDTO {
 
-  private String logId;
-  private SystemDTO system;
-  private ActivityDTO activity;
-  private UserDTO user;
-  private List<ResourceDTO> resources;
+  String logId;
+  SystemDTO system;
+  ActivityDTO activity;
+  UserDTO user;
+  List<ResourceDTO> resources;
 
-  @Data
-  @AllArgsConstructor
+  @Value
+  @Builder
   public static class SystemDTO {
 
-    private String systemId;
-    private String systemName;
+    String systemId;
+    String systemName;
   }
 
-  @Data
-  @AllArgsConstructor
+  @Value
+  @Builder
   public static class ActivityDTO {
 
-    private String activityType;
-    private String activityLevel;
-    private String activityArgs;
-    private LocalDateTime startDate;
-    private String purpose;
+    String activityType;
+    String activityLevel;
+    String activityArgs;
+    LocalDateTime startDate;
+    String purpose;
   }
 
-  @Data
-  @AllArgsConstructor
+  @Value
+  @Builder
   public static class UserDTO {
 
-    private String userId;
-    private String assignment;
-    private CareProviderDTO careProvider;
-    private CareUnitDTO careUnit;
+    String userId;
+    String assignment;
+    CareProviderDTO careProvider;
+    CareUnitDTO careUnit;
   }
 
-  @Data
-  @AllArgsConstructor
+  @Value
+  @Builder
   public static class ResourceDTO {
 
-    private String resourceType;
-    private PatientDTO patient;
-    private CareProviderDTO careProvider;
-    private CareUnitDTO careUnit;
+    String resourceType;
+    PatientDTO patient;
+    CareProviderDTO careProvider;
+    CareUnitDTO careUnit;
   }
 
-  @Data
-  @AllArgsConstructor
+  @Value
+  @Builder
   public static class PatientDTO {
 
-    private String root;
-    private String extension;
+    String root;
+    String extension;
   }
 
-  @Data
-  @AllArgsConstructor
+  @Value
+  @Builder
   public static class CareProviderDTO {
 
-    private String careProviderId;
-    private String careProviderName;
+    String careProviderId;
+    String careProviderName;
   }
 
-  @Data
-  @AllArgsConstructor
+  @Value
+  @Builder
   public static class CareUnitDTO {
 
-    private String careUnitId;
-    private String careUnitName;
+    String careUnitId;
+    String careUnitName;
   }
 }

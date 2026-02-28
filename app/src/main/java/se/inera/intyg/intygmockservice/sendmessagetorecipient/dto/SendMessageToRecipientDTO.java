@@ -1,22 +1,24 @@
 package se.inera.intyg.intygmockservice.sendmessagetorecipient.dto;
 
 import java.time.LocalDateTime;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 import se.inera.intyg.intygmockservice.common.dto.CodeTypeDTO;
 import se.inera.intyg.intygmockservice.common.dto.HoSPersonalDTO;
 import se.inera.intyg.intygmockservice.common.dto.IntygDTO.IntygsId;
 import se.inera.intyg.intygmockservice.common.dto.PatientDTO.PersonId;
 
-@Data
+@Value
+@Builder
 public class SendMessageToRecipientDTO {
 
-  private String logiskAdressMottagare;
-  private String meddelandeId;
-  private LocalDateTime skickatTidpunkt;
-  private IntygsId intygsId;
-  private PersonId patientPersonId;
-  private CodeTypeDTO amne;
-  private String rubrik;
-  private String meddelande;
-  private HoSPersonalDTO skickatAv;
+  String logiskAdressMottagare;
+  String meddelandeId;
+  LocalDateTime skickatTidpunkt;
+  IntygsId intygsId;
+  PersonId patientPersonId;
+  CodeTypeDTO amne;
+  String rubrik;
+  String meddelande;
+  HoSPersonalDTO skickatAv;
 }

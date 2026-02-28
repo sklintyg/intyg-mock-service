@@ -1,21 +1,24 @@
 package se.inera.intyg.intygmockservice.common.dto;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
-@Data
+@Value
+@Builder
 public class PatientDTO {
 
-  private PersonId personId;
-  private String fornamn;
-  private String efternamn;
-  private String postadress;
-  private String postnummer;
-  private String postort;
+  PersonId personId;
+  String fornamn;
+  String efternamn;
+  String postadress;
+  String postnummer;
+  String postort;
 
-  @Data
+  @Value
+  @Builder
   public static class PersonId {
 
-    private String root;
-    private String extension;
+    String root;
+    String extension;
   }
 }

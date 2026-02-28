@@ -5,7 +5,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,8 +28,8 @@ class SendMessageToRecipientControllerTest {
   @Test
   void getAllMessages_ShouldReturnAllMessages() {
     SendMessageToRecipientType message = new SendMessageToRecipientType();
-    SendMessageToRecipientDTO messageDTO = new SendMessageToRecipientDTO();
-    when(repository.findAll()).thenReturn(Arrays.asList(message));
+    SendMessageToRecipientDTO messageDTO = SendMessageToRecipientDTO.builder().build();
+    when(repository.findAll()).thenReturn(List.of(message));
     when(converter.convert(message)).thenReturn(messageDTO);
 
     List<SendMessageToRecipientDTO> result = controller.getAllMessages();
@@ -49,8 +48,8 @@ class SendMessageToRecipientControllerTest {
   void getMessagesByRecipientId_ShouldReturnMessagesForRecipient() {
     String recipientId = "recipient1";
     SendMessageToRecipientType message = new SendMessageToRecipientType();
-    SendMessageToRecipientDTO messageDTO = new SendMessageToRecipientDTO();
-    when(repository.findByRecipientId(recipientId)).thenReturn(Arrays.asList(message));
+    SendMessageToRecipientDTO messageDTO = SendMessageToRecipientDTO.builder().build();
+    when(repository.findByRecipientId(recipientId)).thenReturn(List.of(message));
     when(converter.convert(message)).thenReturn(messageDTO);
 
     List<SendMessageToRecipientDTO> result = controller.getMessagesByRecipientId(recipientId);

@@ -1,45 +1,51 @@
 package se.inera.intyg.intygmockservice.statusupdates.dto;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 import se.inera.intyg.intygmockservice.common.dto.IntygDTO;
 
-@Data
+@Value
+@Builder
 public class CertificateStatusUpdateForCareDTO {
 
-  private IntygDTO intyg;
-  private Handelse handelse;
-  private Fragor skickadeFragor;
-  private Fragor mottagnaFragor;
-  private HanteratAv hanteratAv;
+  IntygDTO intyg;
+  Handelse handelse;
+  Fragor skickadeFragor;
+  Fragor mottagnaFragor;
+  HanteratAv hanteratAv;
 
-  @Data
+  @Value
+  @Builder
   public static class Handelse {
 
-    private Handelsekod handelsekod;
-    private String tidpunkt;
+    Handelsekod handelsekod;
+    String tidpunkt;
 
-    @Data
+    @Value
+    @Builder
     public static class Handelsekod {
 
-      private String code;
-      private String codeSystem;
-      private String displayName;
+      String code;
+      String codeSystem;
+      String displayName;
     }
   }
 
-  @Data
+  @Value
+  @Builder
   public static class Fragor {
 
-    private int totalt;
-    private int ejBesvarade;
-    private int besvarade;
-    private int hanterade;
+    int totalt;
+    int ejBesvarade;
+    int besvarade;
+    int hanterade;
   }
 
-  @Data
+  @Value
+  @Builder
   public static class HanteratAv {
 
-    private String root;
-    private String extension;
+    String root;
+    String extension;
   }
 }

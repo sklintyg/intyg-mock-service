@@ -16,33 +16,29 @@ public class SendMessageToRecipientConverter {
   private final HoSPersonalConverter hoSPersonalConverter;
 
   public SendMessageToRecipientDTO convert(SendMessageToRecipientType source) {
-    final var dto = new SendMessageToRecipientDTO();
-    dto.setLogiskAdressMottagare(source.getLogiskAdressMottagare());
-    dto.setMeddelandeId(source.getMeddelandeId());
-    dto.setSkickatTidpunkt(source.getSkickatTidpunkt());
-
-    final var intygsId = new IntygsId();
-    intygsId.setRoot(source.getIntygsId().getRoot());
-    intygsId.setExtension(source.getIntygsId().getExtension());
-    dto.setIntygsId(intygsId);
-
-    final var patientPersonId = new PersonId();
-    patientPersonId.setRoot(source.getPatientPersonId().getRoot());
-    patientPersonId.setExtension(source.getPatientPersonId().getExtension());
-    dto.setPatientPersonId(patientPersonId);
-
-    final var amne = new CodeTypeDTO();
-    amne.setCode(source.getAmne().getCode());
-    amne.setCodeSystem(source.getAmne().getCodeSystem());
-    amne.setDisplayName(source.getAmne().getDisplayName());
-    dto.setAmne(amne);
-
-    dto.setRubrik(source.getRubrik());
-    dto.setMeddelande(source.getMeddelande());
-
-    final var skickatAv = hoSPersonalConverter.convert(source.getSkickatAv());
-    dto.setSkickatAv(skickatAv);
-
-    return dto;
+    return SendMessageToRecipientDTO.builder()
+        .logiskAdressMottagare(source.getLogiskAdressMottagare())
+        .meddelandeId(source.getMeddelandeId())
+        .skickatTidpunkt(source.getSkickatTidpunkt())
+        .intygsId(
+            IntygsId.builder()
+                .root(source.getIntygsId().getRoot())
+                .extension(source.getIntygsId().getExtension())
+                .build())
+        .patientPersonId(
+            PersonId.builder()
+                .root(source.getPatientPersonId().getRoot())
+                .extension(source.getPatientPersonId().getExtension())
+                .build())
+        .amne(
+            CodeTypeDTO.builder()
+                .code(source.getAmne().getCode())
+                .codeSystem(source.getAmne().getCodeSystem())
+                .displayName(source.getAmne().getDisplayName())
+                .build())
+        .rubrik(source.getRubrik())
+        .meddelande(source.getMeddelande())
+        .skickatAv(hoSPersonalConverter.convert(source.getSkickatAv()))
+        .build();
   }
 }

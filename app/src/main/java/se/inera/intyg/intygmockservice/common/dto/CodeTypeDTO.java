@@ -1,11 +1,13 @@
 package se.inera.intyg.intygmockservice.common.dto;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Value;
 
-@Data
+@Value
+@Builder
 public class CodeTypeDTO {
 
-  private String code;
-  private String codeSystem;
-  private String displayName;
+  String code;
+  String codeSystem;
+  String displayName;
 }

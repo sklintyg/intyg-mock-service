@@ -12,13 +12,13 @@ public class PatientConverter {
   private final PersonIdConverter personIdConverter;
 
   public PatientDTO convert(Patient source) {
-    final var target = new PatientDTO();
-    target.setPersonId(personIdConverter.convert(source.getPersonId()));
-    target.setFornamn(source.getFornamn());
-    target.setEfternamn(source.getEfternamn());
-    target.setPostadress(source.getPostadress());
-    target.setPostnummer(source.getPostnummer());
-    target.setPostort(source.getPostort());
-    return target;
+    return PatientDTO.builder()
+        .personId(personIdConverter.convert(source.getPersonId()))
+        .fornamn(source.getFornamn())
+        .efternamn(source.getEfternamn())
+        .postadress(source.getPostadress())
+        .postnummer(source.getPostnummer())
+        .postort(source.getPostort())
+        .build();
   }
 }

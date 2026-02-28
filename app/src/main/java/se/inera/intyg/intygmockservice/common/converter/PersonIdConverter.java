@@ -8,9 +8,9 @@ import se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId;
 public class PersonIdConverter {
 
   public PatientDTO.PersonId convert(PersonId source) {
-    final var target = new PatientDTO.PersonId();
-    target.setRoot(source.getRoot());
-    target.setExtension(source.getExtension());
-    return target;
+    return PatientDTO.PersonId.builder()
+        .root(source.getRoot())
+        .extension(source.getExtension())
+        .build();
   }
 }

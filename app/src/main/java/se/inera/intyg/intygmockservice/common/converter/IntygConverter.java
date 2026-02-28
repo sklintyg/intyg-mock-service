@@ -27,46 +27,44 @@ public class IntygConverter {
   private final IntygIdConverter intygIdConverter;
 
   public IntygDTO convert(Intyg source) {
-    final var intyg = new IntygDTO();
-
-    intyg.setIntygsId(intygIdConverter.convert(source.getIntygsId()));
-    intyg.setTyp(convertTyp(source.getTyp()));
-    intyg.setVersion(source.getVersion());
-    intyg.setSigneringstidpunkt(source.getSigneringstidpunkt());
-    intyg.setSkickatTidpunkt(source.getSkickatTidpunkt());
-    intyg.setPatient(patientConverter.convert(source.getPatient()));
-    intyg.setSkapadAv(hosPersonalConverter.convert(source.getSkapadAv()));
-    intyg.setRelation(
-        Stream.ofNullable(source.getRelation())
-            .flatMap(List::stream)
-            .map(this::convertRelation)
-            .toList());
-    intyg.setSvar(convertSvarList(source.getSvar()));
-
-    return intyg;
+    return IntygDTO.builder()
+        .intygsId(intygIdConverter.convert(source.getIntygsId()))
+        .typ(convertTyp(source.getTyp()))
+        .version(source.getVersion())
+        .signeringstidpunkt(source.getSigneringstidpunkt())
+        .skickatTidpunkt(source.getSkickatTidpunkt())
+        .patient(patientConverter.convert(source.getPatient()))
+        .skapadAv(hosPersonalConverter.convert(source.getSkapadAv()))
+        .relation(
+            Stream.ofNullable(source.getRelation())
+                .flatMap(List::stream)
+                .map(this::convertRelation)
+                .toList())
+        .svar(convertSvarList(source.getSvar()))
+        .build();
   }
 
   public RelationDTO convertRelation(Relation source) {
-    final var target = new RelationDTO();
-    target.setTyp(convertTyp(source.getTyp()));
-    target.setIntygsId(intygIdConverter.convert(source.getIntygsId()));
-    return target;
+    return RelationDTO.builder()
+        .typ(convertTyp(source.getTyp()))
+        .intygsId(intygIdConverter.convert(source.getIntygsId()))
+        .build();
   }
 
   private CodeTypeDTO convertTyp(TypAvIntyg source) {
-    final var target = new CodeTypeDTO();
-    target.setCode(source.getCode());
-    target.setCodeSystem(source.getCodeSystem());
-    target.setDisplayName(source.getDisplayName());
-    return target;
+    return CodeTypeDTO.builder()
+        .code(source.getCode())
+        .codeSystem(source.getCodeSystem())
+        .displayName(source.getDisplayName())
+        .build();
   }
 
   private CodeTypeDTO convertTyp(TypAvRelation source) {
-    final var target = new CodeTypeDTO();
-    target.setCode(source.getCode());
-    target.setCodeSystem(source.getCodeSystem());
-    target.setDisplayName(source.getDisplayName());
-    return target;
+    return CodeTypeDTO.builder()
+        .code(source.getCode())
+        .codeSystem(source.getCodeSystem())
+        .displayName(source.getDisplayName())
+        .build();
   }
 
   private List<SvarDTO> convertSvarList(List<Svar> source) {
@@ -74,47 +72,43 @@ public class IntygConverter {
   }
 
   private SvarDTO convertSvar(Svar source) {
-    final var target = new SvarDTO();
-    target.setId(source.getId());
-    target.setInstans(String.valueOf(source.getInstans()));
-    target.setDelsvar(source.getDelsvar().stream().map(this::convertDelsvar).toList());
-    return target;
+    return SvarDTO.builder()
+        .id(source.getId())
+        .instans(String.valueOf(source.getInstans()))
+        .delsvar(source.getDelsvar().stream().map(this::convertDelsvar).toList())
+        .build();
   }
 
   private DelsvarDTO convertDelsvar(Svar.Delsvar source) {
-    final var target = new DelsvarDTO();
-    target.setId(source.getId());
+    final var builder = DelsvarDTO.builder().id(source.getId());
     if (source.getContent().size() > 1
         && source.getContent().get(1) instanceof JAXBElement<?> jaxbElement) {
       if (jaxbElement.getValue() instanceof CVType cvType) {
-        target.setCv(convertCv(cvType));
+        builder.cv(convertCv(cvType));
       } else if (jaxbElement.getValue() instanceof DatePeriodType datePeriodType) {
-        target.setDatePeriod(convertDatePeriod(datePeriodType));
+        builder.datePeriod(convertDatePeriod(datePeriodType));
       }
     } else if (source.getContent().get(0) instanceof JAXBElement<?> jaxbElement) {
       if (jaxbElement.getValue() instanceof CVType cvType) {
-        target.setCv(convertCv(cvType));
+        builder.cv(convertCv(cvType));
       } else if (jaxbElement.getValue() instanceof DatePeriodType datePeriodType) {
-        target.setDatePeriod(convertDatePeriod(datePeriodType));
+        builder.datePeriod(convertDatePeriod(datePeriodType));
       }
     } else {
-      target.setValue((String) source.getContent().getFirst());
+      builder.value((String) source.getContent().getFirst());
     }
-    return target;
+    return builder.build();
   }
 
   private CodeTypeDTO convertCv(CVType source) {
-    final var target = new CodeTypeDTO();
-    target.setCode(source.getCode());
-    target.setCodeSystem(source.getCodeSystem());
-    target.setDisplayName(source.getDisplayName());
-    return target;
+    return CodeTypeDTO.builder()
+        .code(source.getCode())
+        .codeSystem(source.getCodeSystem())
+        .displayName(source.getDisplayName())
+        .build();
   }
 
   private DelsvarDTO.DatePeriod convertDatePeriod(DatePeriodType source) {
-    final var target = new DelsvarDTO.DatePeriod();
-    target.setStart(source.getStart());
-    target.setEnd(source.getEnd());
-    return target;
+    return DelsvarDTO.DatePeriod.builder().start(source.getStart()).end(source.getEnd()).build();
   }
 }
