@@ -1,5 +1,6 @@
 plugins {
-    id 'org.springframework.boot' version "3.5.10"
+    alias(libs.plugins.org.springframework.boot)
+    alias(libs.plugins.org.cyclonedx.bom)
 }
 
 tasks.named('bootJar') {
@@ -12,23 +13,23 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     implementation "org.apache.cxf:cxf-spring-boot-starter-jaxws:${cxfVersion}"
-    implementation "org.apache.cxf:cxf-rt-features-logging:${cxfVersion}"
+    implementation "org.apache.cxf:cxf-rt-features-logging"
 
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
-    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0"
-    implementation "codes.rafael.jaxb2_commons:jaxb2-basics:${jaxb2Version}"
+    implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:${springdocVersion}"
+    implementation "codes.rafael.jaxb2_commons:jaxb2-basics"
 
     implementation "se.riv.clinicalprocess.healthcond.certificate:clinicalprocess-healthcond-certificate-schemas:${rivtaClinicalprocessSchemasVersion}"
     implementation "se.riv.informationsecurity.auditing.log:informationsecurity-auditing-log-schemas:${informationSecurityAuditingLogSchemas}"
 
-    implementation 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+    annotationProcessor "org.projectlombok:lombok"
+    testAnnotationProcessor "org.projectlombok:lombok"
+    testCompileOnly "org.projectlombok:lombok"
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 bootRun {

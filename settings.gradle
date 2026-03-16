@@ -1,10 +1,15 @@
-pluginManagement {
+dependencyResolutionManagement {
     repositories {
-        maven { url 'https://repo.spring.io/milestone' }
-        maven { url 'https://repo.spring.io/snapshot' }
+        mavenLocal()
+        maven { url = "https://nexus.drift.inera.se/repository/it-public/" }
         gradlePluginPortal()
     }
+    versionCatalogs {
+        libs {
+            from("se.inera.intyg.bom:catalog:${settings.ext.intygBomVersion}")
+        }
+    }
 }
-rootProject.name = 'intyg-mock-service'
 
+rootProject.name = 'intyg-mock-service'
 include 'app', 'integration-test'

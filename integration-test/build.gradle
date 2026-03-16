@@ -2,7 +2,6 @@ dependencies {
     testImplementation project(':app')
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
@@ -30,6 +29,10 @@ testing {
             targets.all {
                 testTask.configure {
                     shouldRunAfter(test)
+                    jvmArgs += [
+                        "-javaagent:${configurations.mockitoAgent.asPath}",
+                        "-Xshare:off"
+                    ]
                 }
             }
         }

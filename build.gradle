@@ -1,16 +1,19 @@
 plugins {
-    id 'com.diffplug.spotless' version '6.25.0'
-    id 'io.spring.dependency-management' version '1.1.7'
-    id 'org.springframework.boot' version '3.5.10'
+    alias(libs.plugins.com.diffplug.spotless)
+    alias(libs.plugins.com.github.ben.manes.versions)
+    alias(libs.plugins.org.cyclonedx.bom)
+    alias(libs.plugins.org.sonarqube)
+    alias(libs.plugins.org.springframework.boot)
 }
 
+apply from: 'gradle/configureIntygBom.gradle'
+
 ext {
-    cxfVersion = "4.1.4"
     informationSecurityAuditingLogSchemas = "2.0.1.3"
-    jaxb2Version = "3.0.0"
     rivtaClinicalprocessSchemasVersion = "4.0.5.4"
 
-    springbootMavenBomVersion = "3.5.10"
+    cxfVersion = "4.1.4"
+    springdocVersion = "2.6.0"
 }
 
 springBoot {
@@ -19,34 +22,40 @@ springBoot {
 
 allprojects {
     apply plugin: 'java'
+    apply plugin: 'test-report-aggregation'
 
     group = 'se.inera.intyg.intygmockservice'
     version = System.properties['buildVersion'] ?: '0.0.1-SNAPSHOT'
 
     repositories {
         mavenLocal()
-        maven { url "https://nexus.drift.inera.se/repository/it-public/" }
+        maven { url = "https://nexus.drift.inera.se/repository/it-public/" }
         mavenCentral()
     }
 }
 
 subprojects {
     apply plugin: 'com.diffplug.spotless'
-    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'jacoco'
 
     java {
         toolchain {
-            languageVersion = JavaLanguageVersion.of(21)
+            languageVersion = JavaLanguageVersion.of(javaVersion)
         }
     }
 
-    dependencyManagement {
-        imports {
-            mavenBom "org.springframework.boot:spring-boot-dependencies:${springbootMavenBomVersion}"
+    spotless {
+        java {
+            target 'src/*/java/**/*.java'
+            removeUnusedImports()
+            forbidWildcardImports()
+            googleJavaFormat(googleJavaFormatVersion)
+            formatAnnotations()
         }
     }
 
     configurations {
+        mockitoAgent
         compileOnly {
             extendsFrom annotationProcessor
         }
@@ -57,8 +66,18 @@ subprojects {
         options.compilerArgs.add("-parameters")
     }
 
+    dependencies {
+        implementation platform("se.inera.intyg.bom:platform:${intygBomVersion}")
+        annotationProcessor platform("se.inera.intyg.bom:platform:${intygBomVersion}")
+        testImplementation platform("se.inera.intyg.bom:platform:${intygBomVersion}")
+        testAnnotationProcessor platform("se.inera.intyg.bom:platform:${intygBomVersion}")
+        mockitoAgent platform("se.inera.intyg.bom:platform:${intygBomVersion}")
+        mockitoAgent("org.mockito:mockito-core") { transitive = false }
+    }
+
     test {
         jvmArgs += [
+                "-javaagent:${configurations.mockitoAgent.asPath}",
                 "-Xshare:off"
         ]
     }
@@ -71,14 +90,16 @@ subprojects {
         }
     }
 
-    spotless {
-        java {
-            googleJavaFormat()
-            targetExclude('**/generated/**', '**/build/**')
-            removeUnusedImports()
-            endWithNewline()
-            trimTrailingWhitespace()
-            formatAnnotations()
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.required = true
+            html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+        }
+        afterEvaluate {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it, exclude: ["**/testability/**", "**/integrationtest/**"])
+            }))
         }
     }
 }
