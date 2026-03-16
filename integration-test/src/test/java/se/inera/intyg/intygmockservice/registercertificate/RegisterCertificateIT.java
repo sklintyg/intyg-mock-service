@@ -16,9 +16,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import se.inera.intyg.intygmockservice.IntygMockServiceApplication;
 import se.inera.intyg.intygmockservice.registercertificate.dto.RegisterCertificateDTO;
 
+@ActiveProfiles("integration-test")
 @SpringBootTest(classes = IntygMockServiceApplication.class, webEnvironment = RANDOM_PORT)
 class RegisterCertificateIT {
 

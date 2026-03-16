@@ -1,3 +1,16 @@
+app:
+  repository:
+    certificate-status-update-for-care:
+      max-size: 1000
+    register-certificate:
+      max-size: 1000
+    revoke-certificate:
+      max-size: 1000
+    send-message-to-recipient:
+      max-size: 1000
+    store-log:
+      max-size: 1000
+
 spring:
   application:
     name: intyg-mock-service
@@ -11,16 +24,3 @@ springdoc:
   swagger-ui:
     path: /swagger-ui
     enabled: true
-
-app:
-  repository:
-    register-certificate:
-      max-size: 1000
-    revoke-certificate:
-      max-size: 1000
-    send-message-to-recipient:
-      max-size: 1000
-    certificate-status-update-for-care:
-      max-size: 1000
-    store-log:
-      max-size: 1000
