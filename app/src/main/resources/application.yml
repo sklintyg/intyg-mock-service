@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: intyg-mock-service
+
+logging:
+  structured:
+    format:
+      console: ecs
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+    enabled: true
+
+app:
+  repository:
+    register-certificate:
+      max-size: 1000
+    revoke-certificate:
+      max-size: 1000
+    send-message-to-recipient:
+      max-size: 1000
+    certificate-status-update-for-care:
+      max-size: 1000
+    store-log:
+      max-size: 1000

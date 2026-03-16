@@ -1,0 +1,7 @@
+logging:
+  structured:
+    format:
+      console:
+
+server:
+  port: 18888
