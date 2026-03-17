@@ -7,21 +7,21 @@ This document captures suggested future development items for intyg-mock-service
 
 ---
 
-## REST API Parity — RevokeCertificate
+## ~~REST API Parity — RevokeCertificate~~ ✓ Done
 
-The three items below bring `RevokeCertificate` to the same level as `RegisterCertificate`.
+~~The three items below bring `RevokeCertificate` to the same level as `RegisterCertificate`.~~
 
-### RC-01 — Add GET and DELETE by certificate ID for RevokeCertificate
+### ~~RC-01 — Add GET and DELETE by certificate ID for RevokeCertificate~~ ✓ Done
 
-Add `GET /api/revoke-certificate/{certificateId}` returning the matching DTO (404 if not found) and `DELETE /api/revoke-certificate/{certificateId}` to remove a single entry. Add `findByCertificateId` and `deleteById` to `RevokeCertificateRepository`. Add integration tests.
+~~Add `GET /api/revoke-certificate/{certificateId}` returning the matching DTO (404 if not found) and `DELETE /api/revoke-certificate/{certificateId}` to remove a single entry. Add `findByCertificateId` and `deleteById` to `RevokeCertificateRepository`. Add integration tests.~~
 
-### RC-02 — Add GET by logical address for RevokeCertificate
+### ~~RC-02 — Add GET by logical address for RevokeCertificate~~ ✓ Done
 
-Add `GET /api/revoke-certificate/logical-address/{logicalAddress}` returning a list of matching DTOs. Add `findByLogicalAddress` to `RevokeCertificateRepository` delegating to `findByKey`. Add integration test.
+~~Add `GET /api/revoke-certificate/logical-address/{logicalAddress}` returning a list of matching DTOs. Add `findByLogicalAddress` to `RevokeCertificateRepository` delegating to `findByKey`. Add integration test.~~
 
-### RC-03 — Add GET by person ID for RevokeCertificate
+### ~~RC-03 — Add GET by person ID for RevokeCertificate~~ ✓ Done
 
-Add `GET /api/revoke-certificate/person/{personId}` filtering by `patientPersonId.extension` with the same hyphen-normalisation used in `RegisterCertificate`. Add `findByPersonId` to `RevokeCertificateRepository`. Add integration test.
+~~Add `GET /api/revoke-certificate/person/{personId}` filtering by `patientPersonId.extension` with the same hyphen-normalisation used in `RegisterCertificate`. Add `findByPersonId` to `RevokeCertificateRepository`. Add integration test.~~
 
 ---
 

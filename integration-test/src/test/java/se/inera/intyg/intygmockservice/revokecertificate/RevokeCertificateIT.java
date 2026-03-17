@@ -62,6 +62,97 @@ class RevokeCertificateIT {
     assertEquals(0, response.getBody().length);
   }
 
+  @Test
+  void shouldReturnRevokeCertificateById() throws IOException {
+    postSoap("soap/revoke-certificate.xml");
+
+    final var response =
+        restTemplate.getForEntity(REST_PATH + "/it-revoke-cert-001", RevokeCertificateDTO.class);
+
+    assertEquals(200, response.getStatusCode().value());
+    assertEquals("it-revoke-cert-001", response.getBody().getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldReturn404WhenRevokeCertificateNotFoundById() {
+    final var response =
+        restTemplate.getForEntity(REST_PATH + "/unknown-id", RevokeCertificateDTO.class);
+
+    assertEquals(404, response.getStatusCode().value());
+  }
+
+  @Test
+  void shouldDeleteRevokeCertificateById() throws IOException {
+    postSoap("soap/revoke-certificate.xml");
+    postSoap("soap/revoke-certificate-2.xml");
+
+    restTemplate.delete(REST_PATH + "/it-revoke-cert-001");
+
+    final var response = restTemplate.getForEntity(REST_PATH, RevokeCertificateDTO[].class);
+    final var items = response.getBody();
+
+    assertEquals(1, items.length);
+    assertEquals("it-revoke-cert-002", items[0].getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldReturnRevokeCertificatesByLogicalAddress() throws IOException {
+    postSoap("soap/revoke-certificate.xml");
+    postSoap("soap/revoke-certificate-2.xml");
+
+    final var response =
+        restTemplate.getForEntity(REST_PATH + "/logical-address/FK", RevokeCertificateDTO[].class);
+
+    assertEquals(2, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnEmptyListForUnknownLogicalAddress() throws IOException {
+    postSoap("soap/revoke-certificate.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/logical-address/UNKNOWN", RevokeCertificateDTO[].class);
+
+    assertEquals(0, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnRevokeCertificatesByPersonId() throws IOException {
+    postSoap("soap/revoke-certificate.xml");
+    postSoap("soap/revoke-certificate-2.xml");
+
+    final var response =
+        restTemplate.getForEntity(REST_PATH + "/person/191212121212", RevokeCertificateDTO[].class);
+    final var items = response.getBody();
+
+    assertEquals(1, items.length);
+    assertEquals("it-revoke-cert-001", items[0].getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldNormalisePersonIdWithHyphen() throws IOException {
+    postSoap("soap/revoke-certificate.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/person/19121212-1212", RevokeCertificateDTO[].class);
+    final var items = response.getBody();
+
+    assertEquals(1, items.length);
+    assertEquals("it-revoke-cert-001", items[0].getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldReturnEmptyListForUnknownPersonId() throws IOException {
+    postSoap("soap/revoke-certificate.xml");
+
+    final var response =
+        restTemplate.getForEntity(REST_PATH + "/person/000000000000", RevokeCertificateDTO[].class);
+
+    assertEquals(0, response.getBody().length);
+  }
+
   private void postSoap(String resourcePath) throws IOException {
     final var resource = new ClassPathResource(resourcePath);
     final var body = resource.getContentAsString(StandardCharsets.UTF_8);
