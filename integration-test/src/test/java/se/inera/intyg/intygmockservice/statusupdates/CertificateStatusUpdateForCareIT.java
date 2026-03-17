@@ -65,6 +65,145 @@ class CertificateStatusUpdateForCareIT {
     assertEquals(0, response.getBody().length);
   }
 
+  @Test
+  void shouldReturnStatusUpdatesByCertificateId() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
+    postSoap("soap/certificate-status-update-for-care-2.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/it-status-update-001", CertificateStatusUpdateForCareDTO[].class);
+    final var items = response.getBody();
+
+    assertEquals(1, items.length);
+    assertEquals("it-status-update-001", items[0].getIntyg().getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldReturnEmptyListForUnknownCertificateId() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/unknown-cert-id", CertificateStatusUpdateForCareDTO[].class);
+
+    assertEquals(0, response.getBody().length);
+  }
+
+  @Test
+  void shouldDeleteStatusUpdatesByCertificateId() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
+    postSoap("soap/certificate-status-update-for-care-2.xml");
+
+    restTemplate.delete(REST_PATH + "/it-status-update-001");
+
+    final var response =
+        restTemplate.getForEntity(REST_PATH, CertificateStatusUpdateForCareDTO[].class);
+    assertEquals(1, response.getBody().length);
+    assertEquals(
+        "it-status-update-002", response.getBody()[0].getIntyg().getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldReturnStatusUpdatesByLogicalAddress() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
+    postSoap("soap/certificate-status-update-for-care-2.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/logical-address/TSTNMT2321000156-ALMC",
+            CertificateStatusUpdateForCareDTO[].class);
+
+    assertEquals(2, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnEmptyListForUnknownLogicalAddress() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/logical-address/UNKNOWN-ADDRESS",
+            CertificateStatusUpdateForCareDTO[].class);
+
+    assertEquals(0, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnStatusUpdatesByPersonId() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
+    postSoap("soap/certificate-status-update-for-care-2.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/person/191212121212", CertificateStatusUpdateForCareDTO[].class);
+
+    assertEquals(1, response.getBody().length);
+    assertEquals(
+        "it-status-update-001", response.getBody()[0].getIntyg().getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldNormalisePersonIdWithHyphen() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/person/19121212-1212", CertificateStatusUpdateForCareDTO[].class);
+
+    assertEquals(1, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnEmptyListForUnknownPersonId() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/person/000000000000", CertificateStatusUpdateForCareDTO[].class);
+
+    assertEquals(0, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnStatusUpdatesByEventCodeSkapat() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
+    postSoap("soap/certificate-status-update-for-care-2.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/event-type/SKAPAT", CertificateStatusUpdateForCareDTO[].class);
+
+    assertEquals(1, response.getBody().length);
+    assertEquals(
+        "it-status-update-001", response.getBody()[0].getIntyg().getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldReturnStatusUpdatesByEventCodeSkicka() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
+    postSoap("soap/certificate-status-update-for-care-2.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/event-type/SKICKA", CertificateStatusUpdateForCareDTO[].class);
+
+    assertEquals(1, response.getBody().length);
+    assertEquals(
+        "it-status-update-002", response.getBody()[0].getIntyg().getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldReturnEmptyListForUnknownEventCode() throws IOException {
+    postSoap("soap/certificate-status-update-for-care.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/event-type/UNKNOWN", CertificateStatusUpdateForCareDTO[].class);
+
+    assertEquals(0, response.getBody().length);
+  }
+
   private void postSoap(String resourcePath) throws IOException {
     final var resource = new ClassPathResource(resourcePath);
     final var body = resource.getContentAsString(StandardCharsets.UTF_8);

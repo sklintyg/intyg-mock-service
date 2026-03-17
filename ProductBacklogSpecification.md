@@ -47,23 +47,25 @@ This document captures suggested future development items for intyg-mock-service
 
 ---
 
-## REST API Parity — CertificateStatusUpdateForCare
+## ~~REST API Parity — CertificateStatusUpdateForCare~~ ✓ Done
 
-### CS-01 — Add GET and DELETE by certificate ID for CertificateStatusUpdateForCare
+~~The four items below bring `CertificateStatusUpdateForCare` to the same level as `RevokeCertificate` and `SendMessageToRecipient`.~~
 
-Add `GET /api/certificate-status-for-care/{certificateId}` returning matching DTOs and `DELETE /api/certificate-status-for-care/{certificateId}` to remove entries for a certificate. Add `findByCertificateId` and `deleteByCertificateId` to `CertificateStatusUpdateForCareRepository`. Add integration tests.
+### ~~CS-01 — Add GET and DELETE by certificate ID for CertificateStatusUpdateForCare~~ ✓ Done
 
-### CS-02 — Add GET by logical address for CertificateStatusUpdateForCare
+~~Add `GET /api/certificate-status-for-care/{certificateId}` returning matching DTOs and `DELETE /api/certificate-status-for-care/{certificateId}` to remove entries for a certificate. Add `findByCertificateId` and `deleteByCertificateId` to `CertificateStatusUpdateForCareRepository`. Add integration tests.~~
 
-Add `GET /api/certificate-status-for-care/logical-address/{logicalAddress}`. Add `findByLogicalAddress` to the repository. Add integration test.
+### ~~CS-02 — Add GET by logical address for CertificateStatusUpdateForCare~~ ✓ Done
 
-### CS-03 — Add GET by person ID for CertificateStatusUpdateForCare
+~~Add `GET /api/certificate-status-for-care/logical-address/{logicalAddress}`. Add `findByLogicalAddress` to the repository. Add integration test.~~
 
-Add `GET /api/certificate-status-for-care/person/{personId}` filtering by `intyg.patient.personId.extension` with hyphen normalisation. Add `findByPersonId` to the repository. Add integration test.
+### ~~CS-03 — Add GET by person ID for CertificateStatusUpdateForCare~~ ✓ Done
 
-### CS-04 — Add GET by event type for CertificateStatusUpdateForCare
+~~Add `GET /api/certificate-status-for-care/person/{personId}` filtering by `intyg.patient.personId.extension` with hyphen normalisation. Add `findByPersonId` to the repository. Add integration test.~~
 
-Add `GET /api/certificate-status-for-care/event-type/{eventCode}` filtering by `handelse.handelsekod.code`. Useful for asserting that a specific status event (e.g. `SKICKA`, `MAKULERA`) was received. Add `findByEventCode` to the repository. Add integration test.
+### ~~CS-04 — Add GET by event type for CertificateStatusUpdateForCare~~ ✓ Done
+
+~~Add `GET /api/certificate-status-for-care/event-type/{eventCode}` filtering by `handelse.handelsekod.code`. Useful for asserting that a specific status event (e.g. `SKICKA`, `MAKULERA`) was received. Add `findByEventCode` to the repository. Add integration test.~~
 
 ---
 

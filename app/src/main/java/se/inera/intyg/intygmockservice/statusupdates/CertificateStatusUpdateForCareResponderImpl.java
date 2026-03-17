@@ -1,10 +1,7 @@
 package se.inera.intyg.intygmockservice.statusupdates;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygmockservice.statusupdates.converter.CertificateStatusUpdateForCareConverter;
-import se.inera.intyg.intygmockservice.statusupdates.repository.CertificateStatusUpdateForCareRepository;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
@@ -12,44 +9,23 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class CertificateStatusUpdateForCareResponderImpl
     implements CertificateStatusUpdateForCareResponderInterface {
 
-  private final CertificateStatusUpdateForCareRepository repository;
-  private final CertificateStatusUpdateForCareConverter converter;
+  private final CertificateStatusUpdateForCareService service;
 
   @Override
   public CertificateStatusUpdateForCareResponseType certificateStatusUpdateForCare(
       String logicalAddress,
       CertificateStatusUpdateForCareType certificateStatusUpdateForCareType) {
 
-    repository.add(logicalAddress, certificateStatusUpdateForCareType);
+    service.store(logicalAddress, certificateStatusUpdateForCareType);
 
     final var response = new CertificateStatusUpdateForCareResponseType();
     final var result = new ResultType();
     response.setResult(result);
     result.setResultCode(ResultCodeType.OK);
-
-    final var statusUpdateForCareDTO = converter.convert(certificateStatusUpdateForCareType);
-
-    log.atInfo()
-        .setMessage(
-            "Certificate '%s' received status update of type '%s'"
-                .formatted(
-                    statusUpdateForCareDTO.getIntyg().getIntygsId().getExtension(),
-                    statusUpdateForCareDTO.getHandelse().getHandelsekod().getCode()))
-        .addKeyValue("event.logical_address", logicalAddress)
-        .addKeyValue(
-            "event.certificate.id", statusUpdateForCareDTO.getIntyg().getIntygsId().getExtension())
-        .addKeyValue("event.type", statusUpdateForCareDTO.getHandelse().getHandelsekod().getCode())
-        .addKeyValue(
-            "event.handled_by",
-            statusUpdateForCareDTO.getHanteratAv() != null
-                ? statusUpdateForCareDTO.getHanteratAv().getExtension()
-                : null)
-        .log();
 
     return response;
   }

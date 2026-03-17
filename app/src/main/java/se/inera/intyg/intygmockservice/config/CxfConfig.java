@@ -13,8 +13,7 @@ import se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateServic
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.SendMessageToRecipientResponderImpl;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.SendMessageToRecipientService;
 import se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareResponderImpl;
-import se.inera.intyg.intygmockservice.statusupdates.converter.CertificateStatusUpdateForCareConverter;
-import se.inera.intyg.intygmockservice.statusupdates.repository.CertificateStatusUpdateForCareRepository;
+import se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareService;
 import se.inera.intyg.intygmockservice.storelog.StoreLogResponderImpl;
 import se.inera.intyg.intygmockservice.storelog.converter.StoreLogTypeConverter;
 import se.inera.intyg.intygmockservice.storelog.repository.StoreLogTypeRepository;
@@ -27,11 +26,11 @@ public class CxfConfig {
 
   @Bean
   public EndpointImpl certificateStatusUpdateForCareEndpoint(
-      CertificateStatusUpdateForCareConverter converter,
-      CertificateStatusUpdateForCareRepository repository) {
+      CertificateStatusUpdateForCareService certificateStatusUpdateForCareService) {
     final var endpoint =
         new EndpointImpl(
-            bus, new CertificateStatusUpdateForCareResponderImpl(repository, converter));
+            bus,
+            new CertificateStatusUpdateForCareResponderImpl(certificateStatusUpdateForCareService));
 
     endpoint.publish(
         "/clinicalprocess/healthcond/certificate/CertificateStatusUpdateForCare/3/rivtabp21");
