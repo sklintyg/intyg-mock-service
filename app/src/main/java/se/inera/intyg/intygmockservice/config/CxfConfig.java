@@ -9,8 +9,7 @@ import se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateRe
 import se.inera.intyg.intygmockservice.registercertificate.converter.RegisterCertificateConverter;
 import se.inera.intyg.intygmockservice.registercertificate.repository.RegisterCertificateRepository;
 import se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateResponderImpl;
-import se.inera.intyg.intygmockservice.revokecertificate.converter.RevokeCertificateConverter;
-import se.inera.intyg.intygmockservice.revokecertificate.repository.RevokeCertificateRepository;
+import se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateService;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.SendMessageToRecipientResponderImpl;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.converter.SendMessageToRecipientConverter;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.repository.SendMessageToRecipientRepository;
@@ -51,10 +50,9 @@ public class CxfConfig {
   }
 
   @Bean
-  public EndpointImpl revokeCertificateEndpoint(
-      RevokeCertificateConverter converter, RevokeCertificateRepository repository) {
+  public EndpointImpl revokeCertificateEndpoint(RevokeCertificateService revokeCertificateService) {
     final var endpoint =
-        new EndpointImpl(bus, new RevokeCertificateResponderImpl(repository, converter));
+        new EndpointImpl(bus, new RevokeCertificateResponderImpl(revokeCertificateService));
 
     endpoint.publish("/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21");
     return endpoint;

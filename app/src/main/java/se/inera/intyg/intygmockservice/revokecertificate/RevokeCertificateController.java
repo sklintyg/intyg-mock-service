@@ -10,9 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import se.inera.intyg.intygmockservice.revokecertificate.converter.RevokeCertificateConverter;
 import se.inera.intyg.intygmockservice.revokecertificate.dto.RevokeCertificateDTO;
-import se.inera.intyg.intygmockservice.revokecertificate.repository.RevokeCertificateRepository;
 
 @RestController
 @RequestMapping("/api/revoke-certificate")
@@ -20,15 +18,14 @@ import se.inera.intyg.intygmockservice.revokecertificate.repository.RevokeCertif
 @Tag(name = "RevokeCertificate", description = "API for managing certificate revocations")
 public class RevokeCertificateController {
 
-  private final RevokeCertificateRepository repository;
-  private final RevokeCertificateConverter revokeCertificateConverter;
+  private final RevokeCertificateService service;
 
   @Operation(
       summary = "Get all revoke certificates",
       description = "Retrieve all revoke certificates")
   @GetMapping
   public List<RevokeCertificateDTO> getAllRevokeCertificates() {
-    return repository.findAll().stream().map(revokeCertificateConverter::convert).toList();
+    return service.getAll();
   }
 
   @Operation(
@@ -36,7 +33,7 @@ public class RevokeCertificateController {
       description = "Delete all revoke certificates")
   @DeleteMapping
   public void deleteAllRevokeCertificates() {
-    repository.deleteAll();
+    service.deleteAll();
   }
 
   @Operation(
@@ -45,11 +42,10 @@ public class RevokeCertificateController {
   @GetMapping("/{certificateId}")
   public ResponseEntity<RevokeCertificateDTO> getRevokeCertificateById(
       @PathVariable final String certificateId) {
-    return repository
-        .findByCertificateId(certificateId)
-        .map(revokeCertificateConverter::convert)
+    return service
+        .getById(certificateId)
         .map(ResponseEntity::ok)
-        .orElseGet(() -> ResponseEntity.notFound().build());
+        .orElseGet(ResponseEntity.notFound()::build);
   }
 
   @Operation(
@@ -57,7 +53,7 @@ public class RevokeCertificateController {
       description = "Delete a single revoke certificate by its certificate ID")
   @DeleteMapping("/{certificateId}")
   public void deleteRevokeCertificateById(@PathVariable final String certificateId) {
-    repository.deleteById(certificateId);
+    service.deleteById(certificateId);
   }
 
   @Operation(
@@ -66,9 +62,7 @@ public class RevokeCertificateController {
   @GetMapping("/logical-address/{logicalAddress}")
   public List<RevokeCertificateDTO> getRevokeCertificatesByLogicalAddress(
       @PathVariable final String logicalAddress) {
-    return repository.findByLogicalAddress(logicalAddress).stream()
-        .map(revokeCertificateConverter::convert)
-        .toList();
+    return service.getByLogicalAddress(logicalAddress);
   }
 
   @Operation(
@@ -77,8 +71,6 @@ public class RevokeCertificateController {
   @GetMapping("/person/{personId}")
   public List<RevokeCertificateDTO> getRevokeCertificatesByPersonId(
       @PathVariable final String personId) {
-    return repository.findByPersonId(personId.replace("-", "")).stream()
-        .map(revokeCertificateConverter::convert)
-        .toList();
+    return service.getByPersonId(personId);
   }
 }
