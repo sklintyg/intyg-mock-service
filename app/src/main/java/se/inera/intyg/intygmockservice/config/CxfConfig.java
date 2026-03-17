@@ -11,8 +11,7 @@ import se.inera.intyg.intygmockservice.registercertificate.repository.RegisterCe
 import se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateResponderImpl;
 import se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateService;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.SendMessageToRecipientResponderImpl;
-import se.inera.intyg.intygmockservice.sendmessagetorecipient.converter.SendMessageToRecipientConverter;
-import se.inera.intyg.intygmockservice.sendmessagetorecipient.repository.SendMessageToRecipientRepository;
+import se.inera.intyg.intygmockservice.sendmessagetorecipient.SendMessageToRecipientService;
 import se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareResponderImpl;
 import se.inera.intyg.intygmockservice.statusupdates.converter.CertificateStatusUpdateForCareConverter;
 import se.inera.intyg.intygmockservice.statusupdates.repository.CertificateStatusUpdateForCareRepository;
@@ -60,9 +59,10 @@ public class CxfConfig {
 
   @Bean
   public EndpointImpl sendMessageToRecipientEndpoint(
-      SendMessageToRecipientConverter converter, SendMessageToRecipientRepository repository) {
+      SendMessageToRecipientService sendMessageToRecipientService) {
     final var endpoint =
-        new EndpointImpl(bus, new SendMessageToRecipientResponderImpl(repository, converter));
+        new EndpointImpl(
+            bus, new SendMessageToRecipientResponderImpl(sendMessageToRecipientService));
 
     endpoint.publish("/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21");
     return endpoint;

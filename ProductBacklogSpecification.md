@@ -25,23 +25,25 @@ This document captures suggested future development items for intyg-mock-service
 
 ---
 
-## REST API Parity — SendMessageToRecipient
+## ~~REST API Parity — SendMessageToRecipient~~ ✓ Done
 
-### SM-01 — Add GET and DELETE by message ID for SendMessageToRecipient
+~~The four items below bring `SendMessageToRecipient` to the same level as `RevokeCertificate`.~~
 
-Add `GET /api/send-message-to-recipient/{messageId}` returning the matching DTO (404 if not found) and `DELETE /api/send-message-to-recipient/{messageId}` to remove a single message. Add `findByMessageId` and `deleteByMessageId` to `SendMessageToRecipientRepository`. Add integration tests.
+### ~~SM-01 — Add GET and DELETE by message ID for SendMessageToRecipient~~ ✓ Done
 
-### SM-02 — Add GET by certificate ID for SendMessageToRecipient
+~~Add `GET /api/send-message-to-recipient/{messageId}` returning the matching DTO (404 if not found) and `DELETE /api/send-message-to-recipient/{messageId}` to remove a single message. Add `findByMessageId` and `deleteByMessageId` to `SendMessageToRecipientRepository`. Add integration tests.~~
 
-Add `GET /api/send-message-to-recipient/certificate/{certificateId}` filtering by `intygsId.extension`. Add `findByCertificateId` to the repository. Add integration test.
+### ~~SM-02 — Add GET by certificate ID for SendMessageToRecipient~~ ✓ Done
 
-### SM-03 — Add GET by person ID for SendMessageToRecipient
+~~Add `GET /api/send-message-to-recipient/certificate/{certificateId}` filtering by `intygsId.extension`. Add `findByCertificateId` to the repository. Add integration test.~~
 
-Add `GET /api/send-message-to-recipient/person/{personId}` filtering by `patientPersonId.extension` with hyphen normalisation. Add `findByPersonId` to the repository. Add integration test.
+### ~~SM-03 — Add GET by person ID for SendMessageToRecipient~~ ✓ Done
 
-### SM-04 — Add GET by logical address for SendMessageToRecipient
+~~Add `GET /api/send-message-to-recipient/person/{personId}` filtering by `patientPersonId.extension` with hyphen normalisation. Add `findByPersonId` to the repository. Add integration test.~~
 
-Add `GET /api/send-message-to-recipient/logical-address/{logicalAddress}` returning messages stored under that logical address. Add `findByLogicalAddress` to the repository. Add integration test.
+### ~~SM-04 — Add GET by logical address for SendMessageToRecipient~~ ✓ Done
+
+~~Add `GET /api/send-message-to-recipient/logical-address/{logicalAddress}` returning messages stored under that logical address. Add `findByLogicalAddress` to the repository. Add integration test.~~
 
 ---
 

@@ -14,6 +14,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import se.inera.intyg.intygmockservice.IntygMockServiceApplication;
@@ -81,6 +82,117 @@ class SendMessageToRecipientIT {
     final var response =
         restTemplate.getForEntity(
             REST_PATH + "/recipient/UNKNOWN", SendMessageToRecipientDTO[].class);
+
+    assertEquals(0, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnMessageByMessageId() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
+
+    final var response =
+        restTemplate.getForEntity(REST_PATH + "/it-message-001", SendMessageToRecipientDTO.class);
+
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertEquals("it-message-001", response.getBody().getMeddelandeId());
+  }
+
+  @Test
+  void shouldReturn404WhenMessageNotFoundByMessageId() {
+    final var response =
+        restTemplate.getForEntity(REST_PATH + "/unknown-message", SendMessageToRecipientDTO.class);
+
+    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+  }
+
+  @Test
+  void shouldDeleteMessageByMessageId() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
+
+    restTemplate.delete(REST_PATH + "/it-message-001");
+
+    final var response = restTemplate.getForEntity(REST_PATH, SendMessageToRecipientDTO[].class);
+    assertEquals(0, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnMessagesByCertificateId() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/certificate/it-send-message-cert-001", SendMessageToRecipientDTO[].class);
+    final var items = response.getBody();
+
+    assertEquals(1, items.length);
+    assertEquals("it-send-message-cert-001", items[0].getIntygsId().getExtension());
+  }
+
+  @Test
+  void shouldReturnEmptyListForUnknownCertificateId() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/certificate/unknown-cert", SendMessageToRecipientDTO[].class);
+
+    assertEquals(0, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnMessagesByPersonId() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/person/191212121212", SendMessageToRecipientDTO[].class);
+    final var items = response.getBody();
+
+    assertEquals(1, items.length);
+    assertEquals("191212121212", items[0].getPatientPersonId().getExtension());
+  }
+
+  @Test
+  void shouldNormalisePersonIdWithHyphen() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/person/19121212-1212", SendMessageToRecipientDTO[].class);
+
+    assertEquals(1, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnEmptyListForUnknownPersonId() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/person/000000000000", SendMessageToRecipientDTO[].class);
+
+    assertEquals(0, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnMessagesByLogicalAddress() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/logical-address/FK", SendMessageToRecipientDTO[].class);
+    final var items = response.getBody();
+
+    assertEquals(1, items.length);
+  }
+
+  @Test
+  void shouldReturnEmptyListForUnknownLogicalAddress() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
+
+    final var response =
+        restTemplate.getForEntity(
+            REST_PATH + "/logical-address/UNKNOWN", SendMessageToRecipientDTO[].class);
 
     assertEquals(0, response.getBody().length);
   }
