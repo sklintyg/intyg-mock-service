@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import se.inera.intyg.intygmockservice.IntygMockServiceApplication;
+import se.inera.intyg.intygmockservice.common.dto.CountResponse;
 import se.inera.intyg.intygmockservice.registercertificate.dto.RegisterCertificateDTO;
 
 @ActiveProfiles("integration-test")
@@ -191,6 +192,23 @@ class RegisterCertificateIT {
             REST_PATH + "/person/000000000000", RegisterCertificateDTO[].class);
 
     assertEquals(0, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnZeroCountWhenEmpty() {
+    final var response = restTemplate.getForEntity(REST_PATH + "/count", CountResponse.class);
+
+    assertEquals(0, response.getBody().count());
+  }
+
+  @Test
+  void shouldReturnCountMatchingStoredCalls() throws IOException {
+    postSoap("soap/register-certificate.xml");
+    postSoap("soap/register-certificate-2.xml");
+
+    final var response = restTemplate.getForEntity(REST_PATH + "/count", CountResponse.class);
+
+    assertEquals(2, response.getBody().count());
   }
 
   private void postSoap(String resourcePath) throws IOException {

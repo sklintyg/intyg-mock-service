@@ -60,6 +60,10 @@ public class RegisterCertificateService {
     return repository.findByPersonId(normalized).stream().map(converter::convert).toList();
   }
 
+  public int getCount() {
+    return repository.count();
+  }
+
   public void deleteAll() {
     repository.deleteAll();
   }

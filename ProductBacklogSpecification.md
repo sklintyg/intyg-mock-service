@@ -71,20 +71,20 @@ This document captures suggested future development items for intyg-mock-service
 
 ## Cross-Cutting REST Enhancements
 
-### XC-01 — Add count endpoint for each module
+### ~~XC-01 — Add count endpoint for each module~~ ✓ Done
 
-Add `GET /api/{module}/count` returning `{"count": N}` for each of the five modules. Allows automated tests to assert "exactly N calls were received" without fetching all records.
+~~Add `GET /api/{module}/count` returning `{"count": N}` for each of the five modules. Allows automated tests to assert "exactly N calls were received" without fetching all records.~~
 
-Endpoints:
-- `GET /api/register-certificate/count`
-- `GET /api/revoke-certificate/count`
-- `GET /api/send-message-to-recipient/count`
-- `GET /api/certificate-status-for-care/count`
-- `GET /api/store-log/count`
+~~Endpoints:~~
+~~- `GET /api/register-certificate/count`~~
+~~- `GET /api/revoke-certificate/count`~~
+~~- `GET /api/send-message-to-recipient/count`~~
+~~- `GET /api/certificate-status-for-care/count`~~
+~~- `GET /api/store-log/count`~~
 
-### XC-02 — Add global reset endpoint
+### ~~XC-02 — Add global reset endpoint~~ ✓ Done
 
-Add `DELETE /api/reset` that calls `deleteAll()` on all five repositories in a single request. Useful as a `@BeforeEach` setup call in automated integration test suites that run against a shared instance.
+~~Add `DELETE /api/reset` that calls `deleteAll()` on all five repositories in a single request. Useful as a `@BeforeEach` setup call in automated integration test suites that run against a shared instance.~~
 
 ---
 

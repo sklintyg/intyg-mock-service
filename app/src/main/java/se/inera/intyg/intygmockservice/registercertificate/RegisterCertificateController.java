@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import se.inera.intyg.intygmockservice.common.dto.CountResponse;
 import se.inera.intyg.intygmockservice.registercertificate.dto.RegisterCertificateDTO;
 
 @RestController
@@ -69,6 +70,12 @@ public class RegisterCertificateController {
   public List<RegisterCertificateDTO> getCertificatesByPersonId(
       @PathVariable final String personId) {
     return registerCertificateService.getByPersonId(personId);
+  }
+
+  @Operation(summary = "Get count of stored register-certificate calls")
+  @GetMapping("/count")
+  public ResponseEntity<CountResponse> getCount() {
+    return ResponseEntity.ok(new CountResponse(registerCertificateService.getCount()));
   }
 
   @Operation(

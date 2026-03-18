@@ -69,6 +69,10 @@ public class StoreLogService {
     return logs;
   }
 
+  public int getCount() {
+    return repository.count();
+  }
+
   public void deleteAll() {
     log.atInfo()
         .setMessage("Deleting all store logs")

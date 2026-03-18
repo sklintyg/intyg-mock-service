@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import se.inera.intyg.intygmockservice.IntygMockServiceApplication;
+import se.inera.intyg.intygmockservice.common.dto.CountResponse;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
 
 @ActiveProfiles("integration-test")
@@ -195,6 +196,23 @@ class SendMessageToRecipientIT {
             REST_PATH + "/logical-address/UNKNOWN", SendMessageToRecipientDTO[].class);
 
     assertEquals(0, response.getBody().length);
+  }
+
+  @Test
+  void shouldReturnZeroCountWhenEmpty() {
+    final var response = restTemplate.getForEntity(REST_PATH + "/count", CountResponse.class);
+
+    assertEquals(0, response.getBody().count());
+  }
+
+  @Test
+  void shouldReturnCountMatchingStoredCalls() throws IOException {
+    postSoap("soap/send-message-to-recipient.xml");
+    postSoap("soap/send-message-to-recipient-2.xml");
+
+    final var response = restTemplate.getForEntity(REST_PATH + "/count", CountResponse.class);
+
+    assertEquals(2, response.getBody().count());
   }
 
   private void postSoap(String resourcePath) throws IOException {

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import se.inera.intyg.intygmockservice.common.dto.CountResponse;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
 
 @RestController
@@ -24,6 +25,12 @@ public class SendMessageToRecipientController {
   @Operation(summary = "Get all messages", description = "Retrieve all messages")
   public List<SendMessageToRecipientDTO> getAllMessages() {
     return service.getAll();
+  }
+
+  @GetMapping("/count")
+  @Operation(summary = "Get count of stored send-message-to-recipient calls")
+  public ResponseEntity<CountResponse> getCount() {
+    return ResponseEntity.ok(new CountResponse(service.getCount()));
   }
 
   @DeleteMapping

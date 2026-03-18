@@ -48,6 +48,10 @@ public abstract class AbstractInMemoryRepository<T> {
     insertionOrder.clear();
   }
 
+  public int count() {
+    return findAll().size();
+  }
+
   public void removeIf(Predicate<T> predicate) {
     insertionOrder.removeIf(entry -> predicate.test(entry.getValue()));
     repository.values().forEach(list -> list.removeIf(predicate));
