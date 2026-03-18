@@ -16,8 +16,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygmockservice.common.dto.IntygDTO.IntygsId;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.converter.SendMessageToRecipientConverter;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
+import se.inera.intyg.intygmockservice.sendmessagetorecipient.passthrough.SendMessageToRecipientPassthroughClient;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.repository.SendMessageToRecipientRepository;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @ExtendWith(MockitoExtension.class)
 class SendMessageToRecipientServiceTest {
@@ -28,19 +32,15 @@ class SendMessageToRecipientServiceTest {
 
   @Mock private SendMessageToRecipientRepository repository;
   @Mock private SendMessageToRecipientConverter converter;
+  @Mock private SendMessageToRecipientPassthroughClient passthroughClient;
 
   @InjectMocks private SendMessageToRecipientService service;
 
   @Test
   void shouldAddToRepositoryWhenStore() {
     final var type = new SendMessageToRecipientType();
-    final var dto =
-        SendMessageToRecipientDTO.builder()
-            .meddelandeId(MESSAGE_ID)
-            .intygsId(IntygsId.builder().root("root").extension(CERTIFICATE_ID).build())
-            .meddelande("content")
-            .build();
-    when(converter.convert(type)).thenReturn(dto);
+    when(converter.convert(type)).thenReturn(buildDto());
+    when(passthroughClient.forward(any(), any())).thenReturn(Optional.empty());
 
     service.store(LOGICAL_ADDRESS, type);
 
@@ -48,19 +48,38 @@ class SendMessageToRecipientServiceTest {
   }
 
   @Test
-  void shouldConvertWhenStore() {
+  void shouldDelegateToPassthroughClientWhenStore() {
     final var type = new SendMessageToRecipientType();
-    final var dto =
-        SendMessageToRecipientDTO.builder()
-            .meddelandeId(MESSAGE_ID)
-            .intygsId(IntygsId.builder().root("root").extension(CERTIFICATE_ID).build())
-            .meddelande("content")
-            .build();
-    when(converter.convert(type)).thenReturn(dto);
+    when(converter.convert(type)).thenReturn(buildDto());
+    when(passthroughClient.forward(any(), any())).thenReturn(Optional.empty());
 
     service.store(LOGICAL_ADDRESS, type);
 
-    verify(converter).convert(type);
+    verify(passthroughClient).forward(LOGICAL_ADDRESS, type);
+  }
+
+  @Test
+  void shouldReturnPassthroughResultWhenStore() {
+    final var type = new SendMessageToRecipientType();
+    when(converter.convert(type)).thenReturn(buildDto());
+    final var response = okResponse();
+    when(passthroughClient.forward(any(), any())).thenReturn(Optional.of(response));
+
+    final var result = service.store(LOGICAL_ADDRESS, type);
+
+    assertTrue(result.isPresent());
+    assertEquals(response, result.get());
+  }
+
+  @Test
+  void shouldReturnEmptyOptionalWhenPassthroughDisabled() {
+    final var type = new SendMessageToRecipientType();
+    when(converter.convert(type)).thenReturn(buildDto());
+    when(passthroughClient.forward(any(), any())).thenReturn(Optional.empty());
+
+    final var result = service.store(LOGICAL_ADDRESS, type);
+
+    assertTrue(result.isEmpty());
   }
 
   @Test
@@ -154,5 +173,21 @@ class SendMessageToRecipientServiceTest {
     service.deleteByMessageId(MESSAGE_ID);
 
     verify(repository).deleteByMessageId(MESSAGE_ID);
+  }
+
+  private SendMessageToRecipientDTO buildDto() {
+    return SendMessageToRecipientDTO.builder()
+        .meddelandeId(MESSAGE_ID)
+        .intygsId(IntygsId.builder().root("root").extension(CERTIFICATE_ID).build())
+        .meddelande("content")
+        .build();
+  }
+
+  private SendMessageToRecipientResponseType okResponse() {
+    final var response = new SendMessageToRecipientResponseType();
+    final var result = new ResultType();
+    result.setResultCode(ResultCodeType.OK);
+    response.setResult(result);
+    return response;
   }
 }

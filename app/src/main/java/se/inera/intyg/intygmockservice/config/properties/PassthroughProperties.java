@@ -3,7 +3,13 @@ package se.inera.intyg.intygmockservice.config.properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "app.passthrough")
-public record PassthroughProperties(MtlsConfig mtls, ServiceConfig registerCertificate) {
+public record PassthroughProperties(
+    MtlsConfig mtls,
+    ServiceConfig registerCertificate,
+    ServiceConfig revokeCertificate,
+    ServiceConfig sendMessageToRecipient,
+    ServiceConfig certificateStatusUpdateForCare,
+    ServiceConfig storeLog) {
 
   public record ServiceConfig(boolean enabled, String url) {}
 

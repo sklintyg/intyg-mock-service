@@ -19,14 +19,15 @@ public class CertificateStatusUpdateForCareResponderImpl
   public CertificateStatusUpdateForCareResponseType certificateStatusUpdateForCare(
       String logicalAddress,
       CertificateStatusUpdateForCareType certificateStatusUpdateForCareType) {
-
-    service.store(logicalAddress, certificateStatusUpdateForCareType);
-
-    final var response = new CertificateStatusUpdateForCareResponseType();
-    final var result = new ResultType();
-    response.setResult(result);
-    result.setResultCode(ResultCodeType.OK);
-
-    return response;
+    return service
+        .store(logicalAddress, certificateStatusUpdateForCareType)
+        .orElseGet(
+            () -> {
+              final var response = new CertificateStatusUpdateForCareResponseType();
+              final var result = new ResultType();
+              result.setResultCode(ResultCodeType.OK);
+              response.setResult(result);
+              return response;
+            });
   }
 }

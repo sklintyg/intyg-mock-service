@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.revokecertificate.converter.RevokeCertificateConverter;
 import se.inera.intyg.intygmockservice.revokecertificate.dto.RevokeCertificateDTO;
+import se.inera.intyg.intygmockservice.revokecertificate.passthrough.RevokeCertificatePassthroughClient;
 import se.inera.intyg.intygmockservice.revokecertificate.repository.RevokeCertificateRepository;
+import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 
 @Service
@@ -17,8 +19,10 @@ public class RevokeCertificateService {
 
   private final RevokeCertificateRepository repository;
   private final RevokeCertificateConverter converter;
+  private final RevokeCertificatePassthroughClient passthroughClient;
 
-  public void store(final String logicalAddress, final RevokeCertificateType revokeCertificate) {
+  public Optional<RevokeCertificateResponseType> store(
+      final String logicalAddress, final RevokeCertificateType revokeCertificate) {
     repository.add(logicalAddress, revokeCertificate);
 
     final var dto = converter.convert(revokeCertificate);
@@ -30,6 +34,8 @@ public class RevokeCertificateService {
         .addKeyValue("event.logical_address", logicalAddress)
         .addKeyValue("event.certificate.id", dto.getIntygsId().getExtension())
         .log();
+
+    return passthroughClient.forward(logicalAddress, revokeCertificate);
   }
 
   public List<RevokeCertificateDTO> getAll() {

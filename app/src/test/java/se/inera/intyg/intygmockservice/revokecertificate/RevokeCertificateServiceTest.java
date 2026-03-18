@@ -16,8 +16,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygmockservice.common.dto.IntygDTO.IntygsId;
 import se.inera.intyg.intygmockservice.revokecertificate.converter.RevokeCertificateConverter;
 import se.inera.intyg.intygmockservice.revokecertificate.dto.RevokeCertificateDTO;
+import se.inera.intyg.intygmockservice.revokecertificate.passthrough.RevokeCertificatePassthroughClient;
 import se.inera.intyg.intygmockservice.revokecertificate.repository.RevokeCertificateRepository;
+import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @ExtendWith(MockitoExtension.class)
 class RevokeCertificateServiceTest {
@@ -27,18 +31,16 @@ class RevokeCertificateServiceTest {
 
   @Mock private RevokeCertificateRepository repository;
   @Mock private RevokeCertificateConverter converter;
+  @Mock private RevokeCertificatePassthroughClient passthroughClient;
 
   @InjectMocks private RevokeCertificateService service;
 
   @Test
   void shouldAddToRepositoryWhenStore() {
     final var type = new RevokeCertificateType();
-    final var dto =
-        RevokeCertificateDTO.builder()
-            .intygsId(IntygsId.builder().root("root").extension(CERTIFICATE_ID).build())
-            .meddelande("reason")
-            .build();
+    final var dto = buildDto();
     when(converter.convert(type)).thenReturn(dto);
+    when(passthroughClient.forward(any(), any())).thenReturn(Optional.empty());
 
     service.store(LOGICAL_ADDRESS, type);
 
@@ -46,18 +48,38 @@ class RevokeCertificateServiceTest {
   }
 
   @Test
-  void shouldConvertWhenStore() {
+  void shouldDelegateToPassthroughClientWhenStore() {
     final var type = new RevokeCertificateType();
-    final var dto =
-        RevokeCertificateDTO.builder()
-            .intygsId(IntygsId.builder().root("root").extension(CERTIFICATE_ID).build())
-            .meddelande("reason")
-            .build();
-    when(converter.convert(type)).thenReturn(dto);
+    when(converter.convert(type)).thenReturn(buildDto());
+    when(passthroughClient.forward(any(), any())).thenReturn(Optional.empty());
 
     service.store(LOGICAL_ADDRESS, type);
 
-    verify(converter).convert(type);
+    verify(passthroughClient).forward(LOGICAL_ADDRESS, type);
+  }
+
+  @Test
+  void shouldReturnPassthroughResultWhenStore() {
+    final var type = new RevokeCertificateType();
+    when(converter.convert(type)).thenReturn(buildDto());
+    final var response = okResponse();
+    when(passthroughClient.forward(any(), any())).thenReturn(Optional.of(response));
+
+    final var result = service.store(LOGICAL_ADDRESS, type);
+
+    assertTrue(result.isPresent());
+    assertEquals(response, result.get());
+  }
+
+  @Test
+  void shouldReturnEmptyOptionalWhenPassthroughDisabled() {
+    final var type = new RevokeCertificateType();
+    when(converter.convert(type)).thenReturn(buildDto());
+    when(passthroughClient.forward(any(), any())).thenReturn(Optional.empty());
+
+    final var result = service.store(LOGICAL_ADDRESS, type);
+
+    assertTrue(result.isEmpty());
   }
 
   @Test
@@ -139,5 +161,20 @@ class RevokeCertificateServiceTest {
     service.deleteById(CERTIFICATE_ID);
 
     verify(repository).deleteById(CERTIFICATE_ID);
+  }
+
+  private RevokeCertificateDTO buildDto() {
+    return RevokeCertificateDTO.builder()
+        .intygsId(IntygsId.builder().root("root").extension(CERTIFICATE_ID).build())
+        .meddelande("reason")
+        .build();
+  }
+
+  private RevokeCertificateResponseType okResponse() {
+    final var response = new RevokeCertificateResponseType();
+    final var result = new ResultType();
+    result.setResultCode(ResultCodeType.OK);
+    response.setResult(result);
+    return response;
   }
 }

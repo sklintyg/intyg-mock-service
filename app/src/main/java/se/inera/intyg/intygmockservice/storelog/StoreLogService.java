@@ -1,12 +1,16 @@
 package se.inera.intyg.intygmockservice.storelog;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.storelog.converter.StoreLogTypeConverter;
 import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO;
+import se.inera.intyg.intygmockservice.storelog.passthrough.StoreLogPassthroughClient;
 import se.inera.intyg.intygmockservice.storelog.repository.StoreLogTypeRepository;
+import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogResponseType;
+import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +19,21 @@ public class StoreLogService {
 
   private final StoreLogTypeRepository repository;
   private final StoreLogTypeConverter converter;
+  private final StoreLogPassthroughClient passthroughClient;
+
+  public Optional<StoreLogResponseType> store(
+      final String logicalAddress, final StoreLogType storeLogType) {
+    repository.add(logicalAddress, storeLogType);
+
+    log.atInfo()
+        .setMessage(
+            "Stored log received for logical address '%s' with '%s' logs"
+                .formatted(logicalAddress, storeLogType.getLog().size()))
+        .addKeyValue("event.logical_address", logicalAddress)
+        .log();
+
+    return passthroughClient.forward(logicalAddress, storeLogType);
+  }
 
   public List<LogTypeDTO> getAll() {
     final var logs =

@@ -112,18 +112,18 @@ app.passthrough.revoke-certificate.url=
 
 ~~When `app.passthrough.register-certificate.enabled=true`, `RegisterCertificateResponderImpl` forwards the call to the URL at `app.passthrough.register-certificate.url` using a CXF JAXWS client after storing the request locally. The upstream response is returned to the caller; if passthrough is disabled the responder falls back to OK. Add integration test using MockServer via Testcontainers.~~
 
-### PT-02 — Passthrough for RevokeCertificate
+### ~~PT-02 — Passthrough for RevokeCertificate~~ ✓ Done
 
-Same pattern as PT-01 for the RevokeCertificate service. Configuration key: `app.passthrough.revoke-certificate`.
+~~Same pattern as PT-01 for the RevokeCertificate service. Configuration key: `app.passthrough.revoke-certificate`.~~
 
-### PT-03 — Passthrough for SendMessageToRecipient
+### ~~PT-03 — Passthrough for SendMessageToRecipient~~ ✓ Done
 
-Same pattern as PT-01 for the SendMessageToRecipient service. Configuration key: `app.passthrough.send-message-to-recipient`.
+~~Same pattern as PT-01 for the SendMessageToRecipient service. Configuration key: `app.passthrough.send-message-to-recipient`.~~
 
-### PT-04 — Passthrough for CertificateStatusUpdateForCare
+### ~~PT-04 — Passthrough for CertificateStatusUpdateForCare~~ ✓ Done
 
-Same pattern as PT-01 for the CertificateStatusUpdateForCare service. Configuration key: `app.passthrough.certificate-status-update-for-care`.
+~~Same pattern as PT-01 for the CertificateStatusUpdateForCare service. Configuration key: `app.passthrough.certificate-status-update-for-care`.~~
 
-### PT-05 — Passthrough for StoreLog
+### ~~PT-05 — Passthrough for StoreLog~~ ✓ Done
 
-Same pattern as PT-01 for the StoreLog service. Configuration key: `app.passthrough.store-log`.
+~~Same pattern as PT-01 for the StoreLog service. Configuration key: `app.passthrough.store-log`.~~

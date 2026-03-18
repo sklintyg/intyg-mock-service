@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.revokecertificate;
+package se.inera.intyg.intygmockservice.sendmessagetorecipient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -11,26 +11,26 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
-import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @ExtendWith(MockitoExtension.class)
-class RevokeCertificateResponderImplTest {
+class SendMessageToRecipientResponderImplTest {
 
   private static final String LOGICAL_ADDRESS = "logical-address-1";
 
-  @Mock private RevokeCertificateService service;
+  @Mock private SendMessageToRecipientService service;
 
-  @InjectMocks private RevokeCertificateResponderImpl responder;
+  @InjectMocks private SendMessageToRecipientResponderImpl responder;
 
   @Test
   void shouldReturnLocalOkWhenServiceReturnsEmpty() {
-    final var type = new RevokeCertificateType();
+    final var type = new SendMessageToRecipientType();
     when(service.store(LOGICAL_ADDRESS, type)).thenReturn(Optional.empty());
 
-    final var response = responder.revokeCertificate(LOGICAL_ADDRESS, type);
+    final var response = responder.sendMessageToRecipient(LOGICAL_ADDRESS, type);
 
     assertEquals(ResultCodeType.OK, response.getResult().getResultCode());
   }
@@ -38,26 +38,26 @@ class RevokeCertificateResponderImplTest {
   @Test
   void shouldReturnUpstreamResponseWhenServiceReturnsPresent() {
     final var upstreamResponse = okResponse();
-    final var type = new RevokeCertificateType();
+    final var type = new SendMessageToRecipientType();
     when(service.store(LOGICAL_ADDRESS, type)).thenReturn(Optional.of(upstreamResponse));
 
-    final var response = responder.revokeCertificate(LOGICAL_ADDRESS, type);
+    final var response = responder.sendMessageToRecipient(LOGICAL_ADDRESS, type);
 
     assertSame(upstreamResponse, response);
   }
 
   @Test
   void shouldDelegateToService() {
-    final var type = new RevokeCertificateType();
+    final var type = new SendMessageToRecipientType();
     when(service.store(LOGICAL_ADDRESS, type)).thenReturn(Optional.empty());
 
-    responder.revokeCertificate(LOGICAL_ADDRESS, type);
+    responder.sendMessageToRecipient(LOGICAL_ADDRESS, type);
 
     verify(service).store(LOGICAL_ADDRESS, type);
   }
 
-  private RevokeCertificateResponseType okResponse() {
-    final var response = new RevokeCertificateResponseType();
+  private SendMessageToRecipientResponseType okResponse() {
+    final var response = new SendMessageToRecipientResponseType();
     final var result = new ResultType();
     result.setResultCode(ResultCodeType.OK);
     response.setResult(result);

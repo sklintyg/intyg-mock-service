@@ -32,7 +32,7 @@ public class PassthroughConduitConfigurer {
 
   private static final Pattern CONDUIT_PATTERN =
       Pattern.compile(
-          "\\{urn:riv:(clinicalprocess:healthcond|insuranceprocess:healthreporting):.*\\.http-conduit");
+          "\\{urn:riv:(clinicalprocess:healthcond|insuranceprocess:healthreporting|informationsecurity:auditing):.*\\.http-conduit");
 
   private final PassthroughProperties props;
 

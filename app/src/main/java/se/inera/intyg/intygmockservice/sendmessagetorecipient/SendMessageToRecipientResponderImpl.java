@@ -18,13 +18,15 @@ public class SendMessageToRecipientResponderImpl
   @Override
   public SendMessageToRecipientResponseType sendMessageToRecipient(
       String logicalAddress, SendMessageToRecipientType sendMessageToRecipient) {
-    service.store(logicalAddress, sendMessageToRecipient);
-
-    final var response = new SendMessageToRecipientResponseType();
-    final var result = new ResultType();
-    response.setResult(result);
-    result.setResultCode(ResultCodeType.OK);
-
-    return response;
+    return service
+        .store(logicalAddress, sendMessageToRecipient)
+        .orElseGet(
+            () -> {
+              final var response = new SendMessageToRecipientResponseType();
+              final var result = new ResultType();
+              result.setResultCode(ResultCodeType.OK);
+              response.setResult(result);
+              return response;
+            });
   }
 }

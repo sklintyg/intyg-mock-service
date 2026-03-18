@@ -14,8 +14,7 @@ import se.inera.intyg.intygmockservice.sendmessagetorecipient.SendMessageToRecip
 import se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareResponderImpl;
 import se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareService;
 import se.inera.intyg.intygmockservice.storelog.StoreLogResponderImpl;
-import se.inera.intyg.intygmockservice.storelog.converter.StoreLogTypeConverter;
-import se.inera.intyg.intygmockservice.storelog.repository.StoreLogTypeRepository;
+import se.inera.intyg.intygmockservice.storelog.StoreLogService;
 
 @Configuration
 @RequiredArgsConstructor
@@ -65,9 +64,8 @@ public class CxfConfig {
   }
 
   @Bean
-  public EndpointImpl storeLogEndpoint(
-      StoreLogTypeConverter converter, StoreLogTypeRepository repository) {
-    final var endpoint = new EndpointImpl(bus, new StoreLogResponderImpl(converter, repository));
+  public EndpointImpl storeLogEndpoint(StoreLogService storeLogService) {
+    final var endpoint = new EndpointImpl(bus, new StoreLogResponderImpl(storeLogService));
     endpoint.publish("/informationsecurity/auditing/log/StoreLog/v2/rivtabp21");
     return endpoint;
   }

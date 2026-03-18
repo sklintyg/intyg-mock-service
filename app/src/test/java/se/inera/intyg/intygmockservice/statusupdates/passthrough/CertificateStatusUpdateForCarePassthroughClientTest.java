@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.registercertificate.passthrough;
+package se.inera.intyg.intygmockservice.statusupdates.passthrough;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,14 +16,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygmockservice.config.passthrough.PassthroughClientFactory;
 import se.inera.intyg.intygmockservice.config.properties.PassthroughProperties;
 import se.inera.intyg.intygmockservice.config.properties.PassthroughProperties.ServiceConfig;
-import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponderInterface;
-import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
-import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponderInterface;
+import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @ExtendWith(MockitoExtension.class)
-class RegisterCertificatePassthroughClientTest {
+class CertificateStatusUpdateForCarePassthroughClientTest {
 
   private static final String LOGICAL_ADDRESS = "logical-address-1";
   private static final String UPSTREAM_URL = "http://upstream/service";
@@ -34,7 +34,7 @@ class RegisterCertificatePassthroughClientTest {
   void shouldNotCreateProxyWhenDisabled() {
     final var props = propsWithEnabled(false);
 
-    new RegisterCertificatePassthroughClient(props, factory);
+    new CertificateStatusUpdateForCarePassthroughClient(props, factory);
 
     verify(factory, never()).createClient(any(), any());
   }
@@ -43,16 +43,17 @@ class RegisterCertificatePassthroughClientTest {
   void shouldNotCreateProxyWhenConfigIsNull() {
     final var props = new PassthroughProperties(null, null, null, null, null, null);
 
-    new RegisterCertificatePassthroughClient(props, factory);
+    new CertificateStatusUpdateForCarePassthroughClient(props, factory);
 
     verify(factory, never()).createClient(any(), any());
   }
 
   @Test
   void shouldReturnEmptyWhenDisabled() {
-    final var client = new RegisterCertificatePassthroughClient(propsWithEnabled(false), factory);
+    final var client =
+        new CertificateStatusUpdateForCarePassthroughClient(propsWithEnabled(false), factory);
 
-    final var result = client.forward(LOGICAL_ADDRESS, new RegisterCertificateType());
+    final var result = client.forward(LOGICAL_ADDRESS, new CertificateStatusUpdateForCareType());
 
     assertTrue(result.isEmpty());
   }
@@ -60,40 +61,45 @@ class RegisterCertificatePassthroughClientTest {
   @Test
   void shouldReturnEmptyWhenConfigIsNull() {
     final var client =
-        new RegisterCertificatePassthroughClient(
+        new CertificateStatusUpdateForCarePassthroughClient(
             new PassthroughProperties(null, null, null, null, null, null), factory);
 
-    final var result = client.forward(LOGICAL_ADDRESS, new RegisterCertificateType());
+    final var result = client.forward(LOGICAL_ADDRESS, new CertificateStatusUpdateForCareType());
 
     assertTrue(result.isEmpty());
   }
 
   @Test
   void shouldReturnUpstreamResponseWhenEnabled() {
-    final var proxy = mock(RegisterCertificateResponderInterface.class);
-    when(factory.createClient(eq(RegisterCertificateResponderInterface.class), eq(UPSTREAM_URL)))
+    final var proxy = mock(CertificateStatusUpdateForCareResponderInterface.class);
+    when(factory.createClient(
+            eq(CertificateStatusUpdateForCareResponderInterface.class), eq(UPSTREAM_URL)))
         .thenReturn(proxy);
     final var expected = okResponse();
-    when(proxy.registerCertificate(any(), any())).thenReturn(expected);
+    when(proxy.certificateStatusUpdateForCare(any(), any())).thenReturn(expected);
 
-    final var client = new RegisterCertificatePassthroughClient(propsWithEnabled(true), factory);
-    final var request = new RegisterCertificateType();
+    final var client =
+        new CertificateStatusUpdateForCarePassthroughClient(propsWithEnabled(true), factory);
+    final var request = new CertificateStatusUpdateForCareType();
     final var result = client.forward(LOGICAL_ADDRESS, request);
 
     assertTrue(result.isPresent());
     assertEquals(ResultCodeType.OK, result.get().getResult().getResultCode());
-    verify(proxy).registerCertificate(LOGICAL_ADDRESS, request);
+    verify(proxy).certificateStatusUpdateForCare(LOGICAL_ADDRESS, request);
   }
 
   @Test
   void shouldReturnErrorResponseWhenProxyThrows() {
-    final var proxy = mock(RegisterCertificateResponderInterface.class);
-    when(factory.createClient(eq(RegisterCertificateResponderInterface.class), eq(UPSTREAM_URL)))
+    final var proxy = mock(CertificateStatusUpdateForCareResponderInterface.class);
+    when(factory.createClient(
+            eq(CertificateStatusUpdateForCareResponderInterface.class), eq(UPSTREAM_URL)))
         .thenReturn(proxy);
-    when(proxy.registerCertificate(any(), any())).thenThrow(new RuntimeException("upstream down"));
+    when(proxy.certificateStatusUpdateForCare(any(), any()))
+        .thenThrow(new RuntimeException("upstream down"));
 
-    final var client = new RegisterCertificatePassthroughClient(propsWithEnabled(true), factory);
-    final var result = client.forward(LOGICAL_ADDRESS, new RegisterCertificateType());
+    final var client =
+        new CertificateStatusUpdateForCarePassthroughClient(propsWithEnabled(true), factory);
+    final var result = client.forward(LOGICAL_ADDRESS, new CertificateStatusUpdateForCareType());
 
     assertTrue(result.isPresent());
     assertEquals(ResultCodeType.ERROR, result.get().getResult().getResultCode());
@@ -101,11 +107,11 @@ class RegisterCertificatePassthroughClientTest {
 
   private PassthroughProperties propsWithEnabled(boolean enabled) {
     final var config = new ServiceConfig(enabled, UPSTREAM_URL);
-    return new PassthroughProperties(null, config, null, null, null, null);
+    return new PassthroughProperties(null, null, null, null, config, null);
   }
 
-  private RegisterCertificateResponseType okResponse() {
-    final var response = new RegisterCertificateResponseType();
+  private CertificateStatusUpdateForCareResponseType okResponse() {
+    final var response = new CertificateStatusUpdateForCareResponseType();
     final var result = new ResultType();
     result.setResultCode(ResultCodeType.OK);
     response.setResult(result);

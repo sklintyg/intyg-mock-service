@@ -8,7 +8,19 @@ app:
       truststore-file:
       truststore-password:
       truststore-type: JKS
+    certificate-status-update-for-care:
+      enabled: false
+      url:
     register-certificate:
+      enabled: false
+      url:
+    revoke-certificate:
+      enabled: false
+      url:
+    send-message-to-recipient:
+      enabled: false
+      url:
+    store-log:
       enabled: false
       url:
   repository:

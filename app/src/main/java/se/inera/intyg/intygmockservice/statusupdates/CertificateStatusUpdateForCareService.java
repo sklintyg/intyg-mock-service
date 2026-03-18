@@ -1,12 +1,15 @@
 package se.inera.intyg.intygmockservice.statusupdates;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.statusupdates.converter.CertificateStatusUpdateForCareConverter;
 import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO;
+import se.inera.intyg.intygmockservice.statusupdates.passthrough.CertificateStatusUpdateForCarePassthroughClient;
 import se.inera.intyg.intygmockservice.statusupdates.repository.CertificateStatusUpdateForCareRepository;
+import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
 
 @Service
@@ -16,8 +19,10 @@ public class CertificateStatusUpdateForCareService {
 
   private final CertificateStatusUpdateForCareRepository repository;
   private final CertificateStatusUpdateForCareConverter converter;
+  private final CertificateStatusUpdateForCarePassthroughClient passthroughClient;
 
-  public void store(final String logicalAddress, final CertificateStatusUpdateForCareType request) {
+  public Optional<CertificateStatusUpdateForCareResponseType> store(
+      final String logicalAddress, final CertificateStatusUpdateForCareType request) {
     repository.add(logicalAddress, request);
 
     final var dto = converter.convert(request);
@@ -35,6 +40,8 @@ public class CertificateStatusUpdateForCareService {
             "event.handled_by",
             dto.getHanteratAv() != null ? dto.getHanteratAv().getExtension() : null)
         .log();
+
+    return passthroughClient.forward(logicalAddress, request);
   }
 
   public List<CertificateStatusUpdateForCareDTO> getAll() {

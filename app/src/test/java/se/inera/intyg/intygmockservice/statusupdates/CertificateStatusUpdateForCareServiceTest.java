@@ -1,11 +1,13 @@
 package se.inera.intyg.intygmockservice.statusupdates;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,8 +19,12 @@ import se.inera.intyg.intygmockservice.statusupdates.converter.CertificateStatus
 import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO;
 import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse;
 import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse.Handelsekod;
+import se.inera.intyg.intygmockservice.statusupdates.passthrough.CertificateStatusUpdateForCarePassthroughClient;
 import se.inera.intyg.intygmockservice.statusupdates.repository.CertificateStatusUpdateForCareRepository;
+import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
+import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateStatusUpdateForCareServiceTest {
@@ -30,6 +36,7 @@ class CertificateStatusUpdateForCareServiceTest {
 
   @Mock private CertificateStatusUpdateForCareRepository repository;
   @Mock private CertificateStatusUpdateForCareConverter converter;
+  @Mock private CertificateStatusUpdateForCarePassthroughClient passthroughClient;
 
   @InjectMocks private CertificateStatusUpdateForCareService service;
 
@@ -48,6 +55,7 @@ class CertificateStatusUpdateForCareServiceTest {
   void shouldAddToRepositoryWhenStore() {
     final var type = new CertificateStatusUpdateForCareType();
     when(converter.convert(type)).thenReturn(buildDto(CERTIFICATE_ID));
+    when(passthroughClient.forward(any(), any())).thenReturn(Optional.empty());
 
     service.store(LOGICAL_ADDRESS, type);
 
@@ -55,13 +63,38 @@ class CertificateStatusUpdateForCareServiceTest {
   }
 
   @Test
-  void shouldConvertWhenStore() {
+  void shouldDelegateToPassthroughClientWhenStore() {
     final var type = new CertificateStatusUpdateForCareType();
     when(converter.convert(type)).thenReturn(buildDto(CERTIFICATE_ID));
+    when(passthroughClient.forward(any(), any())).thenReturn(Optional.empty());
 
     service.store(LOGICAL_ADDRESS, type);
 
-    verify(converter).convert(type);
+    verify(passthroughClient).forward(LOGICAL_ADDRESS, type);
+  }
+
+  @Test
+  void shouldReturnPassthroughResultWhenStore() {
+    final var type = new CertificateStatusUpdateForCareType();
+    when(converter.convert(type)).thenReturn(buildDto(CERTIFICATE_ID));
+    final var response = okResponse();
+    when(passthroughClient.forward(any(), any())).thenReturn(Optional.of(response));
+
+    final var result = service.store(LOGICAL_ADDRESS, type);
+
+    assertTrue(result.isPresent());
+    assertEquals(response, result.get());
+  }
+
+  @Test
+  void shouldReturnEmptyOptionalWhenPassthroughDisabled() {
+    final var type = new CertificateStatusUpdateForCareType();
+    when(converter.convert(type)).thenReturn(buildDto(CERTIFICATE_ID));
+    when(passthroughClient.forward(any(), any())).thenReturn(Optional.empty());
+
+    final var result = service.store(LOGICAL_ADDRESS, type);
+
+    assertTrue(result.isEmpty());
   }
 
   @Test
@@ -145,5 +178,13 @@ class CertificateStatusUpdateForCareServiceTest {
     service.deleteByCertificateId(CERTIFICATE_ID);
 
     verify(repository).deleteByCertificateId(CERTIFICATE_ID);
+  }
+
+  private CertificateStatusUpdateForCareResponseType okResponse() {
+    final var response = new CertificateStatusUpdateForCareResponseType();
+    final var result = new ResultType();
+    result.setResultCode(ResultCodeType.OK);
+    response.setResult(result);
+    return response;
   }
 }

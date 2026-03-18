@@ -7,7 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.converter.SendMessageToRecipientConverter;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
+import se.inera.intyg.intygmockservice.sendmessagetorecipient.passthrough.SendMessageToRecipientPassthroughClient;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.repository.SendMessageToRecipientRepository;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 
 @Service
@@ -17,8 +19,10 @@ public class SendMessageToRecipientService {
 
   private final SendMessageToRecipientRepository repository;
   private final SendMessageToRecipientConverter converter;
+  private final SendMessageToRecipientPassthroughClient passthroughClient;
 
-  public void store(final String logicalAddress, final SendMessageToRecipientType message) {
+  public Optional<SendMessageToRecipientResponseType> store(
+      final String logicalAddress, final SendMessageToRecipientType message) {
     repository.add(logicalAddress, message);
 
     final var dto = converter.convert(message);
@@ -35,6 +39,8 @@ public class SendMessageToRecipientService {
         .addKeyValue("event.certificate.id", dto.getIntygsId().getExtension())
         .addKeyValue("event.message.id", dto.getMeddelandeId())
         .log();
+
+    return passthroughClient.forward(logicalAddress, message);
   }
 
   public List<SendMessageToRecipientDTO> getAll() {
