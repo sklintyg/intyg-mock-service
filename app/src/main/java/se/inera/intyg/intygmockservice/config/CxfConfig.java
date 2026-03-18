@@ -6,8 +6,7 @@ import org.apache.cxf.jaxws.EndpointImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateResponderImpl;
-import se.inera.intyg.intygmockservice.registercertificate.converter.RegisterCertificateConverter;
-import se.inera.intyg.intygmockservice.registercertificate.repository.RegisterCertificateRepository;
+import se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateService;
 import se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateResponderImpl;
 import se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateService;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.SendMessageToRecipientResponderImpl;
@@ -38,10 +37,8 @@ public class CxfConfig {
   }
 
   @Bean
-  public EndpointImpl registerCertificateEndpoint(
-      RegisterCertificateConverter converter, RegisterCertificateRepository repository) {
-    final var endpoint =
-        new EndpointImpl(bus, new RegisterCertificateResponderImpl(repository, converter));
+  public EndpointImpl registerCertificateEndpoint(RegisterCertificateService service) {
+    final var endpoint = new EndpointImpl(bus, new RegisterCertificateResponderImpl(service));
 
     endpoint.publish("/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21");
     return endpoint;

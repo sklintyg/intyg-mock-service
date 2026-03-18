@@ -1,7 +1,10 @@
 dependencies {
     testImplementation project(':app')
+    testImplementation 'org.mock-server:mockserver-client-java'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.testcontainers:junit-jupiter'
+    testImplementation 'org.testcontainers:mockserver'
 }
 
 test {
@@ -30,8 +33,8 @@ testing {
                 testTask.configure {
                     shouldRunAfter(test)
                     jvmArgs += [
-                        "-javaagent:${configurations.mockitoAgent.asPath}",
-                        "-Xshare:off"
+                            "-javaagent:${configurations.mockitoAgent.asPath}",
+                            "-Xshare:off"
                     ]
                 }
             }

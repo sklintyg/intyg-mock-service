@@ -7,19 +7,24 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.registercertificate.converter.RegisterCertificateConverter;
 import se.inera.intyg.intygmockservice.registercertificate.dto.RegisterCertificateDTO;
+import se.inera.intyg.intygmockservice.registercertificate.passthrough.RegisterCertificatePassthroughClient;
 import se.inera.intyg.intygmockservice.registercertificate.repository.RegisterCertificateRepository;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.ObjectFactory;
+import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RegisterCertificateService {
 
   private final RegisterCertificateRepository repository;
   private final RegisterCertificateConverter converter;
+  private final RegisterCertificatePassthroughClient passthroughClient;
 
   private static final JAXBContext JAXB_CONTEXT;
 
@@ -35,6 +40,25 @@ public class RegisterCertificateService {
     } catch (JAXBException e) {
       throw new ExceptionInInitializerError(e);
     }
+  }
+
+  public Optional<RegisterCertificateResponseType> store(
+      String logicalAddress, RegisterCertificateType type) {
+    repository.add(logicalAddress, type);
+
+    final var dto = converter.convert(type);
+    log.atInfo()
+        .setMessage(
+            "Register certificate '%s' received"
+                .formatted(dto.getIntyg().getIntygsId().getExtension()))
+        .addKeyValue("event.logical_address", logicalAddress)
+        .addKeyValue("event.certificate.id", dto.getIntyg().getIntygsId().getExtension())
+        .addKeyValue(
+            "event.answered.message.id",
+            dto.getSvarPa() != null ? dto.getSvarPa().getMeddelandeId() : "-")
+        .log();
+
+    return passthroughClient.forward(logicalAddress, type);
   }
 
   public List<RegisterCertificateDTO> getAll() {

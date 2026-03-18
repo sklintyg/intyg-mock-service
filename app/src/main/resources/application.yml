@@ -1,4 +1,16 @@
 app:
+  passthrough:
+    mtls:
+      certificate-file:
+      certificate-password:
+      certificate-type: PKCS12
+      key-manager-password:
+      truststore-file:
+      truststore-password:
+      truststore-type: JKS
+    register-certificate:
+      enabled: false
+      url:
   repository:
     certificate-status-update-for-care:
       max-size: 1000

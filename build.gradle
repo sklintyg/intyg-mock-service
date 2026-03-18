@@ -29,7 +29,13 @@ allprojects {
 
     repositories {
         mavenLocal()
-        maven { url = "https://nexus.drift.inera.se/repository/it-public/" }
+        maven {
+            url = "https://nexus.drift.inera.se/repository/it-public/"
+            content {
+                includeGroupByRegex "se\\.inera.*"
+                includeGroupByRegex "se\\.riv.*"
+            }
+        }
         mavenCentral()
     }
 }

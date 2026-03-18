@@ -94,23 +94,23 @@ The passthrough feature lets the mock store each incoming SOAP call locally (exi
 
 Each module is a separate item. **PT-00 is a prerequisite for PT-01 through PT-05.**
 
-### PT-00 — Add common CXF client infrastructure for passthrough
+### ~~PT-00 — Add common CXF client infrastructure for passthrough~~ ✓ Done
 
-Add `cxf-rt-frontend-jaxws` to `app/build.gradle`. Introduce per-service configuration properties:
+~~Add `cxf-rt-frontend-jaxws` to `app/build.gradle`. Introduce per-service configuration properties:~~
 
-```
+~~```
 app.passthrough.register-certificate.enabled=false
 app.passthrough.register-certificate.url=
 app.passthrough.revoke-certificate.enabled=false
 app.passthrough.revoke-certificate.url=
 # … etc.
-```
+```~~
 
-Create a reusable CXF JAXWS client factory helper (or configure in `CxfConfig`). Document the configuration pattern in `application.properties`. No functional change to existing behaviour when all flags are `false`.
+~~Create a reusable CXF JAXWS client factory helper (or configure in `CxfConfig`). Document the configuration pattern in `application.properties`. No functional change to existing behaviour when all flags are `false`.~~
 
-### PT-01 — Passthrough for RegisterCertificate
+### ~~PT-01 — Passthrough for RegisterCertificate~~ ✓ Done
 
-When `app.passthrough.register-certificate.enabled=true`, `RegisterCertificateResponderImpl` forwards the call to the URL at `app.passthrough.register-certificate.url` using a CXF JAXWS client after storing the request locally. The upstream response is logged but the local mock always returns `OK` to the caller. Add integration test using WireMock or a local stub.
+~~When `app.passthrough.register-certificate.enabled=true`, `RegisterCertificateResponderImpl` forwards the call to the URL at `app.passthrough.register-certificate.url` using a CXF JAXWS client after storing the request locally. The upstream response is returned to the caller; if passthrough is disabled the responder falls back to OK. Add integration test using MockServer via Testcontainers.~~
 
 ### PT-02 — Passthrough for RevokeCertificate
 
