@@ -9,6 +9,11 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygmockservice.behavior.BehaviorLogger;
+import se.inera.intyg.intygmockservice.behavior.BehaviorRuleEvaluator;
+import se.inera.intyg.intygmockservice.behavior.CertificateBehaviorResponseBuilder;
+import se.inera.intyg.intygmockservice.behavior.MatchContext;
+import se.inera.intyg.intygmockservice.behavior.ServiceName;
 import se.inera.intyg.intygmockservice.registercertificate.converter.RegisterCertificateConverter;
 import se.inera.intyg.intygmockservice.registercertificate.dto.RegisterCertificateDTO;
 import se.inera.intyg.intygmockservice.registercertificate.passthrough.RegisterCertificatePassthroughClient;
@@ -25,6 +30,9 @@ public class RegisterCertificateService {
   private final RegisterCertificateRepository repository;
   private final RegisterCertificateConverter converter;
   private final RegisterCertificatePassthroughClient passthroughClient;
+  private final BehaviorRuleEvaluator behaviorRuleEvaluator;
+  private final BehaviorLogger behaviorLogger;
+  private final CertificateBehaviorResponseBuilder responseBuilder;
 
   private static final JAXBContext JAXB_CONTEXT;
 
@@ -44,6 +52,33 @@ public class RegisterCertificateService {
 
   public Optional<RegisterCertificateResponseType> store(
       String logicalAddress, RegisterCertificateType type) {
+    final var intyg = type.getIntyg();
+    final var certificateId =
+        intyg != null && intyg.getIntygsId() != null ? intyg.getIntygsId().getExtension() : null;
+    final var personId =
+        intyg != null && intyg.getPatient() != null && intyg.getPatient().getPersonId() != null
+            ? intyg.getPatient().getPersonId().getExtension()
+            : null;
+
+    final var context =
+        MatchContext.builder()
+            .logicalAddress(logicalAddress)
+            .certificateId(certificateId)
+            .personId(personId)
+            .build();
+
+    final var ruleOpt = behaviorRuleEvaluator.evaluate(ServiceName.REGISTER_CERTIFICATE, context);
+
+    if (ruleOpt.isPresent()) {
+      final var rule = ruleOpt.get();
+      if (rule.getResultCode() != null) {
+        behaviorLogger.logErrorSkipped(ServiceName.REGISTER_CERTIFICATE, certificateId, rule);
+        return Optional.of(responseBuilder.build(rule));
+      } else {
+        behaviorLogger.logDelayApplied(ServiceName.REGISTER_CERTIFICATE, certificateId, rule);
+      }
+    }
+
     repository.add(logicalAddress, type);
 
     final var dto = converter.convert(type);

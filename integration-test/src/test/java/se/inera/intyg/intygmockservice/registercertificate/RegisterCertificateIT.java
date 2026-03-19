@@ -33,7 +33,7 @@ class RegisterCertificateIT {
 
   @BeforeEach
   void cleanUp() {
-    restTemplate.delete(REST_PATH);
+    restTemplate.delete("/api/reset");
   }
 
   @Test

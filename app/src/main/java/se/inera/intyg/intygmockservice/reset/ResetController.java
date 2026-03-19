@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import se.inera.intyg.intygmockservice.behavior.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateService;
 import se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateService;
 import se.inera.intyg.intygmockservice.sendmessagetorecipient.SendMessageToRecipientService;
@@ -24,6 +25,7 @@ public class ResetController {
   private final SendMessageToRecipientService sendMessageToRecipientService;
   private final CertificateStatusUpdateForCareService certificateStatusUpdateForCareService;
   private final StoreLogService storeLogService;
+  private final BehaviorRuleRepository behaviorRuleRepository;
 
   @Operation(summary = "Delete all stored data across all modules")
   @DeleteMapping
@@ -33,6 +35,7 @@ public class ResetController {
     sendMessageToRecipientService.deleteAll();
     certificateStatusUpdateForCareService.deleteAll();
     storeLogService.deleteAll();
+    behaviorRuleRepository.deleteAll();
     return ResponseEntity.noContent().build();
   }
 }

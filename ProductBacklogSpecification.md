@@ -18,9 +18,9 @@ A centralized REST API at `/api/behavior` for creating runtime rules that contro
 
 A rule can combine delay AND error response in a single rule (e.g., `delayMillis=30000` + `resultCode=ERROR` + `errorId=VALIDATION_ERROR` → wait 30s then return error). Delay-only or error-only also supported.
 
-### MB-01 — Error response rules for RegisterCertificate (full vertical slice)
+### ~~MB-01 — Error response rules for RegisterCertificate (full vertical slice)~~ ✓ Done
 
-First item — establishes the entire pattern that subsequent items follow.
+~~First item — establishes the entire pattern that subsequent items follow.~~
 
 Deliver:
 - `BehaviorRule` model (`@Value @Builder`): `id` (UUID), `serviceName` (enum), `resultCode` (nullable), `errorId` (nullable), `resultText` (nullable), `delayMillis` (Long, nullable), `matchCriteria` (logicalAddress / certificateId / personId — all nullable), `maxTriggerCount` (Integer, nullable — auto-remove after N fires), `triggerCount`, `createdAt`
