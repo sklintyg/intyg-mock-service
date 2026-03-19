@@ -1,129 +1,124 @@
 # Product Backlog Specification — intyg-mock-service
 
-This document captures suggested future development items for intyg-mock-service. Each item is intentionally scoped to a single module or concern so it can be picked up and implemented independently. The primary drivers are:
-
-- **REST API usability** — making the inspection endpoints richer for both manual testers and automated test suites that need to assert on what was received.
-- **SOAP passthrough** — allowing the mock to act as a transparent proxy, storing calls locally while also forwarding them to an upstream system.
+This document captures suggested future development items for intyg-mock-service. Each item is intentionally scoped to a single module or concern so it can be picked up and implemented independently.
 
 ---
 
-## ~~REST API Parity — RevokeCertificate~~ ✓ Done
+## Previously Implemented
 
-~~The three items below bring `RevokeCertificate` to the same level as `RegisterCertificate`.~~
-
-### ~~RC-01 — Add GET and DELETE by certificate ID for RevokeCertificate~~ ✓ Done
-
-~~Add `GET /api/revoke-certificate/{certificateId}` returning the matching DTO (404 if not found) and `DELETE /api/revoke-certificate/{certificateId}` to remove a single entry. Add `findByCertificateId` and `deleteById` to `RevokeCertificateRepository`. Add integration tests.~~
-
-### ~~RC-02 — Add GET by logical address for RevokeCertificate~~ ✓ Done
-
-~~Add `GET /api/revoke-certificate/logical-address/{logicalAddress}` returning a list of matching DTOs. Add `findByLogicalAddress` to `RevokeCertificateRepository` delegating to `findByKey`. Add integration test.~~
-
-### ~~RC-03 — Add GET by person ID for RevokeCertificate~~ ✓ Done
-
-~~Add `GET /api/revoke-certificate/person/{personId}` filtering by `patientPersonId.extension` with the same hyphen-normalisation used in `RegisterCertificate`. Add `findByPersonId` to `RevokeCertificateRepository`. Add integration test.~~
+- REST API parity for all five services (GET/DELETE by ID, logical address, person ID, etc.)
+- Cross-cutting: count endpoints (`GET /api/{module}/count`) and global reset (`DELETE /api/reset`)
+- SOAP passthrough for all five services with mTLS support
 
 ---
 
-## ~~REST API Parity — SendMessageToRecipient~~ ✓ Done
+## Mock Behavior Control
 
-~~The four items below bring `SendMessageToRecipient` to the same level as `RevokeCertificate`.~~
+A centralized REST API at `/api/behavior` for creating runtime rules that control how each SOAP service responds. Rules are evaluated on every incoming SOAP call. Error rules prevent the request from being stored (it was rejected); delay-only rules store normally. Skipped stores are logged via a generic `BehaviorLogger`.
 
-### ~~SM-01 — Add GET and DELETE by message ID for SendMessageToRecipient~~ ✓ Done
+A rule can combine delay AND error response in a single rule (e.g., `delayMillis=30000` + `resultCode=ERROR` + `errorId=VALIDATION_ERROR` → wait 30s then return error). Delay-only or error-only also supported.
 
-~~Add `GET /api/send-message-to-recipient/{messageId}` returning the matching DTO (404 if not found) and `DELETE /api/send-message-to-recipient/{messageId}` to remove a single message. Add `findByMessageId` and `deleteByMessageId` to `SendMessageToRecipientRepository`. Add integration tests.~~
+### MB-01 — Error response rules for RegisterCertificate (full vertical slice)
 
-### ~~SM-02 — Add GET by certificate ID for SendMessageToRecipient~~ ✓ Done
+First item — establishes the entire pattern that subsequent items follow.
 
-~~Add `GET /api/send-message-to-recipient/certificate/{certificateId}` filtering by `intygsId.extension`. Add `findByCertificateId` to the repository. Add integration test.~~
+Deliver:
+- `BehaviorRule` model (`@Value @Builder`): `id` (UUID), `serviceName` (enum), `resultCode` (nullable), `errorId` (nullable), `resultText` (nullable), `delayMillis` (Long, nullable), `matchCriteria` (logicalAddress / certificateId / personId — all nullable), `maxTriggerCount` (Integer, nullable — auto-remove after N fires), `triggerCount`, `createdAt`
+- `BehaviorRuleRepository` — `ConcurrentHashMap<UUID, BehaviorRule>` with CRUD + `findByServiceName` + trigger-count tracking + auto-removal
+- `BehaviorRuleEvaluator` — matches rules by specificity (more non-null criteria = higher priority, ties broken by most-recent `createdAt`), handles delay via injectable `DelayApplier` (`Thread.sleep` in prod)
+- `BehaviorController` — full REST API at `/api/behavior`:
+  - `POST /api/behavior` — create rule
+  - `GET /api/behavior` — list all (optionally `?service=register-certificate`)
+  - `GET /api/behavior/{ruleId}` — get specific rule
+  - `DELETE /api/behavior/{ruleId}` — delete specific rule
+  - `DELETE /api/behavior` — delete all (optionally `?service=...`)
+- Wire into `ResetController` so `DELETE /api/reset` clears behavior rules
+- `BehaviorLogger` — generic structured logger for behavior rule outcomes, used by all services. Logs service name, matched rule ID, certificate/person ID, and outcome (e.g., `"RegisterCertificate with certificateId 'abc-123' not stored due to simulated VALIDATION_ERROR behavior (rule 550e8400-...)"`). Uses the existing `log.atInfo().setMessage(...).addKeyValue(...).log()` pattern
+- Wire into `RegisterCertificateService.store()`: (1) extract match context (logicalAddress, certificateId, personId), (2) evaluate rule, (3) if error rule matches → apply delay if present, log via `BehaviorLogger`, return error response **without storing**, (4) if delay-only rule matches → apply delay, store request, return OK, (5) no rule → fall through to passthrough/OK and store as before
+- Unit tests for: `BehaviorRuleRepository`, `BehaviorRuleEvaluator` (matching, specificity, trigger-count), `BehaviorLogger`, `RegisterCertificateService` (error rule skips store, delay-only rule stores, no rule stores)
+- Integration tests: create error rule via REST → send SOAP → verify error response + request **not** stored; `maxTriggerCount=1` fires once then OK; reset clears rules; delay-only rule stores normally
+- OpenAPI annotations on all endpoints
 
-### ~~SM-03 — Add GET by person ID for SendMessageToRecipient~~ ✓ Done
+Example POST:
+```json
+{
+  "serviceName": "REGISTER_CERTIFICATE",
+  "resultCode": "ERROR",
+  "errorId": "VALIDATION_ERROR",
+  "resultText": "Certificate validation failed",
+  "matchCriteria": { "certificateId": "abc-123" },
+  "maxTriggerCount": 1
+}
+```
 
-~~Add `GET /api/send-message-to-recipient/person/{personId}` filtering by `patientPersonId.extension` with hyphen normalisation. Add `findByPersonId` to the repository. Add integration test.~~
+Prerequisites: none
 
-### ~~SM-04 — Add GET by logical address for SendMessageToRecipient~~ ✓ Done
+### MB-02 — Error response rules for RevokeCertificate
 
-~~Add `GET /api/send-message-to-recipient/logical-address/{logicalAddress}` returning messages stored under that logical address. Add `findByLogicalAddress` to the repository. Add integration test.~~
+Reuse all infrastructure from MB-01. Only new work:
+- Wire `BehaviorRuleEvaluator` into `RevokeCertificateService.store()`
+- Extract match context from `RevokeCertificateType` (logicalAddress, `intygsId.extension`, `patientPersonId.extension`)
+- Reuse the shared `CertificateBehaviorResponseBuilder` (same `certificate.v3.ResultType`)
+- Unit tests for `RevokeCertificateService` rule evaluation
+- Integration test: error rule → SOAP → verify error response + request stored
 
----
+Prerequisites: MB-01
 
-## ~~REST API Parity — CertificateStatusUpdateForCare~~ ✓ Done
+### MB-03 — Error response rules for SendMessageToRecipient
 
-~~The four items below bring `CertificateStatusUpdateForCare` to the same level as `RevokeCertificate` and `SendMessageToRecipient`.~~
+Same pattern as MB-02:
+- Wire into `SendMessageToRecipientService.store()`
+- Extract match context from `SendMessageToRecipientType` (logicalAddress, `intygsId.extension`, `patientPersonId.extension`)
+- Unit tests + integration test
 
-### ~~CS-01 — Add GET and DELETE by certificate ID for CertificateStatusUpdateForCare~~ ✓ Done
+Prerequisites: MB-01
 
-~~Add `GET /api/certificate-status-for-care/{certificateId}` returning matching DTOs and `DELETE /api/certificate-status-for-care/{certificateId}` to remove entries for a certificate. Add `findByCertificateId` and `deleteByCertificateId` to `CertificateStatusUpdateForCareRepository`. Add integration tests.~~
+### MB-04 — Error response rules for CertificateStatusUpdateForCare
 
-### ~~CS-02 — Add GET by logical address for CertificateStatusUpdateForCare~~ ✓ Done
+Same pattern as MB-02:
+- Wire into `CertificateStatusUpdateForCareService.store()`
+- Extract match context from `CertificateStatusUpdateForCareType` (logicalAddress, `intyg.intygsId.extension`, `intyg.patient.personId.extension`)
+- Unit tests + integration test
 
-~~Add `GET /api/certificate-status-for-care/logical-address/{logicalAddress}`. Add `findByLogicalAddress` to the repository. Add integration test.~~
+Prerequisites: MB-01
 
-### ~~CS-03 — Add GET by person ID for CertificateStatusUpdateForCare~~ ✓ Done
+### MB-05 — Error response rules for StoreLog
 
-~~Add `GET /api/certificate-status-for-care/person/{personId}` filtering by `intyg.patient.personId.extension` with hyphen normalisation. Add `findByPersonId` to the repository. Add integration test.~~
+Different schema — requires `StoreLogBehaviorResponseBuilder`:
+- Wire into `StoreLogService.store()`
+- Uses `auditing.log.v2.ResultType` (no `errorId` field, different `ResultCodeType` enum with VALIDATION_ERROR, ACCESSDENIED, etc.)
+- Extract match context: `logicalAddress` + certificate ID from `log.activity.activityLevel`
+- Separate response builder that maps rule's `resultCode` string to `auditing.log.v2.ResultCodeType`
+- Unit tests + integration test
 
-### ~~CS-04 — Add GET by event type for CertificateStatusUpdateForCare~~ ✓ Done
+Prerequisites: MB-01
 
-~~Add `GET /api/certificate-status-for-care/event-type/{eventCode}` filtering by `handelse.handelsekod.code`. Useful for asserting that a specific status event (e.g. `SKICKA`, `MAKULERA`) was received. Add `findByEventCode` to the repository. Add integration test.~~
+### Dependency Graph
 
----
+```
+MB-01 (RegisterCertificate — full infra + first service)
+  ├── MB-02 (RevokeCertificate)
+  ├── MB-03 (SendMessageToRecipient)
+  ├── MB-04 (CertificateStatusUpdateForCare)
+  └── MB-05 (StoreLog — different schema)
+```
 
-## Cross-Cutting REST Enhancements
+MB-02 through MB-05 are independent of each other and can be done in any order after MB-01.
 
-### ~~XC-01 — Add count endpoint for each module~~ ✓ Done
+### Key Design Decisions
 
-~~Add `GET /api/{module}/count` returning `{"count": N}` for each of the five modules. Allows automated tests to assert "exactly N calls were received" without fetching all records.~~
+1. **Centralized `/api/behavior` endpoint** — one place to manage all rules, `serviceName` field provides scoping
+2. **Combined delay + error** — a single rule can have both `delayMillis` and error fields; delay-only or error-only also work
+3. **Rules evaluated in service layer** — response types differ per schema, keeps logic explicit and follows existing patterns
+4. **Behavior rules override passthrough** — most useful for testing (override upstream for specific scenarios)
+5. **Don't store on error** — if a rule produces an error response, the request is **not** stored (it was rejected). Delay-only rules still store normally. The skipped store is logged via a generic `BehaviorLogger` (see below)
+6. **Thread-safe `ConcurrentHashMap`** — rules managed via REST while SOAP requests processed concurrently
+7. **Specificity-based matching** — more specific rules win (certificateId+logicalAddress beats logicalAddress-only)
 
-~~Endpoints:~~
-~~- `GET /api/register-certificate/count`~~
-~~- `GET /api/revoke-certificate/count`~~
-~~- `GET /api/send-message-to-recipient/count`~~
-~~- `GET /api/certificate-status-for-care/count`~~
-~~- `GET /api/store-log/count`~~
+### Schema Reference
 
-### ~~XC-02 — Add global reset endpoint~~ ✓ Done
+**Certificate v3** (RegisterCertificate, RevokeCertificate, SendMessageToRecipient, CertificateStatusUpdateForCare):
+- `ResultType`: `resultCode` (OK | INFO | ERROR) + `errorId` (VALIDATION_ERROR | APPLICATION_ERROR | TECHNICAL_ERROR | REVOKED) + `resultText` (String)
 
-~~Add `DELETE /api/reset` that calls `deleteAll()` on all five repositories in a single request. Useful as a `@BeforeEach` setup call in automated integration test suites that run against a shared instance.~~
-
----
-
-## SOAP Passthrough
-
-The passthrough feature lets the mock store each incoming SOAP call locally (existing behaviour) and simultaneously forward it to a real upstream system. This is useful when running integration tests against a full environment where the real service must also receive the call.
-
-Each module is a separate item. **PT-00 is a prerequisite for PT-01 through PT-05.**
-
-### ~~PT-00 — Add common CXF client infrastructure for passthrough~~ ✓ Done
-
-~~Add `cxf-rt-frontend-jaxws` to `app/build.gradle`. Introduce per-service configuration properties:~~
-
-~~```
-app.passthrough.register-certificate.enabled=false
-app.passthrough.register-certificate.url=
-app.passthrough.revoke-certificate.enabled=false
-app.passthrough.revoke-certificate.url=
-# … etc.
-```~~
-
-~~Create a reusable CXF JAXWS client factory helper (or configure in `CxfConfig`). Document the configuration pattern in `application.properties`. No functional change to existing behaviour when all flags are `false`.~~
-
-### ~~PT-01 — Passthrough for RegisterCertificate~~ ✓ Done
-
-~~When `app.passthrough.register-certificate.enabled=true`, `RegisterCertificateResponderImpl` forwards the call to the URL at `app.passthrough.register-certificate.url` using a CXF JAXWS client after storing the request locally. The upstream response is returned to the caller; if passthrough is disabled the responder falls back to OK. Add integration test using MockServer via Testcontainers.~~
-
-### ~~PT-02 — Passthrough for RevokeCertificate~~ ✓ Done
-
-~~Same pattern as PT-01 for the RevokeCertificate service. Configuration key: `app.passthrough.revoke-certificate`.~~
-
-### ~~PT-03 — Passthrough for SendMessageToRecipient~~ ✓ Done
-
-~~Same pattern as PT-01 for the SendMessageToRecipient service. Configuration key: `app.passthrough.send-message-to-recipient`.~~
-
-### ~~PT-04 — Passthrough for CertificateStatusUpdateForCare~~ ✓ Done
-
-~~Same pattern as PT-01 for the CertificateStatusUpdateForCare service. Configuration key: `app.passthrough.certificate-status-update-for-care`.~~
-
-### ~~PT-05 — Passthrough for StoreLog~~ ✓ Done
-
-~~Same pattern as PT-01 for the StoreLog service. Configuration key: `app.passthrough.store-log`.~~
+**StoreLog v2**:
+- `ResultType`: `resultCode` (OK | INFO | ERROR | VALIDATION_ERROR | ACCESSDENIED | ...) + `resultText` (String) — **no `errorId` field**
