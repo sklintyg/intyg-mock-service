@@ -108,17 +108,96 @@ class BehaviorRuleRepositoryTest {
   }
 
   @Test
-  void shouldIncrementTriggerCount() {
+  void shouldFindBestMatchBySpecificity() {
+    final var wildcard =
+        BehaviorRule.builder()
+            .id(UUID.randomUUID())
+            .serviceName(ServiceName.REGISTER_CERTIFICATE)
+            .resultCode("ERROR")
+            .triggerCount(0)
+            .createdAt(Instant.now())
+            .build();
+    final var specific =
+        BehaviorRule.builder()
+            .id(UUID.randomUUID())
+            .serviceName(ServiceName.REGISTER_CERTIFICATE)
+            .resultCode("ERROR")
+            .matchCriteria(MatchCriteria.builder().certificateId("cert-123").build())
+            .triggerCount(0)
+            .createdAt(Instant.now())
+            .build();
+    repository.save(wildcard);
+    repository.save(specific);
+
+    final var context =
+        MatchContext.builder().logicalAddress("any").certificateId("cert-123").build();
+    final var result = repository.findBestMatch(ServiceName.REGISTER_CERTIFICATE, context);
+
+    assertTrue(result.isPresent());
+    assertEquals(specific.getId(), result.get().getId());
+  }
+
+  @Test
+  void shouldFindBestMatchByMostRecentCreatedAt() {
+    final var older =
+        BehaviorRule.builder()
+            .id(UUID.randomUUID())
+            .serviceName(ServiceName.REGISTER_CERTIFICATE)
+            .resultCode("ERROR")
+            .triggerCount(0)
+            .createdAt(Instant.now().minusSeconds(10))
+            .build();
+    final var newer =
+        BehaviorRule.builder()
+            .id(UUID.randomUUID())
+            .serviceName(ServiceName.REGISTER_CERTIFICATE)
+            .resultCode("ERROR")
+            .triggerCount(0)
+            .createdAt(Instant.now())
+            .build();
+    repository.save(older);
+    repository.save(newer);
+
+    final var context = MatchContext.builder().logicalAddress("any").certificateId("any").build();
+    final var result = repository.findBestMatch(ServiceName.REGISTER_CERTIFICATE, context);
+
+    assertTrue(result.isPresent());
+    assertEquals(newer.getId(), result.get().getId());
+  }
+
+  @Test
+  void shouldReturnEmptyWhenNoMatch() {
+    final var rule =
+        BehaviorRule.builder()
+            .id(UUID.randomUUID())
+            .serviceName(ServiceName.REGISTER_CERTIFICATE)
+            .resultCode("ERROR")
+            .matchCriteria(MatchCriteria.builder().certificateId("cert-999").build())
+            .triggerCount(0)
+            .createdAt(Instant.now())
+            .build();
+    repository.save(rule);
+
+    final var context =
+        MatchContext.builder().logicalAddress("any").certificateId("cert-123").build();
+    final var result = repository.findBestMatch(ServiceName.REGISTER_CERTIFICATE, context);
+
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void shouldTriggerAndPersistRule() {
     final var rule = rule(ServiceName.REGISTER_CERTIFICATE);
     repository.save(rule);
 
-    repository.incrementTriggerCount(rule.getId());
+    final var result = repository.triggerAndPersist(rule.getId());
 
+    assertTrue(result.isPresent());
     assertEquals(1, repository.findById(rule.getId()).get().getTriggerCount());
   }
 
   @Test
-  void shouldAutoRemoveWhenMaxTriggerCountReached() {
+  void shouldRemoveExhaustedRuleOnTrigger() {
     final var rule =
         BehaviorRule.builder()
             .id(UUID.randomUUID())
@@ -130,13 +209,13 @@ class BehaviorRuleRepositoryTest {
             .build();
     repository.save(rule);
 
-    repository.incrementTriggerCount(rule.getId());
+    repository.triggerAndPersist(rule.getId());
 
     assertTrue(repository.findById(rule.getId()).isEmpty());
   }
 
   @Test
-  void shouldNotAutoRemoveWhenMaxTriggerCountNotYetReached() {
+  void shouldNotRemoveWhenMaxTriggerCountNotYetReached() {
     final var rule =
         BehaviorRule.builder()
             .id(UUID.randomUUID())
@@ -148,8 +227,15 @@ class BehaviorRuleRepositoryTest {
             .build();
     repository.save(rule);
 
-    repository.incrementTriggerCount(rule.getId());
+    repository.triggerAndPersist(rule.getId());
 
     assertTrue(repository.findById(rule.getId()).isPresent());
+  }
+
+  @Test
+  void shouldReturnEmptyWhenTriggeringUnknownId() {
+    final var result = repository.triggerAndPersist(UUID.randomUUID());
+
+    assertTrue(result.isEmpty());
   }
 }

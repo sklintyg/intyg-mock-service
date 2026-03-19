@@ -20,7 +20,7 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import se.inera.intyg.intygmockservice.behavior.BehaviorLogger;
 import se.inera.intyg.intygmockservice.behavior.BehaviorRule;
-import se.inera.intyg.intygmockservice.behavior.BehaviorRuleEvaluator;
+import se.inera.intyg.intygmockservice.behavior.BehaviorService;
 import se.inera.intyg.intygmockservice.behavior.CertificateBehaviorResponseBuilder;
 import se.inera.intyg.intygmockservice.behavior.ServiceName;
 import se.inera.intyg.intygmockservice.common.dto.IntygDTO;
@@ -42,7 +42,7 @@ class RegisterCertificateServiceTest {
   @Mock private RegisterCertificateRepository repository;
   @Mock private RegisterCertificateConverter converter;
   @Mock private RegisterCertificatePassthroughClient passthroughClient;
-  @Mock private BehaviorRuleEvaluator behaviorRuleEvaluator;
+  @Mock private BehaviorService behaviorRuleEvaluator;
   @Mock private BehaviorLogger behaviorLogger;
   @Mock private CertificateBehaviorResponseBuilder responseBuilder;
 

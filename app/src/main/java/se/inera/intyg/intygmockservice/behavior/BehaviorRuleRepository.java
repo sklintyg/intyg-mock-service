@@ -1,5 +1,6 @@
 package se.inera.intyg.intygmockservice.behavior;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -28,6 +29,35 @@ public class BehaviorRuleRepository {
     return rules.values().stream().filter(r -> r.getServiceName() == serviceName).toList();
   }
 
+  public Optional<BehaviorRule> findBestMatch(ServiceName serviceName, MatchContext context) {
+    return rules.values().stream()
+        .filter(rule -> rule.getServiceName() == serviceName)
+        .filter(rule -> rule.matches(context))
+        .sorted(
+            Comparator.comparingInt(BehaviorRule::specificity)
+                .reversed()
+                .thenComparing(Comparator.comparing(BehaviorRule::getCreatedAt).reversed()))
+        .findFirst();
+  }
+
+  public Optional<BehaviorRule> triggerAndPersist(UUID id) {
+    final var result = new BehaviorRule[1];
+    rules.compute(
+        id,
+        (k, existing) -> {
+          if (existing == null) {
+            return null;
+          }
+          result[0] = existing;
+          final var exhausted = existing.trigger();
+          if (exhausted) {
+            return null;
+          }
+          return existing;
+        });
+    return Optional.ofNullable(result[0]);
+  }
+
   public boolean delete(UUID id) {
     return rules.remove(id) != null;
   }
@@ -38,22 +68,5 @@ public class BehaviorRuleRepository {
 
   public void deleteByServiceName(ServiceName serviceName) {
     rules.entrySet().removeIf(e -> e.getValue().getServiceName() == serviceName);
-  }
-
-  public void incrementTriggerCount(UUID id) {
-    rules.compute(
-        id,
-        (k, existing) -> {
-          if (existing == null) {
-            return null;
-          }
-          final var updated =
-              existing.toBuilder().triggerCount(existing.getTriggerCount() + 1).build();
-          if (updated.getMaxTriggerCount() != null
-              && updated.getTriggerCount() >= updated.getMaxTriggerCount()) {
-            return null;
-          }
-          return updated;
-        });
   }
 }

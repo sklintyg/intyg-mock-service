@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.behavior.BehaviorLogger;
-import se.inera.intyg.intygmockservice.behavior.BehaviorRuleEvaluator;
+import se.inera.intyg.intygmockservice.behavior.BehaviorService;
 import se.inera.intyg.intygmockservice.behavior.CertificateBehaviorResponseBuilder;
 import se.inera.intyg.intygmockservice.behavior.MatchContext;
 import se.inera.intyg.intygmockservice.behavior.ServiceName;
@@ -30,7 +30,7 @@ public class RegisterCertificateService {
   private final RegisterCertificateRepository repository;
   private final RegisterCertificateConverter converter;
   private final RegisterCertificatePassthroughClient passthroughClient;
-  private final BehaviorRuleEvaluator behaviorRuleEvaluator;
+  private final BehaviorService behaviorService;
   private final BehaviorLogger behaviorLogger;
   private final CertificateBehaviorResponseBuilder responseBuilder;
 
@@ -67,7 +67,7 @@ public class RegisterCertificateService {
             .personId(personId)
             .build();
 
-    final var ruleOpt = behaviorRuleEvaluator.evaluate(ServiceName.REGISTER_CERTIFICATE, context);
+    final var ruleOpt = behaviorService.evaluate(ServiceName.REGISTER_CERTIFICATE, context);
 
     if (ruleOpt.isPresent()) {
       final var rule = ruleOpt.get();
