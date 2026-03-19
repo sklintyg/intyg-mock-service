@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.behavior;
+package se.inera.intyg.intygmockservice.infrastructure.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -8,6 +8,10 @@ import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import se.inera.intyg.intygmockservice.domain.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.MatchContext;
+import se.inera.intyg.intygmockservice.domain.MatchCriteria;
+import se.inera.intyg.intygmockservice.domain.ServiceName;
 
 class BehaviorRuleRepositoryTest {
 

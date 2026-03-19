@@ -1,20 +1,20 @@
-package se.inera.intyg.intygmockservice.config;
+package se.inera.intyg.intygmockservice.infrastructure.config;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateResponderImpl;
-import se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateService;
-import se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateResponderImpl;
-import se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateService;
-import se.inera.intyg.intygmockservice.sendmessagetorecipient.SendMessageToRecipientResponderImpl;
-import se.inera.intyg.intygmockservice.sendmessagetorecipient.SendMessageToRecipientService;
-import se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareResponderImpl;
-import se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareService;
-import se.inera.intyg.intygmockservice.storelog.StoreLogResponderImpl;
-import se.inera.intyg.intygmockservice.storelog.StoreLogService;
+import se.inera.intyg.intygmockservice.application.registercertificate.RegisterCertificateResponderImpl;
+import se.inera.intyg.intygmockservice.application.registercertificate.RegisterCertificateService;
+import se.inera.intyg.intygmockservice.application.revokecertificate.RevokeCertificateResponderImpl;
+import se.inera.intyg.intygmockservice.application.revokecertificate.RevokeCertificateService;
+import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.SendMessageToRecipientResponderImpl;
+import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.SendMessageToRecipientService;
+import se.inera.intyg.intygmockservice.application.statusupdates.CertificateStatusUpdateForCareResponderImpl;
+import se.inera.intyg.intygmockservice.application.statusupdates.CertificateStatusUpdateForCareService;
+import se.inera.intyg.intygmockservice.application.storelog.StoreLogResponderImpl;
+import se.inera.intyg.intygmockservice.application.storelog.StoreLogService;
 
 @Configuration
 @RequiredArgsConstructor

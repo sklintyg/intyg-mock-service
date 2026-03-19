@@ -1,7 +1,7 @@
-package se.inera.intyg.intygmockservice.common.converter;
+package se.inera.intyg.intygmockservice.application.common.converter;
 
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.common.dto.IntygDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
 
 @Component

@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.common.repository;
+package se.inera.intyg.intygmockservice.infrastructure.repository;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;

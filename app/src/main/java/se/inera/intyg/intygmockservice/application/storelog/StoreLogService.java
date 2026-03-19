@@ -1,14 +1,14 @@
-package se.inera.intyg.intygmockservice.storelog;
+package se.inera.intyg.intygmockservice.application.storelog;
 
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygmockservice.storelog.converter.StoreLogTypeConverter;
-import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO;
-import se.inera.intyg.intygmockservice.storelog.passthrough.StoreLogPassthroughClient;
-import se.inera.intyg.intygmockservice.storelog.repository.StoreLogTypeRepository;
+import se.inera.intyg.intygmockservice.application.storelog.converter.StoreLogTypeConverter;
+import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO;
+import se.inera.intyg.intygmockservice.infrastructure.passthrough.StoreLogPassthroughClient;
+import se.inera.intyg.intygmockservice.infrastructure.repository.StoreLogTypeRepository;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogResponseType;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType;
 

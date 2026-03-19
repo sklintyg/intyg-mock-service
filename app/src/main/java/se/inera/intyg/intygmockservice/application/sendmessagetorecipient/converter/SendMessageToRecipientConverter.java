@@ -1,12 +1,12 @@
-package se.inera.intyg.intygmockservice.sendmessagetorecipient.converter;
+package se.inera.intyg.intygmockservice.application.sendmessagetorecipient.converter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.common.converter.HoSPersonalConverter;
-import se.inera.intyg.intygmockservice.common.dto.CodeTypeDTO;
-import se.inera.intyg.intygmockservice.common.dto.IntygDTO.IntygsId;
-import se.inera.intyg.intygmockservice.common.dto.PatientDTO.PersonId;
-import se.inera.intyg.intygmockservice.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
+import se.inera.intyg.intygmockservice.application.common.converter.HoSPersonalConverter;
+import se.inera.intyg.intygmockservice.application.common.dto.CodeTypeDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO.IntygsId;
+import se.inera.intyg.intygmockservice.application.common.dto.PatientDTO.PersonId;
+import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 
 @Component

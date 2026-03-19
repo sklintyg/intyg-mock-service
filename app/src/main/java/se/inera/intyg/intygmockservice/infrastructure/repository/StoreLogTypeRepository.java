@@ -1,8 +1,7 @@
-package se.inera.intyg.intygmockservice.storelog.repository;
+package se.inera.intyg.intygmockservice.infrastructure.repository;
 
 import org.springframework.stereotype.Repository;
-import se.inera.intyg.intygmockservice.common.repository.AbstractInMemoryRepository;
-import se.inera.intyg.intygmockservice.config.properties.AppProperties;
+import se.inera.intyg.intygmockservice.infrastructure.config.properties.AppProperties;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType;
 
 @Repository

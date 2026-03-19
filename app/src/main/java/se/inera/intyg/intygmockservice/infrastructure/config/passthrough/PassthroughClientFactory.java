@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.config.passthrough;
+package se.inera.intyg.intygmockservice.infrastructure.config.passthrough;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.cxf.Bus;

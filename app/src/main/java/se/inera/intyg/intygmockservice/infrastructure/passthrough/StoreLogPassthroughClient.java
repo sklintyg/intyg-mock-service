@@ -1,10 +1,10 @@
-package se.inera.intyg.intygmockservice.storelog.passthrough;
+package se.inera.intyg.intygmockservice.infrastructure.passthrough;
 
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.config.passthrough.PassthroughClientFactory;
-import se.inera.intyg.intygmockservice.config.properties.PassthroughProperties;
+import se.inera.intyg.intygmockservice.infrastructure.config.passthrough.PassthroughClientFactory;
+import se.inera.intyg.intygmockservice.infrastructure.config.properties.PassthroughProperties;
 import se.riv.informationsecurity.auditing.log.StoreLog.v2.rivtabp21.StoreLogResponderInterface;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogResponseType;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType;

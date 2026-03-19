@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.revokecertificate;
+package se.inera.intyg.intygmockservice.application.revokecertificate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;

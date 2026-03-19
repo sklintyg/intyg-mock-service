@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.registercertificate;
+package se.inera.intyg.intygmockservice.application.registercertificate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;

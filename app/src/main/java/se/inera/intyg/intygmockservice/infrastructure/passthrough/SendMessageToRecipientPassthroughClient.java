@@ -1,10 +1,10 @@
-package se.inera.intyg.intygmockservice.sendmessagetorecipient.passthrough;
+package se.inera.intyg.intygmockservice.infrastructure.passthrough;
 
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.config.passthrough.PassthroughClientFactory;
-import se.inera.intyg.intygmockservice.config.properties.PassthroughProperties;
+import se.inera.intyg.intygmockservice.infrastructure.config.passthrough.PassthroughClientFactory;
+import se.inera.intyg.intygmockservice.infrastructure.config.properties.PassthroughProperties;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponderInterface;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;

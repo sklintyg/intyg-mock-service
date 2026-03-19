@@ -1,13 +1,13 @@
-package se.inera.intyg.intygmockservice.statusupdates.converter;
+package se.inera.intyg.intygmockservice.application.statusupdates.converter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.common.converter.IntygConverter;
-import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO;
-import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO.Fragor;
-import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse;
-import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse.Handelsekod;
-import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO.HanteratAv;
+import se.inera.intyg.intygmockservice.application.common.converter.IntygConverter;
+import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO;
+import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Fragor;
+import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse;
+import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse.Handelsekod;
+import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.HanteratAv;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.Arenden;
 

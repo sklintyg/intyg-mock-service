@@ -1,9 +1,8 @@
-package se.inera.intyg.intygmockservice.statusupdates.repository;
+package se.inera.intyg.intygmockservice.infrastructure.repository;
 
 import java.util.List;
 import org.springframework.stereotype.Repository;
-import se.inera.intyg.intygmockservice.common.repository.AbstractInMemoryRepository;
-import se.inera.intyg.intygmockservice.config.properties.AppProperties;
+import se.inera.intyg.intygmockservice.infrastructure.config.properties.AppProperties;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
 
 @Repository

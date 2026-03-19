@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.behavior;
+package se.inera.intyg.intygmockservice.application.behavior;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import se.inera.intyg.intygmockservice.application.behavior.dto.CreateBehaviorRuleRequest;
+import se.inera.intyg.intygmockservice.application.behavior.service.BehaviorService;
 import se.inera.intyg.intygmockservice.domain.BehaviorRule;
 import se.inera.intyg.intygmockservice.domain.ServiceName;
 

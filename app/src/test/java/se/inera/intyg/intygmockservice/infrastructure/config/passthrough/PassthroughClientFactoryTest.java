@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.config.passthrough;
+package se.inera.intyg.intygmockservice.infrastructure.config.passthrough;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

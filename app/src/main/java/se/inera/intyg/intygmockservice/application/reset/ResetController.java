@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.reset;
+package se.inera.intyg.intygmockservice.application.reset;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -7,12 +7,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import se.inera.intyg.intygmockservice.behavior.BehaviorService;
-import se.inera.intyg.intygmockservice.registercertificate.RegisterCertificateService;
-import se.inera.intyg.intygmockservice.revokecertificate.RevokeCertificateService;
-import se.inera.intyg.intygmockservice.sendmessagetorecipient.SendMessageToRecipientService;
-import se.inera.intyg.intygmockservice.statusupdates.CertificateStatusUpdateForCareService;
-import se.inera.intyg.intygmockservice.storelog.StoreLogService;
+import se.inera.intyg.intygmockservice.application.behavior.service.BehaviorService;
+import se.inera.intyg.intygmockservice.application.registercertificate.RegisterCertificateService;
+import se.inera.intyg.intygmockservice.application.revokecertificate.RevokeCertificateService;
+import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.SendMessageToRecipientService;
+import se.inera.intyg.intygmockservice.application.statusupdates.CertificateStatusUpdateForCareService;
+import se.inera.intyg.intygmockservice.application.storelog.StoreLogService;
 
 @Tag(name = "Reset")
 @RestController

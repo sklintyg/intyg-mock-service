@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.behavior;
+package se.inera.intyg.intygmockservice.infrastructure.repository;
 
 import java.util.Comparator;
 import java.util.List;

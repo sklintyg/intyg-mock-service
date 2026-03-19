@@ -1,8 +1,8 @@
-package se.inera.intyg.intygmockservice.statusupdates.dto;
+package se.inera.intyg.intygmockservice.application.statusupdates.dto;
 
 import lombok.Builder;
 import lombok.Value;
-import se.inera.intyg.intygmockservice.common.dto.IntygDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO;
 
 @Value
 @Builder

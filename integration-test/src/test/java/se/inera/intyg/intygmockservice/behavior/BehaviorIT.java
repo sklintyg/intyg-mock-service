@@ -20,7 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import se.inera.intyg.intygmockservice.IntygMockServiceApplication;
-import se.inera.intyg.intygmockservice.common.dto.CountResponse;
+import se.inera.intyg.intygmockservice.application.common.dto.CountResponse;
+import se.inera.intyg.intygmockservice.domain.BehaviorRule;
 
 @ActiveProfiles("integration-test")
 @SpringBootTest(classes = IntygMockServiceApplication.class, webEnvironment = RANDOM_PORT)

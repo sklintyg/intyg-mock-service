@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.behavior;
+package se.inera.intyg.intygmockservice.application.behavior.service;
 
 import java.time.Instant;
 import java.util.List;
@@ -6,11 +6,13 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygmockservice.domain.DelayApplier;
+import se.inera.intyg.intygmockservice.application.behavior.dto.CreateBehaviorRuleRequest;
 import se.inera.intyg.intygmockservice.domain.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.DelayApplier;
 import se.inera.intyg.intygmockservice.domain.MatchContext;
 import se.inera.intyg.intygmockservice.domain.MatchCriteria;
 import se.inera.intyg.intygmockservice.domain.ServiceName;
+import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 
 @Service
 @RequiredArgsConstructor

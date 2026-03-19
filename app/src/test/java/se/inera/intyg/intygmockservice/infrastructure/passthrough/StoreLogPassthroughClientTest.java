@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.storelog.passthrough;
+package se.inera.intyg.intygmockservice.infrastructure.passthrough;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygmockservice.config.passthrough.PassthroughClientFactory;
-import se.inera.intyg.intygmockservice.config.properties.PassthroughProperties;
-import se.inera.intyg.intygmockservice.config.properties.PassthroughProperties.ServiceConfig;
+import se.inera.intyg.intygmockservice.infrastructure.config.passthrough.PassthroughClientFactory;
+import se.inera.intyg.intygmockservice.infrastructure.config.properties.PassthroughProperties;
+import se.inera.intyg.intygmockservice.infrastructure.config.properties.PassthroughProperties.ServiceConfig;
 import se.riv.informationsecurity.auditing.log.StoreLog.v2.rivtabp21.StoreLogResponderInterface;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogResponseType;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType;

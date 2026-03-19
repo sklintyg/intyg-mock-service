@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.sendmessagetorecipient;
+package se.inera.intyg.intygmockservice.application.sendmessagetorecipient;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;

@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.statusupdates;
+package se.inera.intyg.intygmockservice.application.statusupdates;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

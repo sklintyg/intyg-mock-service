@@ -29,7 +29,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 import se.inera.intyg.intygmockservice.IntygMockServiceApplication;
-import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO;
+import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO;
 
 @Testcontainers
 @ActiveProfiles("integration-test")

@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.config.passthrough;
+package se.inera.intyg.intygmockservice.infrastructure.config.passthrough;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,7 +22,7 @@ import org.apache.cxf.transports.http.configuration.HTTPClientPolicy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import se.inera.intyg.intygmockservice.config.properties.PassthroughProperties;
+import se.inera.intyg.intygmockservice.infrastructure.config.properties.PassthroughProperties;
 
 @Slf4j
 @Profile("mtls-enabled")

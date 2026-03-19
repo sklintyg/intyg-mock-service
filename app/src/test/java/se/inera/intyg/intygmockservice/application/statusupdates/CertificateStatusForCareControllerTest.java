@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.statusupdates;
+package se.inera.intyg.intygmockservice.application.statusupdates;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import se.inera.intyg.intygmockservice.statusupdates.dto.CertificateStatusUpdateForCareDTO;
+import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateStatusForCareControllerTest {

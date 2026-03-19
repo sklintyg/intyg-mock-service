@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.config.properties;
+package se.inera.intyg.intygmockservice.infrastructure.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.storelog.dto;
+package se.inera.intyg.intygmockservice.application.storelog.dto;
 
 import java.time.LocalDateTime;
 import java.util.List;

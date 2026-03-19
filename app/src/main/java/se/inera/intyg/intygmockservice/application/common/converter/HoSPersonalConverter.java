@@ -1,15 +1,15 @@
-package se.inera.intyg.intygmockservice.common.converter;
+package se.inera.intyg.intygmockservice.application.common.converter;
 
 import java.util.Collection;
 import java.util.stream.Stream;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.common.dto.CodeTypeDTO;
-import se.inera.intyg.intygmockservice.common.dto.HoSPersonalDTO;
-import se.inera.intyg.intygmockservice.common.dto.HoSPersonalDTO.EnhetDTO;
-import se.inera.intyg.intygmockservice.common.dto.HoSPersonalDTO.EnhetDTO.ArbetsplatskodDTO;
-import se.inera.intyg.intygmockservice.common.dto.HoSPersonalDTO.EnhetDTO.HsaIdDTO;
-import se.inera.intyg.intygmockservice.common.dto.HoSPersonalDTO.EnhetDTO.VardgivareDTO;
-import se.inera.intyg.intygmockservice.common.dto.HoSPersonalDTO.PersonalIdDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.CodeTypeDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO.EnhetDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO.EnhetDTO.ArbetsplatskodDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO.EnhetDTO.HsaIdDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO.EnhetDTO.VardgivareDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO.PersonalIdDTO;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.ArbetsplatsKod;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Befattning;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;

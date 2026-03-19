@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.revokecertificate;
+package se.inera.intyg.intygmockservice.application.revokecertificate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -13,11 +13,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygmockservice.common.dto.IntygDTO.IntygsId;
-import se.inera.intyg.intygmockservice.revokecertificate.converter.RevokeCertificateConverter;
-import se.inera.intyg.intygmockservice.revokecertificate.dto.RevokeCertificateDTO;
-import se.inera.intyg.intygmockservice.revokecertificate.passthrough.RevokeCertificatePassthroughClient;
-import se.inera.intyg.intygmockservice.revokecertificate.repository.RevokeCertificateRepository;
+import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO.IntygsId;
+import se.inera.intyg.intygmockservice.application.revokecertificate.converter.RevokeCertificateConverter;
+import se.inera.intyg.intygmockservice.application.revokecertificate.dto.RevokeCertificateDTO;
+import se.inera.intyg.intygmockservice.infrastructure.passthrough.RevokeCertificatePassthroughClient;
+import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;

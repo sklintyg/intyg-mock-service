@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.sendmessagetorecipient;
+package se.inera.intyg.intygmockservice.application.sendmessagetorecipient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,7 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import se.inera.intyg.intygmockservice.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
+import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
 
 @ExtendWith(MockitoExtension.class)
 class SendMessageToRecipientControllerTest {

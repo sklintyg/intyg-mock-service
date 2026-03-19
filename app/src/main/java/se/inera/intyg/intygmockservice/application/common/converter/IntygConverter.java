@@ -1,15 +1,15 @@
-package se.inera.intyg.intygmockservice.common.converter;
+package se.inera.intyg.intygmockservice.application.common.converter;
 
 import jakarta.xml.bind.JAXBElement;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.common.dto.CodeTypeDTO;
-import se.inera.intyg.intygmockservice.common.dto.IntygDTO;
-import se.inera.intyg.intygmockservice.common.dto.IntygDTO.RelationDTO;
-import se.inera.intyg.intygmockservice.common.dto.IntygDTO.SvarDTO;
-import se.inera.intyg.intygmockservice.common.dto.IntygDTO.SvarDTO.DelsvarDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.CodeTypeDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO.RelationDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO.SvarDTO;
+import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO.SvarDTO.DelsvarDTO;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.CVType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.DatePeriodType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.TypAvIntyg;

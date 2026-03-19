@@ -1,11 +1,11 @@
-package se.inera.intyg.intygmockservice.revokecertificate.converter;
+package se.inera.intyg.intygmockservice.application.revokecertificate.converter;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.common.converter.HoSPersonalConverter;
-import se.inera.intyg.intygmockservice.common.converter.IntygIdConverter;
-import se.inera.intyg.intygmockservice.common.converter.PersonIdConverter;
-import se.inera.intyg.intygmockservice.revokecertificate.dto.RevokeCertificateDTO;
+import se.inera.intyg.intygmockservice.application.common.converter.HoSPersonalConverter;
+import se.inera.intyg.intygmockservice.application.common.converter.IntygIdConverter;
+import se.inera.intyg.intygmockservice.application.common.converter.PersonIdConverter;
+import se.inera.intyg.intygmockservice.application.revokecertificate.dto.RevokeCertificateDTO;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 
 @Component

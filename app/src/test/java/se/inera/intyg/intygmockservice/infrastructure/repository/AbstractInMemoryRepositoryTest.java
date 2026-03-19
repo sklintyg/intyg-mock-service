@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.common.repository;
+package se.inera.intyg.intygmockservice.infrastructure.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

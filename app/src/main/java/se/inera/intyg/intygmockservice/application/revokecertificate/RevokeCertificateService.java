@@ -1,14 +1,14 @@
-package se.inera.intyg.intygmockservice.revokecertificate;
+package se.inera.intyg.intygmockservice.application.revokecertificate;
 
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygmockservice.revokecertificate.converter.RevokeCertificateConverter;
-import se.inera.intyg.intygmockservice.revokecertificate.dto.RevokeCertificateDTO;
-import se.inera.intyg.intygmockservice.revokecertificate.passthrough.RevokeCertificatePassthroughClient;
-import se.inera.intyg.intygmockservice.revokecertificate.repository.RevokeCertificateRepository;
+import se.inera.intyg.intygmockservice.application.revokecertificate.converter.RevokeCertificateConverter;
+import se.inera.intyg.intygmockservice.application.revokecertificate.dto.RevokeCertificateDTO;
+import se.inera.intyg.intygmockservice.infrastructure.passthrough.RevokeCertificatePassthroughClient;
+import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 

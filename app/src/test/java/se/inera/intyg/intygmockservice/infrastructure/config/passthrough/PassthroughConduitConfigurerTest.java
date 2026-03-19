@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.config.passthrough;
+package se.inera.intyg.intygmockservice.infrastructure.config.passthrough;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,8 +18,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygmockservice.config.properties.PassthroughProperties;
-import se.inera.intyg.intygmockservice.config.properties.PassthroughProperties.MtlsConfig;
+import se.inera.intyg.intygmockservice.infrastructure.config.properties.PassthroughProperties;
+import se.inera.intyg.intygmockservice.infrastructure.config.properties.PassthroughProperties.MtlsConfig;
 
 @ExtendWith(MockitoExtension.class)
 class PassthroughConduitConfigurerTest {

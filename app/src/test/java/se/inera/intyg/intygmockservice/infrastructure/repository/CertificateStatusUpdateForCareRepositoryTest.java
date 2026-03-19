@@ -1,10 +1,10 @@
-package se.inera.intyg.intygmockservice.statusupdates.repository;
+package se.inera.intyg.intygmockservice.infrastructure.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import se.inera.intyg.intygmockservice.config.properties.AppProperties;
+import se.inera.intyg.intygmockservice.infrastructure.config.properties.AppProperties;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.Handelsekod;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;

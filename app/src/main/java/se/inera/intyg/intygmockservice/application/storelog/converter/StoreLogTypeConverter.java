@@ -1,15 +1,15 @@
-package se.inera.intyg.intygmockservice.storelog.converter;
+package se.inera.intyg.intygmockservice.application.storelog.converter;
 
 import java.util.List;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO;
-import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO.ActivityDTO;
-import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO.CareProviderDTO;
-import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO.CareUnitDTO;
-import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO.PatientDTO;
-import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO.ResourceDTO;
-import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO.SystemDTO;
-import se.inera.intyg.intygmockservice.storelog.dto.LogTypeDTO.UserDTO;
+import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO;
+import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO.ActivityDTO;
+import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO.CareProviderDTO;
+import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO.CareUnitDTO;
+import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO.PatientDTO;
+import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO.ResourceDTO;
+import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO.SystemDTO;
+import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO.UserDTO;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType;
 
 @Component
