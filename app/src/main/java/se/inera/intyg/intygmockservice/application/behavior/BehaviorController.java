@@ -15,10 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import se.inera.intyg.intygmockservice.application.behavior.dto.CreateBehaviorRuleRequest;
-import se.inera.intyg.intygmockservice.application.behavior.service.BehaviorService;
-import se.inera.intyg.intygmockservice.domain.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.ServiceName;
+import se.inera.intyg.intygmockservice.application.common.behavior.dto.BehaviorRuleDTO;
+import se.inera.intyg.intygmockservice.application.common.behavior.service.BehaviorService;
+import se.inera.intyg.intygmockservice.application.common.behavior.service.CreateBehaviorRuleRequest;
 
 @Tag(name = "Behavior")
 @RestController
@@ -30,13 +29,13 @@ public class BehaviorController {
 
   @Operation(summary = "Create a behavior rule")
   @PostMapping
-  public ResponseEntity<BehaviorRule> create(@RequestBody CreateBehaviorRuleRequest request) {
+  public ResponseEntity<BehaviorRuleDTO> create(@RequestBody CreateBehaviorRuleRequest request) {
     return ResponseEntity.status(HttpStatus.CREATED).body(behaviorService.create(request));
   }
 
   @Operation(summary = "List behavior rules, optionally filtered by service")
   @GetMapping
-  public List<BehaviorRule> list(@RequestParam(required = false) ServiceName service) {
+  public List<BehaviorRuleDTO> list(@RequestParam(required = false) String service) {
     if (service != null) {
       return behaviorService.findByServiceName(service);
     }
@@ -45,7 +44,7 @@ public class BehaviorController {
 
   @Operation(summary = "Get a specific behavior rule by ID")
   @GetMapping("/{ruleId}")
-  public ResponseEntity<BehaviorRule> getById(@PathVariable UUID ruleId) {
+  public ResponseEntity<BehaviorRuleDTO> getById(@PathVariable UUID ruleId) {
     return behaviorService
         .findById(ruleId)
         .map(ResponseEntity::ok)
@@ -61,7 +60,7 @@ public class BehaviorController {
 
   @Operation(summary = "Delete behavior rules, optionally filtered by service")
   @DeleteMapping
-  public ResponseEntity<Void> deleteAll(@RequestParam(required = false) ServiceName service) {
+  public ResponseEntity<Void> deleteAll(@RequestParam(required = false) String service) {
     if (service != null) {
       behaviorService.deleteByServiceName(service);
     } else {

@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.behavior.service;
+package se.inera.intyg.intygmockservice.application.common.behavior.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.behavior.service;
+package se.inera.intyg.intygmockservice.application.common.behavior.service;
 
 import java.time.Instant;
 import java.util.List;
@@ -6,7 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygmockservice.application.behavior.dto.CreateBehaviorRuleRequest;
+import se.inera.intyg.intygmockservice.application.common.behavior.dto.BehaviorRuleDTO;
+import se.inera.intyg.intygmockservice.application.common.behavior.dto.BehaviorRuleDTO.MatchCriteriaDTO;
 import se.inera.intyg.intygmockservice.domain.BehaviorRule;
 import se.inera.intyg.intygmockservice.domain.DelayApplier;
 import se.inera.intyg.intygmockservice.domain.MatchContext;
@@ -35,7 +36,7 @@ public class BehaviorService {
     return ruleOpt;
   }
 
-  public BehaviorRule create(CreateBehaviorRuleRequest request) {
+  public BehaviorRuleDTO create(CreateBehaviorRuleRequest request) {
     final var rule =
         BehaviorRule.builder()
             .id(UUID.randomUUID())
@@ -49,19 +50,21 @@ public class BehaviorService {
             .triggerCount(0)
             .createdAt(Instant.now())
             .build();
-    return repository.save(rule);
+    return toDto(repository.save(rule));
   }
 
-  public List<BehaviorRule> findAll() {
-    return repository.findAll();
+  public List<BehaviorRuleDTO> findAll() {
+    return repository.findAll().stream().map(this::toDto).toList();
   }
 
-  public List<BehaviorRule> findByServiceName(ServiceName serviceName) {
-    return repository.findByServiceName(serviceName);
+  public List<BehaviorRuleDTO> findByServiceName(String serviceName) {
+    return repository.findByServiceName(ServiceName.valueOf(serviceName)).stream()
+        .map(this::toDto)
+        .toList();
   }
 
-  public Optional<BehaviorRule> findById(UUID id) {
-    return repository.findById(id);
+  public Optional<BehaviorRuleDTO> findById(UUID id) {
+    return repository.findById(id).map(this::toDto);
   }
 
   public boolean delete(UUID id) {
@@ -72,8 +75,8 @@ public class BehaviorService {
     repository.deleteAll();
   }
 
-  public void deleteByServiceName(ServiceName serviceName) {
-    repository.deleteByServiceName(serviceName);
+  public void deleteByServiceName(String serviceName) {
+    repository.deleteByServiceName(ServiceName.valueOf(serviceName));
   }
 
   private MatchCriteria toMatchCriteria(CreateBehaviorRuleRequest.MatchCriteriaRequest request) {
@@ -84,6 +87,28 @@ public class BehaviorService {
         .logicalAddress(request.logicalAddress())
         .certificateId(request.certificateId())
         .personId(request.personId())
+        .build();
+  }
+
+  private BehaviorRuleDTO toDto(BehaviorRule rule) {
+    return BehaviorRuleDTO.builder()
+        .id(rule.getId())
+        .serviceName(rule.getServiceName() != null ? rule.getServiceName().name() : null)
+        .resultCode(rule.getResultCode())
+        .errorId(rule.getErrorId())
+        .resultText(rule.getResultText())
+        .delayMillis(rule.getDelayMillis())
+        .matchCriteria(
+            rule.getMatchCriteria() != null
+                ? MatchCriteriaDTO.builder()
+                    .logicalAddress(rule.getMatchCriteria().getLogicalAddress())
+                    .certificateId(rule.getMatchCriteria().getCertificateId())
+                    .personId(rule.getMatchCriteria().getPersonId())
+                    .build()
+                : null)
+        .maxTriggerCount(rule.getMaxTriggerCount())
+        .triggerCount(rule.getTriggerCount())
+        .createdAt(rule.getCreatedAt())
         .build();
   }
 }

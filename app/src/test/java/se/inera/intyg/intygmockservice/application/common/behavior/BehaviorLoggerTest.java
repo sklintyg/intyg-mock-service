@@ -1,8 +1,9 @@
-package se.inera.intyg.intygmockservice.application.behavior.service;
+package se.inera.intyg.intygmockservice.application.common.behavior;
 
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
+import se.inera.intyg.intygmockservice.application.common.behavior.service.BehaviorLogger;
 import se.inera.intyg.intygmockservice.domain.BehaviorRule;
 import se.inera.intyg.intygmockservice.domain.ServiceName;
 

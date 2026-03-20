@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.behavior.service;
+package se.inera.intyg.intygmockservice.application.common.behavior;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,7 +17,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygmockservice.application.behavior.dto.CreateBehaviorRuleRequest;
+import se.inera.intyg.intygmockservice.application.common.behavior.service.BehaviorService;
+import se.inera.intyg.intygmockservice.application.common.behavior.service.CreateBehaviorRuleRequest;
 import se.inera.intyg.intygmockservice.domain.BehaviorRule;
 import se.inera.intyg.intygmockservice.domain.DelayApplier;
 import se.inera.intyg.intygmockservice.domain.MatchContext;
@@ -106,7 +107,7 @@ class BehaviorServiceTest {
     final var result = behaviorService.create(request);
 
     assertNotNull(result.getId());
-    assertEquals(ServiceName.REGISTER_CERTIFICATE, result.getServiceName());
+    assertEquals("REGISTER_CERTIFICATE", result.getServiceName());
     assertEquals("ERROR", result.getResultCode());
     assertEquals("addr", result.getMatchCriteria().getLogicalAddress());
     assertEquals(0, result.getTriggerCount());
@@ -135,7 +136,7 @@ class BehaviorServiceTest {
 
   @Test
   void deleteByServiceNameDelegatesToRepository() {
-    behaviorService.deleteByServiceName(ServiceName.REGISTER_CERTIFICATE);
+    behaviorService.deleteByServiceName("REGISTER_CERTIFICATE");
 
     verify(repository).deleteByServiceName(ServiceName.REGISTER_CERTIFICATE);
   }
@@ -166,7 +167,7 @@ class BehaviorServiceTest {
 
   @Test
   void findByServiceNameDelegatesToRepository() {
-    behaviorService.findByServiceName(ServiceName.REGISTER_CERTIFICATE);
+    behaviorService.findByServiceName("REGISTER_CERTIFICATE");
 
     verify(repository).findByServiceName(eq(ServiceName.REGISTER_CERTIFICATE));
   }
