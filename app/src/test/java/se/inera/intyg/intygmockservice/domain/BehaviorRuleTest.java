@@ -19,6 +19,7 @@ class BehaviorRuleTest {
 
   @Mock private DelayApplier delayApplier;
   @Mock private BehaviorEventLogger eventLogger;
+  @Mock private Runnable onExhausted;
 
   private final MatchContext context =
       MatchContext.builder().logicalAddress("addr").certificateId("cert-1").build();
@@ -130,8 +131,9 @@ class BehaviorRuleTest {
   @Test
   void evaluateReturnsEmptyForDelayOnlyRule() {
     final var rule = baseRule().delayMillis(50L).build();
+    rule.wire(delayApplier, eventLogger, onExhausted);
 
-    final var result = rule.evaluate(context, delayApplier, eventLogger);
+    final var result = rule.evaluate(context);
 
     assertTrue(result.isEmpty());
   }
@@ -139,8 +141,9 @@ class BehaviorRuleTest {
   @Test
   void evaluateAppliesDelayWhenRuleHasDelay() {
     final var rule = baseRule().delayMillis(50L).build();
+    rule.wire(delayApplier, eventLogger, onExhausted);
 
-    rule.evaluate(context, delayApplier, eventLogger);
+    rule.evaluate(context);
 
     verify(delayApplier).apply(50L);
   }
@@ -148,8 +151,9 @@ class BehaviorRuleTest {
   @Test
   void evaluateDoesNotApplyDelayWhenNoDelay() {
     final var rule = baseRule().resultCode("ERROR").build();
+    rule.wire(delayApplier, eventLogger, onExhausted);
 
-    rule.evaluate(context, delayApplier, eventLogger);
+    rule.evaluate(context);
 
     verify(delayApplier, never()).apply(anyLong());
   }
@@ -158,8 +162,9 @@ class BehaviorRuleTest {
   void evaluateReturnsResultForErrorRule() {
     final var rule =
         baseRule().resultCode("ERROR").errorId("VALIDATION_ERROR").resultText("msg").build();
+    rule.wire(delayApplier, eventLogger, onExhausted);
 
-    final var result = rule.evaluate(context, delayApplier, eventLogger);
+    final var result = rule.evaluate(context);
 
     assertTrue(result.isPresent());
     assertEquals("ERROR", result.get().getResultCode());
@@ -170,8 +175,9 @@ class BehaviorRuleTest {
   @Test
   void evaluateIncrementsTriggerCount() {
     final var rule = baseRule().build();
+    rule.wire(delayApplier, eventLogger, onExhausted);
 
-    rule.evaluate(context, delayApplier, eventLogger);
+    rule.evaluate(context);
 
     assertEquals(1, rule.getTriggerCount());
   }
@@ -179,8 +185,9 @@ class BehaviorRuleTest {
   @Test
   void evaluateLogsDelayApplied() {
     final var rule = baseRule().delayMillis(100L).build();
+    rule.wire(delayApplier, eventLogger, onExhausted);
 
-    rule.evaluate(context, delayApplier, eventLogger);
+    rule.evaluate(context);
 
     verify(eventLogger).logDelayApplied(ServiceName.REGISTER_CERTIFICATE, "cert-1", rule);
   }
@@ -188,9 +195,30 @@ class BehaviorRuleTest {
   @Test
   void evaluateLogsErrorSkipped() {
     final var rule = baseRule().resultCode("ERROR").build();
+    rule.wire(delayApplier, eventLogger, onExhausted);
 
-    rule.evaluate(context, delayApplier, eventLogger);
+    rule.evaluate(context);
 
     verify(eventLogger).logErrorSkipped(ServiceName.REGISTER_CERTIFICATE, "cert-1", rule);
+  }
+
+  @Test
+  void evaluateFiresOnExhaustedCallbackWhenExhausted() {
+    final var rule = baseRule().resultCode("ERROR").maxTriggerCount(1).build();
+    rule.wire(delayApplier, eventLogger, onExhausted);
+
+    rule.evaluate(context);
+
+    verify(onExhausted).run();
+  }
+
+  @Test
+  void evaluateDoesNotFireOnExhaustedCallbackWhenNotExhausted() {
+    final var rule = baseRule().resultCode("ERROR").maxTriggerCount(2).build();
+    rule.wire(delayApplier, eventLogger, onExhausted);
+
+    rule.evaluate(context);
+
+    verify(onExhausted, never()).run();
   }
 }

@@ -23,6 +23,17 @@ public class BehaviorRule {
   private int triggerCount;
   private final Instant createdAt;
 
+  private DelayApplier delayApplier;
+  private BehaviorEventLogger eventLogger;
+  private Runnable onExhausted;
+
+  public void wire(
+      DelayApplier delayApplier, BehaviorEventLogger eventLogger, Runnable onExhausted) {
+    this.delayApplier = delayApplier;
+    this.eventLogger = eventLogger;
+    this.onExhausted = onExhausted;
+  }
+
   public boolean matches(MatchContext context) {
     if (matchCriteria == null) {
       return true;
@@ -54,14 +65,17 @@ public class BehaviorRule {
     return maxTriggerCount != null && triggerCount >= maxTriggerCount;
   }
 
-  public Optional<EvaluationResult> evaluate(
-      MatchContext context, DelayApplier delayApplier, BehaviorEventLogger eventLogger) {
+  public Optional<EvaluationResult> evaluate(MatchContext context) {
     if (hasDelay()) {
       delayApplier.apply(delayMillis);
       eventLogger.logDelayApplied(serviceName, context.getCertificateId(), this);
     }
 
     trigger();
+
+    if (isExhausted() && onExhausted != null) {
+      onExhausted.run();
+    }
 
     if (hasErrorEffect()) {
       eventLogger.logErrorSkipped(serviceName, context.getCertificateId(), this);

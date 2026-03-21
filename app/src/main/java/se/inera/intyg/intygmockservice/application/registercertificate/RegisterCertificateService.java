@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.application.behavior.service.CertificateBehaviorResponseBuilder;
 import se.inera.intyg.intygmockservice.application.registercertificate.converter.RegisterCertificateConverter;
 import se.inera.intyg.intygmockservice.application.registercertificate.dto.RegisterCertificateDTO;
-import se.inera.intyg.intygmockservice.domain.BehaviorEventLogger;
-import se.inera.intyg.intygmockservice.domain.DelayApplier;
 import se.inera.intyg.intygmockservice.domain.MatchContext;
 import se.inera.intyg.intygmockservice.domain.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RegisterCertificatePassthroughClient;
@@ -32,8 +30,6 @@ public class RegisterCertificateService {
   private final RegisterCertificateConverter converter;
   private final RegisterCertificatePassthroughClient passthroughClient;
   private final BehaviorRuleRepository behaviorRuleRepository;
-  private final DelayApplier delayApplier;
-  private final BehaviorEventLogger eventLogger;
   private final CertificateBehaviorResponseBuilder responseBuilder;
 
   private static final JAXBContext JAXB_CONTEXT;
@@ -73,11 +69,7 @@ public class RegisterCertificateService {
         behaviorRuleRepository.findBestMatch(ServiceName.REGISTER_CERTIFICATE, context);
 
     if (ruleOpt.isPresent()) {
-      final var rule = ruleOpt.get();
-      final var resultOpt = rule.evaluate(context, delayApplier, eventLogger);
-      if (rule.isExhausted()) {
-        behaviorRuleRepository.delete(rule.getId());
-      }
+      final var resultOpt = ruleOpt.get().evaluate(context);
       if (resultOpt.isPresent()) {
         return Optional.of(responseBuilder.build(resultOpt.get()));
       }

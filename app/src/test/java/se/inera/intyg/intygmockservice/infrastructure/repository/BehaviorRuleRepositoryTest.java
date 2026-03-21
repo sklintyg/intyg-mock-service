@@ -3,23 +3,33 @@ package se.inera.intyg.intygmockservice.infrastructure.repository;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
 
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.intygmockservice.domain.BehaviorEventLogger;
 import se.inera.intyg.intygmockservice.domain.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.DelayApplier;
 import se.inera.intyg.intygmockservice.domain.MatchContext;
 import se.inera.intyg.intygmockservice.domain.MatchCriteria;
 import se.inera.intyg.intygmockservice.domain.ServiceName;
 
+@ExtendWith(MockitoExtension.class)
 class BehaviorRuleRepositoryTest {
+
+  @Mock private DelayApplier delayApplier;
+  @Mock private BehaviorEventLogger eventLogger;
 
   private BehaviorRuleRepository repository;
 
   @BeforeEach
   void setUp() {
-    repository = new BehaviorRuleRepository();
+    repository = new BehaviorRuleRepository(delayApplier, eventLogger);
   }
 
   private BehaviorRule rule(ServiceName serviceName) {
@@ -187,5 +197,42 @@ class BehaviorRuleRepositoryTest {
     final var result = repository.findBestMatch(ServiceName.REGISTER_CERTIFICATE, context);
 
     assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void shouldWireDelayApplierIntoReturnedRule() {
+    final var rule =
+        BehaviorRule.builder()
+            .id(UUID.randomUUID())
+            .serviceName(ServiceName.REGISTER_CERTIFICATE)
+            .delayMillis(50L)
+            .triggerCount(0)
+            .createdAt(Instant.now())
+            .build();
+    repository.save(rule);
+
+    final var context = MatchContext.builder().logicalAddress("any").certificateId("any").build();
+    repository.findBestMatch(ServiceName.REGISTER_CERTIFICATE, context).get().evaluate(context);
+
+    verify(delayApplier).apply(50L);
+  }
+
+  @Test
+  void shouldDeleteExhaustedRuleViaOnExhaustedCallback() {
+    final var rule =
+        BehaviorRule.builder()
+            .id(UUID.randomUUID())
+            .serviceName(ServiceName.REGISTER_CERTIFICATE)
+            .resultCode("ERROR")
+            .maxTriggerCount(1)
+            .triggerCount(0)
+            .createdAt(Instant.now())
+            .build();
+    repository.save(rule);
+
+    final var context = MatchContext.builder().logicalAddress("any").certificateId("any").build();
+    repository.findBestMatch(ServiceName.REGISTER_CERTIFICATE, context).get().evaluate(context);
+
+    assertTrue(repository.findById(rule.getId()).isEmpty());
   }
 }

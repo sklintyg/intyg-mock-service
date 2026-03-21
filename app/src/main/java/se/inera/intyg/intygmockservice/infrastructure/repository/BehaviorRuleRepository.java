@@ -5,14 +5,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import se.inera.intyg.intygmockservice.domain.BehaviorEventLogger;
 import se.inera.intyg.intygmockservice.domain.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.DelayApplier;
 import se.inera.intyg.intygmockservice.domain.MatchContext;
 import se.inera.intyg.intygmockservice.domain.ServiceName;
 
 @Repository
+@RequiredArgsConstructor
 public class BehaviorRuleRepository {
 
+  private final DelayApplier delayApplier;
+  private final BehaviorEventLogger eventLogger;
   private final ConcurrentHashMap<UUID, BehaviorRule> rules = new ConcurrentHashMap<>();
 
   public BehaviorRule save(BehaviorRule rule) {
@@ -38,7 +44,12 @@ public class BehaviorRuleRepository {
         .filter(rule -> rule.matches(context))
         .max(
             Comparator.comparingInt(BehaviorRule::specificity)
-                .thenComparing(BehaviorRule::getCreatedAt));
+                .thenComparing(BehaviorRule::getCreatedAt))
+        .map(
+            rule -> {
+              rule.wire(delayApplier, eventLogger, () -> delete(rule.getId()));
+              return rule;
+            });
   }
 
   public boolean delete(UUID id) {
