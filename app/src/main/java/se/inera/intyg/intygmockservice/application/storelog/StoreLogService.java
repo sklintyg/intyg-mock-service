@@ -7,7 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.application.storelog.converter.StoreLogTypeConverter;
 import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO;
+import se.inera.intyg.intygmockservice.application.storelog.service.StoreLogResponseFactory;
+import se.inera.intyg.intygmockservice.domain.MatchContext;
+import se.inera.intyg.intygmockservice.domain.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.StoreLogPassthroughClient;
+import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.StoreLogTypeRepository;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogResponseType;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType;
@@ -20,9 +24,25 @@ public class StoreLogService {
   private final StoreLogTypeRepository repository;
   private final StoreLogTypeConverter converter;
   private final StoreLogPassthroughClient passthroughClient;
+  private final BehaviorRuleRepository behaviorRuleRepository;
+  private final StoreLogResponseFactory responseFactory;
 
   public Optional<StoreLogResponseType> store(
       final String logicalAddress, final StoreLogType storeLogType) {
+    final var certificateId =
+        storeLogType.getLog().isEmpty()
+            ? null
+            : storeLogType.getLog().get(0).getActivity().getActivityLevel();
+    final var context =
+        MatchContext.builder().logicalAddress(logicalAddress).certificateId(certificateId).build();
+    final var ruleOpt = behaviorRuleRepository.findBestMatch(ServiceName.STORE_LOG, context);
+    if (ruleOpt.isPresent()) {
+      final var resultOpt = ruleOpt.get().evaluate(context);
+      if (resultOpt.isPresent()) {
+        return Optional.of(responseFactory.create(resultOpt.get()));
+      }
+    }
+
     repository.add(logicalAddress, storeLogType);
 
     log.atInfo()

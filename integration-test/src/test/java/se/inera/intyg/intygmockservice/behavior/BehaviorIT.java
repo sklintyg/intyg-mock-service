@@ -35,11 +35,14 @@ class BehaviorIT {
       "/services/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21";
   private static final String CERTIFICATE_STATUS_SOAP_PATH =
       "/services/clinicalprocess/healthcond/certificate/CertificateStatusUpdateForCare/3/rivtabp21";
+  private static final String STORE_LOG_SOAP_PATH =
+      "/services/informationsecurity/auditing/log/StoreLog/v2/rivtabp21";
   private static final String BEHAVIOR_PATH = "/api/behavior";
   private static final String REGISTER_CERT_PATH = "/api/register-certificate";
   private static final String REVOKE_CERT_PATH = "/api/revoke-certificate";
   private static final String SEND_MESSAGE_PATH = "/api/send-message-to-recipient";
   private static final String CERTIFICATE_STATUS_PATH = "/api/certificate-status-for-care";
+  private static final String STORE_LOG_PATH = "/api/store-log";
 
   @Autowired private TestRestTemplate restTemplate;
 
@@ -208,6 +211,33 @@ class BehaviorIT {
         restTemplate
             .getForEntity(CERTIFICATE_STATUS_PATH + "/count", CountResponse.class)
             .getBody();
+    assertEquals(0, count.count());
+  }
+
+  @Test
+  void errorRuleForStoreLogShouldReturnErrorAndNotStoreLog() throws IOException {
+    final var body = Map.of("serviceName", "STORE_LOG", "resultCode", "VALIDATION_ERROR");
+    final var ruleResponse = restTemplate.postForEntity(BEHAVIOR_PATH, body, Map.class);
+    assertEquals(HttpStatus.CREATED, ruleResponse.getStatusCode());
+
+    final var resource = new ClassPathResource("soap/store-log.xml");
+    final var soapBody = resource.getContentAsString(StandardCharsets.UTF_8);
+    final var headers = new HttpHeaders();
+    headers.setContentType(MediaType.TEXT_XML);
+    headers.set("SOAPAction", "\"\"");
+    final var soapResponse =
+        restTemplate
+            .exchange(
+                STORE_LOG_SOAP_PATH,
+                HttpMethod.POST,
+                new HttpEntity<>(soapBody, headers),
+                String.class)
+            .getBody();
+
+    assertTrue(
+        soapResponse.contains("VALIDATION_ERROR"), "Expected VALIDATION_ERROR in SOAP response");
+    final var count =
+        restTemplate.getForEntity(STORE_LOG_PATH + "/count", CountResponse.class).getBody();
     assertEquals(0, count.count());
   }
 

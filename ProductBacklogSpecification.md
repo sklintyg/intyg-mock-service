@@ -101,13 +101,13 @@ Same pattern as MB-02:
 
 Prerequisites: MB-01
 
-### MB-05 — Error response rules for StoreLog
+### ~~MB-05 — Error response rules for StoreLog~~ ✓ Done
 
-Different schema — requires a separate `StoreLogResponseFactory`:
-- Add `StoreLogResponseFactory` (`@Component`) — `create(EvaluationResult)` → `StoreLogResponseType`. Uses `auditing.log.v2.ResultType` which has **no `errorId` field** and a different `ResultCodeType` enum (VALIDATION_ERROR, ACCESSDENIED, etc.). Maps rule's `resultCode` string to `auditing.log.v2.ResultCodeType`; ignore `errorId` from `EvaluationResult`.
-- Wire `behaviorRuleRepository.findBestMatch(STORE_LOG, context)` + `rule.evaluate(context)` into `StoreLogService.store()`
-- Extract match context: `logicalAddress` + certificate ID from `log.activity.activityLevel` (no personId for StoreLog)
-- Unit tests for service and response factory + integration test
+~~Different schema — requires a separate `StoreLogResponseFactory`:~~
+- ~~Add `StoreLogResponseFactory` (`@Component`) — `create(EvaluationResult)` → `StoreLogResponseType`. Uses `auditing.log.v2.ResultType` which has **no `errorId` field** and a different `ResultCodeType` enum (VALIDATION_ERROR, ACCESSDENIED, etc.). Maps rule's `resultCode` string to `auditing.log.v2.ResultCodeType`; ignore `errorId` from `EvaluationResult`.~~
+- ~~Wire `behaviorRuleRepository.findBestMatch(STORE_LOG, context)` + `rule.evaluate(context)` into `StoreLogService.store()`~~
+- ~~Extract match context: `logicalAddress` + certificate ID from `log.activity.activityLevel` (no personId for StoreLog)~~
+- ~~Unit tests for service and response factory + integration test~~
 
 Prerequisites: MB-01
 
