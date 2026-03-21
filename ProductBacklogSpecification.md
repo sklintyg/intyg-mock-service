@@ -22,22 +22,39 @@ A rule can combine delay AND error response in a single rule (e.g., `delayMillis
 
 ~~First item — establishes the entire pattern that subsequent items follow.~~
 
-Deliver:
-- `BehaviorRule` model (`@Value @Builder`): `id` (UUID), `serviceName` (enum), `resultCode` (nullable), `errorId` (nullable), `resultText` (nullable), `delayMillis` (Long, nullable), `matchCriteria` (logicalAddress / certificateId / personId — all nullable), `maxTriggerCount` (Integer, nullable — auto-remove after N fires), `triggerCount`, `createdAt`
-- `BehaviorRuleRepository` — `ConcurrentHashMap<UUID, BehaviorRule>` with CRUD + `findByServiceName` + trigger-count tracking + auto-removal
-- `BehaviorRuleEvaluator` — matches rules by specificity (more non-null criteria = higher priority, ties broken by most-recent `createdAt`), handles delay via injectable `DelayApplier` (`Thread.sleep` in prod)
-- `BehaviorController` — full REST API at `/api/behavior`:
-  - `POST /api/behavior` — create rule
-  - `GET /api/behavior` — list all (optionally `?service=register-certificate`)
-  - `GET /api/behavior/{ruleId}` — get specific rule
-  - `DELETE /api/behavior/{ruleId}` — delete specific rule
-  - `DELETE /api/behavior` — delete all (optionally `?service=...`)
-- Wire into `ResetController` so `DELETE /api/reset` clears behavior rules
-- `BehaviorLogger` — generic structured logger for behavior rule outcomes, used by all services. Logs service name, matched rule ID, certificate/person ID, and outcome (e.g., `"RegisterCertificate with certificateId 'abc-123' not stored due to simulated VALIDATION_ERROR behavior (rule 550e8400-...)"`). Uses the existing `log.atInfo().setMessage(...).addKeyValue(...).log()` pattern
-- Wire into `RegisterCertificateService.store()`: (1) extract match context (logicalAddress, certificateId, personId), (2) evaluate rule, (3) if error rule matches → apply delay if present, log via `BehaviorLogger`, return error response **without storing**, (4) if delay-only rule matches → apply delay, store request, return OK, (5) no rule → fall through to passthrough/OK and store as before
-- Unit tests for: `BehaviorRuleRepository`, `BehaviorRuleEvaluator` (matching, specificity, trigger-count), `BehaviorLogger`, `RegisterCertificateService` (error rule skips store, delay-only rule stores, no rule stores)
-- Integration tests: create error rule via REST → send SOAP → verify error response + request **not** stored; `maxTriggerCount=1` fires once then OK; reset clears rules; delay-only rule stores normally
-- OpenAPI annotations on all endpoints
+~~Deliver:~~
+
+~~**Domain model** (`se.inera.intyg.intygmockservice.domain`):~~
+- ~~`BehaviorRule` — `@Getter @Builder(toBuilder = true)` rich entity. Fields: `id` (UUID), `serviceName` (ServiceName), `resultCode` (String, nullable), `errorId` (String, nullable), `resultText` (String, nullable), `delayMillis` (Long, nullable), `matchCriteria` (MatchCriteria, nullable), `maxTriggerCount` (Integer, nullable), `triggerCount` (mutable int), `createdAt` (Instant). Runtime-injected fields: `delayApplier`, `eventLogger`, `onExhausted`. Methods: `wire(DelayApplier, BehaviorEventLogger, Runnable onExhausted)`, `matches(MatchContext)`, `specificity()`, `evaluate(MatchContext)` → `Optional<EvaluationResult>`, `trigger()`, `isExhausted()`, `hasErrorEffect()`, `hasDelay()`~~
+- ~~`MatchCriteria` — `@Value @Builder` with `logicalAddress`, `certificateId`, `personId` (all nullable). Methods: `matches(MatchContext)`, `specificity()` (count of non-null fields). Person ID matching strips hyphens before comparing.~~
+- ~~`MatchContext` — `@Value @Builder` with `logicalAddress`, `certificateId`, `personId` (extracted from SOAP request)~~
+- ~~`EvaluationResult` — `@Value @Builder` with `resultCode`, `errorId`, `resultText`~~
+- ~~`ServiceName` — enum: `REGISTER_CERTIFICATE`, `REVOKE_CERTIFICATE`, `SEND_MESSAGE_TO_RECIPIENT`, `CERTIFICATE_STATUS_UPDATE_FOR_CARE`, `STORE_LOG`~~
+- ~~`DelayApplier` — interface: `void apply(long millis)`~~
+- ~~`BehaviorEventLogger` — interface: `logDelayApplied(ServiceName, String certificateId, BehaviorRule)` and `logErrorSkipped(ServiceName, String certificateId, BehaviorRule)`~~
+
+~~Note: No `BehaviorRuleEvaluator` class — evaluation logic lives in `BehaviorRule.evaluate()`, matching and specificity-based selection in `BehaviorRuleRepository.findBestMatch()`.~~
+
+~~**Infrastructure**:~~
+- ~~`BehaviorRuleRepository` (`@Repository`) — `ConcurrentHashMap<UUID, BehaviorRule>` with `save`, `findById`, `findAll`, `findByServiceName`, `findBestMatch(ServiceName, MatchContext)`, `delete`, `deleteAll`, `deleteByServiceName`. `findBestMatch` filters by service and context, picks highest specificity (tiebreak: most recent `createdAt`), then **wires** the rule with `delayApplier`, `eventLogger`, and auto-delete callback before returning.~~
+- ~~`BehaviorLogger` (`@Component`) — implements `BehaviorEventLogger`, structured ECS logging via `log.atInfo()`. Logs delay and error-skipped events with rule ID, result code, and certificate ID.~~
+- ~~`ThreadSleepDelayApplier` (`@Component`) — implements `DelayApplier` via `Thread.sleep`. Handles `InterruptedException` by restoring interrupt flag and logging a warning.~~
+
+~~**Application** (`application/behavior/`):~~
+- ~~`BehaviorController` (`@RestController`) — full REST API at `/api/behavior`: `POST`, `GET` (all, optionally `?service=`), `GET /{ruleId}`, `DELETE /{ruleId}`, `DELETE` (all, optionally `?service=`). OpenAPI annotations on all endpoints.~~
+- ~~`BehaviorService` (`@Service`) — CRUD operations, converts domain ↔ DTO~~
+- ~~`CreateBehaviorRuleRequest` — Java record (input DTO) with inner `MatchCriteriaRequest` record~~
+- ~~`BehaviorRuleDTO` — `@Value @Builder` (output DTO) with inner `MatchCriteriaDTO`~~
+
+~~Wire into `ResetController` so `DELETE /api/reset` clears behavior rules.~~
+
+~~**Service integration**:~~
+- ~~`RegisterCertificateResponseFactory` (`@Component`) — `create(EvaluationResult)` → `RegisterCertificateResponseType`. Maps `resultCode` → `ResultCodeType`, `errorId` → `ErrorIdType`, `resultText` → string.~~
+- ~~In `RegisterCertificateService.store()`: convert SOAP type → DTO first, build `MatchContext` from DTO fields, call `behaviorRuleRepository.findBestMatch(REGISTER_CERTIFICATE, context)`, if present call `rule.evaluate(context)`, if result present return error response without storing. Delay-only rules (no `resultCode`) cause `evaluate()` to return `Optional.empty()` → store proceeds normally.~~
+
+~~**Unit tests** (one class per production class, no Spring context): `BehaviorRuleTest` (evaluate, trigger, exhaustion, delay), `MatchCriteriaTest` (matching, specificity, person ID normalisation), `BehaviorRuleRepositoryTest` (CRUD, findBestMatch specificity/tiebreak, wiring, auto-delete), `BehaviorLoggerTest`, `BehaviorServiceTest`, `RegisterCertificateResponseFactoryTest`, `RegisterCertificateServiceTest` (error rule skips store, delay-only rule stores, no rule stores).~~
+
+~~**Integration tests**: create error rule via REST → send SOAP → verify error response + request **not** stored; `maxTriggerCount=1` fires once then auto-removed; reset clears rules; delay-only rule stores normally.~~
 
 Example POST:
 ```json
@@ -56,40 +73,41 @@ Prerequisites: none
 ### MB-02 — Error response rules for RevokeCertificate
 
 Reuse all infrastructure from MB-01. Only new work:
-- Wire `BehaviorRuleEvaluator` into `RevokeCertificateService.store()`
-- Extract match context from `RevokeCertificateType` (logicalAddress, `intygsId.extension`, `patientPersonId.extension`)
-- Reuse the shared `CertificateBehaviorResponseBuilder` (same `certificate.v3.ResultType`)
-- Unit tests for `RevokeCertificateService` rule evaluation
-- Integration test: error rule → SOAP → verify error response + request stored
+- Add `RevokeCertificateResponseFactory` (`@Component`) — `create(EvaluationResult)` → `RevokeCertificateResponseType`. Same mapping logic as `RegisterCertificateResponseFactory` but wraps `certificate.v3.ResultType` in the Revoke-specific response type.
+- Wire `behaviorRuleRepository.findBestMatch(REVOKE_CERTIFICATE, context)` + `rule.evaluate(context)` into `RevokeCertificateService.store()`
+- Extract match context from `RevokeCertificateType`: logicalAddress, `intygsId.extension`, `patientPersonId.extension`
+- Unit tests for `RevokeCertificateService` (error rule skips store, delay-only rule stores) and `RevokeCertificateResponseFactory`
+- Integration test: error rule → SOAP → verify error response + request **not** stored
 
 Prerequisites: MB-01
 
 ### MB-03 — Error response rules for SendMessageToRecipient
 
 Same pattern as MB-02:
-- Wire into `SendMessageToRecipientService.store()`
-- Extract match context from `SendMessageToRecipientType` (logicalAddress, `intygsId.extension`, `patientPersonId.extension`)
-- Unit tests + integration test
+- Add `SendMessageToRecipientResponseFactory` (`@Component`) — wraps `certificate.v3.ResultType` in `SendMessageToRecipientResponseType`
+- Wire into `SendMessageToRecipientService.store()` with `ServiceName.SEND_MESSAGE_TO_RECIPIENT`
+- Extract match context from `SendMessageToRecipientType`: logicalAddress, `intygsId.extension`, `patientPersonId.extension`
+- Unit tests for service and response factory + integration test
 
 Prerequisites: MB-01
 
 ### MB-04 — Error response rules for CertificateStatusUpdateForCare
 
 Same pattern as MB-02:
-- Wire into `CertificateStatusUpdateForCareService.store()`
-- Extract match context from `CertificateStatusUpdateForCareType` (logicalAddress, `intyg.intygsId.extension`, `intyg.patient.personId.extension`)
-- Unit tests + integration test
+- Add `CertificateStatusUpdateForCareResponseFactory` (`@Component`) — wraps `certificate.v3.ResultType` in `CertificateStatusUpdateForCareResponseType`
+- Wire into `CertificateStatusUpdateForCareService.store()` with `ServiceName.CERTIFICATE_STATUS_UPDATE_FOR_CARE`
+- Extract match context from `CertificateStatusUpdateForCareType`: logicalAddress, `intyg.intygsId.extension`, `intyg.patient.personId.extension`
+- Unit tests for service and response factory + integration test
 
 Prerequisites: MB-01
 
 ### MB-05 — Error response rules for StoreLog
 
-Different schema — requires `StoreLogBehaviorResponseBuilder`:
-- Wire into `StoreLogService.store()`
-- Uses `auditing.log.v2.ResultType` (no `errorId` field, different `ResultCodeType` enum with VALIDATION_ERROR, ACCESSDENIED, etc.)
-- Extract match context: `logicalAddress` + certificate ID from `log.activity.activityLevel`
-- Separate response builder that maps rule's `resultCode` string to `auditing.log.v2.ResultCodeType`
-- Unit tests + integration test
+Different schema — requires a separate `StoreLogResponseFactory`:
+- Add `StoreLogResponseFactory` (`@Component`) — `create(EvaluationResult)` → `StoreLogResponseType`. Uses `auditing.log.v2.ResultType` which has **no `errorId` field** and a different `ResultCodeType` enum (VALIDATION_ERROR, ACCESSDENIED, etc.). Maps rule's `resultCode` string to `auditing.log.v2.ResultCodeType`; ignore `errorId` from `EvaluationResult`.
+- Wire `behaviorRuleRepository.findBestMatch(STORE_LOG, context)` + `rule.evaluate(context)` into `StoreLogService.store()`
+- Extract match context: `logicalAddress` + certificate ID from `log.activity.activityLevel` (no personId for StoreLog)
+- Unit tests for service and response factory + integration test
 
 Prerequisites: MB-01
 
@@ -109,11 +127,12 @@ MB-02 through MB-05 are independent of each other and can be done in any order a
 
 1. **Centralized `/api/behavior` endpoint** — one place to manage all rules, `serviceName` field provides scoping
 2. **Combined delay + error** — a single rule can have both `delayMillis` and error fields; delay-only or error-only also work
-3. **Rules evaluated in service layer** — response types differ per schema, keeps logic explicit and follows existing patterns
+3. **Rules evaluated in domain entity** — `BehaviorRule.evaluate()` contains evaluation logic (apply delay, trigger count, return `EvaluationResult`); `BehaviorRuleRepository.findBestMatch()` handles specificity-based selection and wires dependencies into the rule before returning it. Each service has its own `*ResponseFactory` because the JAXB response wrapper type differs per service.
 4. **Behavior rules override passthrough** — most useful for testing (override upstream for specific scenarios)
 5. **Don't store on error** — if a rule produces an error response, the request is **not** stored (it was rejected). Delay-only rules still store normally. The skipped store is logged via a generic `BehaviorLogger` (see below)
 6. **Thread-safe `ConcurrentHashMap`** — rules managed via REST while SOAP requests processed concurrently
 7. **Specificity-based matching** — more specific rules win (certificateId+logicalAddress beats logicalAddress-only)
+8. **Domain interfaces for testability** — `DelayApplier` and `BehaviorEventLogger` are domain interfaces injected at runtime via `BehaviorRule.wire()`. Unit tests can pass no-op or spy implementations without mocking infrastructure beans.
 
 ### Schema Reference
 
