@@ -1,35 +1,105 @@
 # Intyg Mock Service
 
-## Overview
+Spring Boot application that mocks five RIV-TA SOAP services that Intygstjanster depends on, enabling isolated testing without real external dependencies. Incoming SOAP requests are stored in memory and exposed via REST inspection endpoints. Supports configurable behavior rules for stubbing error responses and delays, and optional passthrough mode to forward requests to real upstream services over mTLS.
 
-The Intyg Mock Service is a Spring Boot application designed to simulate the behavior of services
-that Intygstjänster is dependent upon. This in order to make it testable.
+## Quick Start
 
-## Prerequisites
-
-- Java 21
-
-## Building the Project
-
-To build the project, run the following command:
+**Prerequisites:** Java 21
 
 ```sh
-./gradlew build
+./gradlew build       # Build all modules
+./gradlew appRun      # Start on port 18888
+./gradlew appRunDebug # Start with debug port 18889
 ```
 
-## Running the Project
+Once running:
+- **Swagger UI** — [localhost:18888/swagger-ui/index.html](http://localhost:18888/swagger-ui/index.html)
+- **CXF services list** — [localhost:18888/services](http://localhost:18888/services)
 
-To run the project, run the following command:
+## Configuration
 
-```sh
-./gradlew appRun
+### Repository sizes
+
+Each service stores up to 1000 messages by default (FIFO eviction). Override per service:
+
+```yaml
+app:
+  repository:
+    register-certificate:
+      max-size: 5000
+    store-log:
+      max-size: 500
 ```
+
+### Passthrough mode
+
+Passthrough forwards SOAP requests to a real upstream service while still storing them locally for inspection. Enable per service:
+
+```yaml
+app:
+  passthrough:
+    register-certificate:
+      enabled: true
+      url: https://upstream-host/services/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21
+```
+
+Available services: `register-certificate`, `revoke-certificate`, `send-message-to-recipient`, `certificate-status-update-for-care`, `store-log`.
+
+If the upstream service requires mutual TLS, activate the `mtls-enabled` Spring profile (see below).
+
+### mTLS
+
+Activated by the `mtls-enabled` Spring profile. Configure certificate and truststore paths:
+
+```yaml
+app:
+  passthrough:
+    mtls:
+      certificate-file: /path/to/client.p12
+      certificate-password: changeit
+      certificate-type: PKCS12
+      key-manager-password: changeit
+      truststore-file: /path/to/truststore.jks
+      truststore-password: changeit
+      truststore-type: JKS
+```
+
+### Behavior rules
+
+The `/api/behavior` REST endpoint lets you configure mock responses at runtime — error codes, custom result text, and artificial delays. Rules can optionally match on logical address, certificate ID, or person ID, and can be limited to trigger a set number of times. See [Swagger UI](http://localhost:18888/swagger-ui/index.html) for full request/response schemas.
+
+## Local Development vs Kubernetes
+
+### Local
+
+`./gradlew appRun` activates the `dev` profile automatically. Dev-specific config lives in `devops/dev/config/application-dev.yml` (sets port 18888 and disables ECS structured logging). To enable passthrough or mTLS locally, add the properties to that file and set `SPRING_PROFILES_ACTIVE=dev,mtls-enabled`.
+
+### Kubernetes
+
+Build the Docker image using the project `Dockerfile`. Configuration is supplied via environment variables or ConfigMaps using Spring Boot's relaxed binding:
+
+| YAML property | Environment variable |
+|---|---|
+| `app.passthrough.register-certificate.enabled` | `APP_PASSTHROUGH_REGISTERCERTIFICATE_ENABLED` |
+| `app.passthrough.register-certificate.url` | `APP_PASSTHROUGH_REGISTERCERTIFICATE_URL` |
+| `app.repository.register-certificate.max-size` | `APP_REPOSITORY_REGISTERCERTIFICATE_MAXSIZE` |
+
+Activate mTLS by setting `SPRING_PROFILES_ACTIVE=mtls-enabled` and mounting certificate/truststore files into the container.
+
+## Configuring Intygstjanster
+
+| Application  | SOAP Webservice                | Local environment (application-dev.properties)    | Test environment (configmap.yaml)                 |
+|--------------|--------------------------------|---------------------------------------------------|---------------------------------------------------|
+| Webcert      | CertificateStatusUpdateForCare | certificatestatusupdateforcare.ws.endpoint.v3.url | CERTIFICATESTATUSUPDATEFORCARE_WS_ENDPOINT_V3_URL |
+| Intygstjanst | RegisterCertificate            | registercertificatev3.endpoint.url                | REGISTERCERTIFICATEV3_ENDPOINT_URL                |
+| Intygstjanst | RevokeCertificate              | revokecertificatev2.endpoint.url                  | REVOKECERTIFICATEV2_ENDPOINT_URL                  |
+| Intygstjanst | SendMessageToRecipient         | sendmessagetocarev2.endpoint.url                  | SENDMESSAGETOCAREV2_ENDPOINT_URL                  |
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    subgraph callers["Intygstjänster"]
+    subgraph callers["Intygstjanster"]
         Webcert
         Intygstjanst
     end
@@ -128,69 +198,11 @@ sequenceDiagram
     Responder -->> Consumer: SOAP response (from real service)
 ```
 
-## Mocked SOAP endpoints
-
-See available cxfservices at <http://localhost:18888/services>.
-
-## API
-
-See swagger documentation at <http://localhost:18888/swagger-ui/index.html>.
-
-## StoreLog Mock
-
-The StoreLog mock implements the `se.riv.informationsecurity.auditing.log` RIV-TA SOAP service (v2).
-Any call to the SOAP endpoint is stored in an in-memory repository and can be inspected or deleted via the REST API.
-
-### SOAP endpoint
-
-```
-POST /services/informationsecurity/auditing/log/StoreLog/v2/rivtabp21
-```
-
-### REST API
-
-| Method   | Path                                  | Description                                                  |
-|----------|---------------------------------------|--------------------------------------------------------------|
-| `GET`    | `/api/store-log`                      | Retrieve all stored audit log entries                        |
-| `GET`    | `/api/store-log/user/{userId}`        | Retrieve all entries for a specific user ID                  |
-| `GET`    | `/api/store-log/certificate/{certId}` | Retrieve all entries for a specific certificate ID           |
-| `DELETE` | `/api/store-log`                      | Delete all stored audit log entries                          |
-| `DELETE` | `/api/store-log/user/{userId}`        | Delete all entries associated with a specific user ID        |
-| `DELETE` | `/api/store-log/certificate/{certId}` | Delete all entries associated with a specific certificate ID |
-
-> **Note:** Certificate ID filtering uses the `activityLevel` field from the StoreLog schema.
-
-### Examples
-
-Retrieve all stored logs:
+## Development
 
 ```sh
-curl http://localhost:18888/api/store-log
+./gradlew :app:test                          # Unit tests
+./gradlew :integration-test:integrationTest  # Integration tests
+./gradlew spotlessApply                      # Auto-format (Google Java Format)
+./gradlew spotlessCheck                      # Check formatting
 ```
-
-Retrieve logs for a specific user:
-
-```sh
-curl http://localhost:18888/api/store-log/user/it-user-001
-```
-
-Retrieve logs for a specific certificate:
-
-```sh
-curl http://localhost:18888/api/store-log/certificate/Enhet
-```
-
-Delete logs for a specific user:
-
-```sh
-curl -X DELETE http://localhost:18888/api/store-log/user/it-user-001
-```
-
-## How to configure Intygstjänster to use the mock service
-
-| Application  | SOAP Webservice                | Local environment (application-dev.properties)    | Test environment (configmap.yaml)                 | 
-|--------------|--------------------------------|---------------------------------------------------|---------------------------------------------------|
-| Webcert      | CertificateStatusUpdateForCare | certificatestatusupdateforcare.ws.endpoint.v3.url | CERTIFICATESTATUSUPDATEFORCARE_WS_ENDPOINT_V3_URL |
-| Intygstjanst | RegisterCertificate            | registercertificatev3.endpoint.url                | REGISTERCERTIFICATEV3_ENDPOINT_URL                |
-| Intygstjanst | RevokeCertificate              | revokecertificatev2.endpoint.url                  | REVOKECERTIFICATEV2_ENDPOINT_URL                  |
-| Intygstjanst | SendMessageToRecipient         | sendmessagetocarev2.endpoint.url                  | SENDMESSAGETOCAREV2_ENDPOINT_URL                  |
