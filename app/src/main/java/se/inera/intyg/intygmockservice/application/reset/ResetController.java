@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygmockservice.application.behavior.service.BehaviorService;
-import se.inera.intyg.intygmockservice.application.registercertificate.RegisterCertificateService;
+import se.inera.intyg.intygmockservice.application.registercertificate.service.RegisterCertificateService;
 import se.inera.intyg.intygmockservice.application.revokecertificate.RevokeCertificateService;
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.SendMessageToRecipientService;
 import se.inera.intyg.intygmockservice.application.statusupdates.CertificateStatusUpdateForCareService;

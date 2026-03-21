@@ -6,7 +6,7 @@ import org.apache.cxf.jaxws.EndpointImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import se.inera.intyg.intygmockservice.application.registercertificate.RegisterCertificateResponderImpl;
-import se.inera.intyg.intygmockservice.application.registercertificate.RegisterCertificateService;
+import se.inera.intyg.intygmockservice.application.registercertificate.service.RegisterCertificateService;
 import se.inera.intyg.intygmockservice.application.revokecertificate.RevokeCertificateResponderImpl;
 import se.inera.intyg.intygmockservice.application.revokecertificate.RevokeCertificateService;
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.SendMessageToRecipientResponderImpl;

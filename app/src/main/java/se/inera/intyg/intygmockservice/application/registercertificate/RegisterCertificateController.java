@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygmockservice.application.common.dto.CountResponse;
 import se.inera.intyg.intygmockservice.application.registercertificate.dto.RegisterCertificateDTO;
+import se.inera.intyg.intygmockservice.application.registercertificate.service.RegisterCertificateService;
 
 @RestController
 @RequestMapping("/api/register-certificate")

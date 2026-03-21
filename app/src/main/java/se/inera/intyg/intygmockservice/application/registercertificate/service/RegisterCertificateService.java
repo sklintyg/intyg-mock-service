@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.registercertificate;
+package se.inera.intyg.intygmockservice.application.registercertificate.service;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
@@ -9,7 +9,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygmockservice.application.behavior.service.CertificateBehaviorResponseBuilder;
 import se.inera.intyg.intygmockservice.application.registercertificate.converter.RegisterCertificateConverter;
 import se.inera.intyg.intygmockservice.application.registercertificate.dto.RegisterCertificateDTO;
 import se.inera.intyg.intygmockservice.domain.MatchContext;
@@ -30,7 +29,7 @@ public class RegisterCertificateService {
   private final RegisterCertificateConverter converter;
   private final RegisterCertificatePassthroughClient passthroughClient;
   private final BehaviorRuleRepository behaviorRuleRepository;
-  private final CertificateBehaviorResponseBuilder responseBuilder;
+  private final RegisterCertificateResponseFactory responseFactory;
 
   private static final JAXBContext JAXB_CONTEXT;
 
@@ -50,19 +49,13 @@ public class RegisterCertificateService {
 
   public Optional<RegisterCertificateResponseType> store(
       String logicalAddress, RegisterCertificateType type) {
-    final var intyg = type.getIntyg();
-    final var certificateId =
-        intyg != null && intyg.getIntygsId() != null ? intyg.getIntygsId().getExtension() : null;
-    final var personId =
-        intyg != null && intyg.getPatient() != null && intyg.getPatient().getPersonId() != null
-            ? intyg.getPatient().getPersonId().getExtension()
-            : null;
+    final var dto = converter.convert(type);
 
     final var context =
         MatchContext.builder()
             .logicalAddress(logicalAddress)
-            .certificateId(certificateId)
-            .personId(personId)
+            .certificateId(dto.getIntyg().getIntygsId().getExtension())
+            .personId(dto.getIntyg().getPatient().getPersonId().getExtension())
             .build();
 
     final var ruleOpt =
@@ -71,13 +64,12 @@ public class RegisterCertificateService {
     if (ruleOpt.isPresent()) {
       final var resultOpt = ruleOpt.get().evaluate(context);
       if (resultOpt.isPresent()) {
-        return Optional.of(responseBuilder.build(resultOpt.get()));
+        return Optional.of(responseFactory.create(resultOpt.get()));
       }
     }
 
     repository.add(logicalAddress, type);
 
-    final var dto = converter.convert(type);
     log.atInfo()
         .setMessage(
             "Register certificate '%s' received"

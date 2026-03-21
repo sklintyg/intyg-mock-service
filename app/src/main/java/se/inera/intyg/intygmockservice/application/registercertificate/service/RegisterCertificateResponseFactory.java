@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.behavior.service;
+package se.inera.intyg.intygmockservice.application.registercertificate.service;
 
 import org.springframework.stereotype.Component;
 import se.inera.intyg.intygmockservice.domain.EvaluationResult;
@@ -8,9 +8,9 @@ import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @Component
-public class CertificateBehaviorResponseBuilder {
+public class RegisterCertificateResponseFactory {
 
-  public RegisterCertificateResponseType build(EvaluationResult result) {
+  public RegisterCertificateResponseType create(EvaluationResult result) {
     final var response = new RegisterCertificateResponseType();
     final var resultType = new ResultType();
     resultType.setResultCode(ResultCodeType.valueOf(result.getResultCode()));
