@@ -7,7 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.application.revokecertificate.converter.RevokeCertificateConverter;
 import se.inera.intyg.intygmockservice.application.revokecertificate.dto.RevokeCertificateDTO;
+import se.inera.intyg.intygmockservice.application.revokecertificate.service.RevokeCertificateResponseFactory;
+import se.inera.intyg.intygmockservice.domain.MatchContext;
+import se.inera.intyg.intygmockservice.domain.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RevokeCertificatePassthroughClient;
+import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
@@ -20,12 +24,31 @@ public class RevokeCertificateService {
   private final RevokeCertificateRepository repository;
   private final RevokeCertificateConverter converter;
   private final RevokeCertificatePassthroughClient passthroughClient;
+  private final BehaviorRuleRepository behaviorRuleRepository;
+  private final RevokeCertificateResponseFactory responseFactory;
 
   public Optional<RevokeCertificateResponseType> store(
       final String logicalAddress, final RevokeCertificateType revokeCertificate) {
-    repository.add(logicalAddress, revokeCertificate);
-
     final var dto = converter.convert(revokeCertificate);
+
+    final var context =
+        MatchContext.builder()
+            .logicalAddress(logicalAddress)
+            .certificateId(dto.getIntygsId().getExtension())
+            .personId(dto.getPatientPersonId().getExtension())
+            .build();
+
+    final var ruleOpt =
+        behaviorRuleRepository.findBestMatch(ServiceName.REVOKE_CERTIFICATE, context);
+
+    if (ruleOpt.isPresent()) {
+      final var resultOpt = ruleOpt.get().evaluate(context);
+      if (resultOpt.isPresent()) {
+        return Optional.of(responseFactory.create(resultOpt.get()));
+      }
+    }
+
+    repository.add(logicalAddress, revokeCertificate);
 
     log.atInfo()
         .setMessage(

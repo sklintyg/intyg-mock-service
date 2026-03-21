@@ -70,7 +70,7 @@ Example POST:
 
 Prerequisites: none
 
-### MB-02 — Error response rules for RevokeCertificate
+### ~~MB-02 — Error response rules for RevokeCertificate~~ ✓ Done
 
 Reuse all infrastructure from MB-01. Only new work:
 - Add `RevokeCertificateResponseFactory` (`@Component`) — `create(EvaluationResult)` → `RevokeCertificateResponseType`. Same mapping logic as `RegisterCertificateResponseFactory` but wraps `certificate.v3.ResultType` in the Revoke-specific response type.

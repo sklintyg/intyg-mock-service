@@ -29,8 +29,11 @@ class BehaviorIT {
 
   private static final String SOAP_PATH =
       "/services/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21";
+  private static final String REVOKE_SOAP_PATH =
+      "/services/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21";
   private static final String BEHAVIOR_PATH = "/api/behavior";
   private static final String REGISTER_CERT_PATH = "/api/register-certificate";
+  private static final String REVOKE_CERT_PATH = "/api/revoke-certificate";
 
   @Autowired private TestRestTemplate restTemplate;
 
@@ -98,6 +101,39 @@ class BehaviorIT {
     final var count =
         restTemplate.getForEntity(REGISTER_CERT_PATH + "/count", CountResponse.class).getBody();
     assertEquals(1, count.count());
+  }
+
+  @Test
+  void errorRuleForRevokeCertificateShouldReturnErrorAndNotStoreRevoke() throws IOException {
+    final var body =
+        Map.of(
+            "serviceName",
+            "REVOKE_CERTIFICATE",
+            "resultCode",
+            "ERROR",
+            "errorId",
+            "VALIDATION_ERROR");
+    final var ruleResponse = restTemplate.postForEntity(BEHAVIOR_PATH, body, Map.class);
+    assertEquals(HttpStatus.CREATED, ruleResponse.getStatusCode());
+
+    final var resource = new ClassPathResource("soap/revoke-certificate.xml");
+    final var soapBody = resource.getContentAsString(StandardCharsets.UTF_8);
+    final var headers = new HttpHeaders();
+    headers.setContentType(MediaType.TEXT_XML);
+    headers.set("SOAPAction", "\"\"");
+    final var soapResponse =
+        restTemplate
+            .exchange(
+                REVOKE_SOAP_PATH,
+                HttpMethod.POST,
+                new HttpEntity<>(soapBody, headers),
+                String.class)
+            .getBody();
+
+    assertTrue(soapResponse.contains("ERROR"), "Expected ERROR in SOAP response");
+    final var count =
+        restTemplate.getForEntity(REVOKE_CERT_PATH + "/count", CountResponse.class).getBody();
+    assertEquals(0, count.count());
   }
 
   private void createErrorRule(String certificateId) {
