@@ -91,13 +91,13 @@ Same pattern as MB-02:
 
 Prerequisites: MB-01
 
-### MB-04 — Error response rules for CertificateStatusUpdateForCare
+### ~~MB-04 — Error response rules for CertificateStatusUpdateForCare~~ ✓ Done
 
 Same pattern as MB-02:
-- Add `CertificateStatusUpdateForCareResponseFactory` (`@Component`) — wraps `certificate.v3.ResultType` in `CertificateStatusUpdateForCareResponseType`
-- Wire into `CertificateStatusUpdateForCareService.store()` with `ServiceName.CERTIFICATE_STATUS_UPDATE_FOR_CARE`
-- Extract match context from `CertificateStatusUpdateForCareType`: logicalAddress, `intyg.intygsId.extension`, `intyg.patient.personId.extension`
-- Unit tests for service and response factory + integration test
+- ~~Add `CertificateStatusUpdateForCareResponseFactory` (`@Component`) — wraps `certificate.v3.ResultType` in `CertificateStatusUpdateForCareResponseType`~~
+- ~~Wire into `CertificateStatusUpdateForCareService.store()` with `ServiceName.CERTIFICATE_STATUS_UPDATE_FOR_CARE`~~
+- ~~Extract match context from `CertificateStatusUpdateForCareType`: logicalAddress, `intyg.intygsId.extension`, `intyg.patient.personId.extension`~~
+- ~~Unit tests for service and response factory + integration test~~
 
 Prerequisites: MB-01
 

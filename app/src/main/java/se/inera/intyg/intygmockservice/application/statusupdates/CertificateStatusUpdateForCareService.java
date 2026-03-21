@@ -7,7 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.application.statusupdates.converter.CertificateStatusUpdateForCareConverter;
 import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO;
+import se.inera.intyg.intygmockservice.application.statusupdates.service.CertificateStatusUpdateForCareResponseFactory;
+import se.inera.intyg.intygmockservice.domain.MatchContext;
+import se.inera.intyg.intygmockservice.domain.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.CertificateStatusUpdateForCarePassthroughClient;
+import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.CertificateStatusUpdateForCareRepository;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
@@ -20,12 +24,32 @@ public class CertificateStatusUpdateForCareService {
   private final CertificateStatusUpdateForCareRepository repository;
   private final CertificateStatusUpdateForCareConverter converter;
   private final CertificateStatusUpdateForCarePassthroughClient passthroughClient;
+  private final BehaviorRuleRepository behaviorRuleRepository;
+  private final CertificateStatusUpdateForCareResponseFactory responseFactory;
 
   public Optional<CertificateStatusUpdateForCareResponseType> store(
       final String logicalAddress, final CertificateStatusUpdateForCareType request) {
-    repository.add(logicalAddress, request);
-
     final var dto = converter.convert(request);
+
+    final var context =
+        MatchContext.builder()
+            .logicalAddress(logicalAddress)
+            .certificateId(dto.getIntyg().getIntygsId().getExtension())
+            .personId(dto.getIntyg().getPatient().getPersonId().getExtension())
+            .build();
+
+    final var ruleOpt =
+        behaviorRuleRepository.findBestMatch(
+            ServiceName.CERTIFICATE_STATUS_UPDATE_FOR_CARE, context);
+
+    if (ruleOpt.isPresent()) {
+      final var resultOpt = ruleOpt.get().evaluate(context);
+      if (resultOpt.isPresent()) {
+        return Optional.of(responseFactory.create(resultOpt.get()));
+      }
+    }
+
+    repository.add(logicalAddress, request);
 
     log.atInfo()
         .setMessage(
