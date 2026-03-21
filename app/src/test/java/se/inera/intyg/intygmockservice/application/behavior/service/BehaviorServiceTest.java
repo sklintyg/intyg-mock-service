@@ -1,27 +1,19 @@
-package se.inera.intyg.intygmockservice.application.common.behavior;
+package se.inera.intyg.intygmockservice.application.behavior.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygmockservice.application.common.behavior.service.BehaviorService;
-import se.inera.intyg.intygmockservice.application.common.behavior.service.CreateBehaviorRuleRequest;
-import se.inera.intyg.intygmockservice.domain.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.DelayApplier;
-import se.inera.intyg.intygmockservice.domain.MatchContext;
+import se.inera.intyg.intygmockservice.application.behavior.dto.CreateBehaviorRuleRequest;
 import se.inera.intyg.intygmockservice.domain.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 
@@ -29,67 +21,8 @@ import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRep
 class BehaviorServiceTest {
 
   @Mock private BehaviorRuleRepository repository;
-  @Mock private DelayApplier delayApplier;
 
   @InjectMocks private BehaviorService behaviorService;
-
-  private final MatchContext context =
-      MatchContext.builder().logicalAddress("addr").certificateId("cert").build();
-
-  @Test
-  void evaluateReturnsMatchingRule() {
-    final var rule = rule(null, null);
-    when(repository.findBestMatch(ServiceName.REGISTER_CERTIFICATE, context))
-        .thenReturn(Optional.of(rule));
-    when(repository.triggerAndPersist(rule.getId())).thenReturn(Optional.of(rule));
-
-    final var result = behaviorService.evaluate(ServiceName.REGISTER_CERTIFICATE, context);
-
-    assertTrue(result.isPresent());
-    assertEquals(rule.getId(), result.get().getId());
-  }
-
-  @Test
-  void evaluateReturnsEmptyWhenNoMatch() {
-    when(repository.findBestMatch(any(), any())).thenReturn(Optional.empty());
-
-    final var result = behaviorService.evaluate(ServiceName.REGISTER_CERTIFICATE, context);
-
-    assertTrue(result.isEmpty());
-  }
-
-  @Test
-  void evaluateAppliesDelayWhenRuleHasDelay() {
-    final var rule = rule(50L, null);
-    when(repository.findBestMatch(any(), any())).thenReturn(Optional.of(rule));
-    when(repository.triggerAndPersist(rule.getId())).thenReturn(Optional.of(rule));
-
-    behaviorService.evaluate(ServiceName.REGISTER_CERTIFICATE, context);
-
-    verify(delayApplier).apply(50L);
-  }
-
-  @Test
-  void evaluateDoesNotApplyDelayWhenNoDelay() {
-    final var rule = rule(null, null);
-    when(repository.findBestMatch(any(), any())).thenReturn(Optional.of(rule));
-    when(repository.triggerAndPersist(rule.getId())).thenReturn(Optional.of(rule));
-
-    behaviorService.evaluate(ServiceName.REGISTER_CERTIFICATE, context);
-
-    verify(delayApplier, never()).apply(any(long.class));
-  }
-
-  @Test
-  void evaluateTriggersRule() {
-    final var rule = rule(null, null);
-    when(repository.findBestMatch(any(), any())).thenReturn(Optional.of(rule));
-    when(repository.triggerAndPersist(rule.getId())).thenReturn(Optional.of(rule));
-
-    behaviorService.evaluate(ServiceName.REGISTER_CERTIFICATE, context);
-
-    verify(repository).triggerAndPersist(rule.getId());
-  }
 
   @Test
   void createBuildsAndSavesRule() {
@@ -170,17 +103,5 @@ class BehaviorServiceTest {
     behaviorService.findByServiceName("REGISTER_CERTIFICATE");
 
     verify(repository).findByServiceName(eq(ServiceName.REGISTER_CERTIFICATE));
-  }
-
-  private BehaviorRule rule(Long delayMillis, Integer maxTriggerCount) {
-    return BehaviorRule.builder()
-        .id(UUID.randomUUID())
-        .serviceName(ServiceName.REGISTER_CERTIFICATE)
-        .resultCode("ERROR")
-        .delayMillis(delayMillis)
-        .maxTriggerCount(maxTriggerCount)
-        .triggerCount(0)
-        .createdAt(Instant.now())
-        .build();
   }
 }

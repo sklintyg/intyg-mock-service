@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.common.behavior.service;
+package se.inera.intyg.intygmockservice.application.behavior.dto;
 
 import se.inera.intyg.intygmockservice.domain.ServiceName;
 

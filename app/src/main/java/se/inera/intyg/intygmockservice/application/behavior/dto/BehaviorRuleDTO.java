@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.common.behavior.dto;
+package se.inera.intyg.intygmockservice.application.behavior.dto;
 
 import java.time.Instant;
 import java.util.UUID;

@@ -3,6 +3,7 @@ package se.inera.intyg.intygmockservice.domain;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,6 +52,28 @@ public class BehaviorRule {
 
   public boolean isExhausted() {
     return maxTriggerCount != null && triggerCount >= maxTriggerCount;
+  }
+
+  public Optional<EvaluationResult> evaluate(
+      MatchContext context, DelayApplier delayApplier, BehaviorEventLogger eventLogger) {
+    if (hasDelay()) {
+      delayApplier.apply(delayMillis);
+      eventLogger.logDelayApplied(serviceName, context.getCertificateId(), this);
+    }
+
+    trigger();
+
+    if (hasErrorEffect()) {
+      eventLogger.logErrorSkipped(serviceName, context.getCertificateId(), this);
+      return Optional.of(
+          EvaluationResult.builder()
+              .resultCode(resultCode)
+              .errorId(errorId)
+              .resultText(resultText)
+              .build());
+    }
+
+    return Optional.empty();
   }
 
   @JsonPOJOBuilder(withPrefix = "")

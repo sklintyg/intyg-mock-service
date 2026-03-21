@@ -18,15 +18,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import se.inera.intyg.intygmockservice.application.common.behavior.service.BehaviorLogger;
-import se.inera.intyg.intygmockservice.application.common.behavior.service.BehaviorService;
-import se.inera.intyg.intygmockservice.application.common.behavior.service.CertificateBehaviorResponseBuilder;
+import se.inera.intyg.intygmockservice.application.behavior.service.CertificateBehaviorResponseBuilder;
 import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO;
 import se.inera.intyg.intygmockservice.application.registercertificate.converter.RegisterCertificateConverter;
 import se.inera.intyg.intygmockservice.application.registercertificate.dto.RegisterCertificateDTO;
+import se.inera.intyg.intygmockservice.domain.BehaviorEventLogger;
 import se.inera.intyg.intygmockservice.domain.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.DelayApplier;
+import se.inera.intyg.intygmockservice.domain.EvaluationResult;
 import se.inera.intyg.intygmockservice.domain.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RegisterCertificatePassthroughClient;
+import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RegisterCertificateRepository;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
@@ -42,8 +44,9 @@ class RegisterCertificateServiceTest {
   @Mock private RegisterCertificateRepository repository;
   @Mock private RegisterCertificateConverter converter;
   @Mock private RegisterCertificatePassthroughClient passthroughClient;
-  @Mock private BehaviorService behaviorRuleEvaluator;
-  @Mock private BehaviorLogger behaviorLogger;
+  @Mock private BehaviorRuleRepository behaviorRuleRepository;
+  @Mock private DelayApplier delayApplier;
+  @Mock private BehaviorEventLogger eventLogger;
   @Mock private CertificateBehaviorResponseBuilder responseBuilder;
 
   @InjectMocks private RegisterCertificateService service;
@@ -59,7 +62,7 @@ class RegisterCertificateServiceTest {
             .build();
     when(converter.convert(any())).thenReturn(dto);
     when(passthroughClient.forward(any(), any())).thenReturn(Optional.empty());
-    when(behaviorRuleEvaluator.evaluate(any(), any())).thenReturn(Optional.empty());
+    when(behaviorRuleRepository.findBestMatch(any(), any())).thenReturn(Optional.empty());
   }
 
   @Test
@@ -102,8 +105,8 @@ class RegisterCertificateServiceTest {
   void shouldReturnErrorResponseAndSkipStorageWhenErrorRuleMatches() {
     final var rule = errorRule();
     final var errorResponse = errorResponse();
-    when(behaviorRuleEvaluator.evaluate(any(), any())).thenReturn(Optional.of(rule));
-    when(responseBuilder.build(rule)).thenReturn(errorResponse);
+    when(behaviorRuleRepository.findBestMatch(any(), any())).thenReturn(Optional.of(rule));
+    when(responseBuilder.build(any(EvaluationResult.class))).thenReturn(errorResponse);
 
     final var result = service.store(LOGICAL_ADDRESS, new RegisterCertificateType());
 
@@ -115,8 +118,8 @@ class RegisterCertificateServiceTest {
 
   @Test
   void shouldStoreNormallyWhenDelayOnlyRuleMatches() {
-    final var rule = delayOnlyRule();
-    when(behaviorRuleEvaluator.evaluate(any(), any())).thenReturn(Optional.of(rule));
+    when(behaviorRuleRepository.findBestMatch(any(), any()))
+        .thenReturn(Optional.of(delayOnlyRule()));
 
     service.store(LOGICAL_ADDRESS, new RegisterCertificateType());
 

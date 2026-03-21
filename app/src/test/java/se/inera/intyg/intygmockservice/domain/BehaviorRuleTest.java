@@ -3,12 +3,25 @@ package se.inera.intyg.intygmockservice.domain;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 class BehaviorRuleTest {
+
+  @Mock private DelayApplier delayApplier;
+  @Mock private BehaviorEventLogger eventLogger;
+
+  private final MatchContext context =
+      MatchContext.builder().logicalAddress("addr").certificateId("cert-1").build();
 
   private BehaviorRule.BehaviorRuleBuilder baseRule() {
     return BehaviorRule.builder()
@@ -112,5 +125,72 @@ class BehaviorRuleTest {
     final var rule = baseRule().triggerCount(100).build();
 
     assertFalse(rule.isExhausted());
+  }
+
+  @Test
+  void evaluateReturnsEmptyForDelayOnlyRule() {
+    final var rule = baseRule().delayMillis(50L).build();
+
+    final var result = rule.evaluate(context, delayApplier, eventLogger);
+
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
+  void evaluateAppliesDelayWhenRuleHasDelay() {
+    final var rule = baseRule().delayMillis(50L).build();
+
+    rule.evaluate(context, delayApplier, eventLogger);
+
+    verify(delayApplier).apply(50L);
+  }
+
+  @Test
+  void evaluateDoesNotApplyDelayWhenNoDelay() {
+    final var rule = baseRule().resultCode("ERROR").build();
+
+    rule.evaluate(context, delayApplier, eventLogger);
+
+    verify(delayApplier, never()).apply(anyLong());
+  }
+
+  @Test
+  void evaluateReturnsResultForErrorRule() {
+    final var rule =
+        baseRule().resultCode("ERROR").errorId("VALIDATION_ERROR").resultText("msg").build();
+
+    final var result = rule.evaluate(context, delayApplier, eventLogger);
+
+    assertTrue(result.isPresent());
+    assertEquals("ERROR", result.get().getResultCode());
+    assertEquals("VALIDATION_ERROR", result.get().getErrorId());
+    assertEquals("msg", result.get().getResultText());
+  }
+
+  @Test
+  void evaluateIncrementsTriggerCount() {
+    final var rule = baseRule().build();
+
+    rule.evaluate(context, delayApplier, eventLogger);
+
+    assertEquals(1, rule.getTriggerCount());
+  }
+
+  @Test
+  void evaluateLogsDelayApplied() {
+    final var rule = baseRule().delayMillis(100L).build();
+
+    rule.evaluate(context, delayApplier, eventLogger);
+
+    verify(eventLogger).logDelayApplied(ServiceName.REGISTER_CERTIFICATE, "cert-1", rule);
+  }
+
+  @Test
+  void evaluateLogsErrorSkipped() {
+    final var rule = baseRule().resultCode("ERROR").build();
+
+    rule.evaluate(context, delayApplier, eventLogger);
+
+    verify(eventLogger).logErrorSkipped(ServiceName.REGISTER_CERTIFICATE, "cert-1", rule);
   }
 }

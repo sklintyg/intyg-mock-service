@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import se.inera.intyg.intygmockservice.application.common.behavior.dto.BehaviorRuleDTO;
-import se.inera.intyg.intygmockservice.application.common.behavior.service.BehaviorService;
-import se.inera.intyg.intygmockservice.application.common.behavior.service.CreateBehaviorRuleRequest;
+import se.inera.intyg.intygmockservice.application.behavior.dto.BehaviorRuleDTO;
+import se.inera.intyg.intygmockservice.application.behavior.dto.CreateBehaviorRuleRequest;
+import se.inera.intyg.intygmockservice.application.behavior.service.BehaviorService;
 
 @Tag(name = "Behavior")
 @RestController

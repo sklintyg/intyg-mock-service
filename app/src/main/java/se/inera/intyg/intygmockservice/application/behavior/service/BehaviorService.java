@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.common.behavior.service;
+package se.inera.intyg.intygmockservice.application.behavior.service;
 
 import java.time.Instant;
 import java.util.List;
@@ -6,11 +6,10 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygmockservice.application.common.behavior.dto.BehaviorRuleDTO;
-import se.inera.intyg.intygmockservice.application.common.behavior.dto.BehaviorRuleDTO.MatchCriteriaDTO;
+import se.inera.intyg.intygmockservice.application.behavior.dto.BehaviorRuleDTO;
+import se.inera.intyg.intygmockservice.application.behavior.dto.BehaviorRuleDTO.MatchCriteriaDTO;
+import se.inera.intyg.intygmockservice.application.behavior.dto.CreateBehaviorRuleRequest;
 import se.inera.intyg.intygmockservice.domain.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.DelayApplier;
-import se.inera.intyg.intygmockservice.domain.MatchContext;
 import se.inera.intyg.intygmockservice.domain.MatchCriteria;
 import se.inera.intyg.intygmockservice.domain.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
@@ -20,21 +19,6 @@ import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRep
 public class BehaviorService {
 
   private final BehaviorRuleRepository repository;
-  private final DelayApplier delayApplier;
-
-  public Optional<BehaviorRule> evaluate(ServiceName serviceName, MatchContext context) {
-    final var ruleOpt = repository.findBestMatch(serviceName, context);
-
-    ruleOpt.ifPresent(
-        rule -> {
-          if (rule.hasDelay()) {
-            delayApplier.apply(rule.getDelayMillis());
-          }
-          repository.triggerAndPersist(rule.getId());
-        });
-
-    return ruleOpt;
-  }
 
   public BehaviorRuleDTO create(CreateBehaviorRuleRequest request) {
     final var rule =

@@ -36,29 +36,9 @@ public class BehaviorRuleRepository {
     return rules.values().stream()
         .filter(rule -> rule.getServiceName() == serviceName)
         .filter(rule -> rule.matches(context))
-        .sorted(
+        .max(
             Comparator.comparingInt(BehaviorRule::specificity)
-                .reversed()
-                .thenComparing(Comparator.comparing(BehaviorRule::getCreatedAt).reversed()))
-        .findFirst();
-  }
-
-  public Optional<BehaviorRule> triggerAndPersist(UUID id) {
-    final var result = new BehaviorRule[1];
-    rules.compute(
-        id,
-        (k, existing) -> {
-          if (existing == null) {
-            return null;
-          }
-          result[0] = existing;
-          final var exhausted = existing.trigger();
-          if (exhausted) {
-            return null;
-          }
-          return existing;
-        });
-    return Optional.ofNullable(result[0]);
+                .thenComparing(BehaviorRule::getCreatedAt));
   }
 
   public boolean delete(UUID id) {

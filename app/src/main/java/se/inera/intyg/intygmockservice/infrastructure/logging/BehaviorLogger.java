@@ -1,13 +1,14 @@
-package se.inera.intyg.intygmockservice.application.common.behavior.service;
+package se.inera.intyg.intygmockservice.infrastructure.logging;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import se.inera.intyg.intygmockservice.domain.BehaviorEventLogger;
 import se.inera.intyg.intygmockservice.domain.BehaviorRule;
 import se.inera.intyg.intygmockservice.domain.ServiceName;
 
 @Component
 @Slf4j
-public class BehaviorLogger {
+public class BehaviorLogger implements BehaviorEventLogger {
 
   public void logErrorSkipped(ServiceName serviceName, String certificateId, BehaviorRule rule) {
     log.atInfo()

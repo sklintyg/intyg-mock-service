@@ -9,14 +9,15 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import se.inera.intyg.intygmockservice.application.common.behavior.service.BehaviorLogger;
-import se.inera.intyg.intygmockservice.application.common.behavior.service.BehaviorService;
-import se.inera.intyg.intygmockservice.application.common.behavior.service.CertificateBehaviorResponseBuilder;
+import se.inera.intyg.intygmockservice.application.behavior.service.CertificateBehaviorResponseBuilder;
 import se.inera.intyg.intygmockservice.application.registercertificate.converter.RegisterCertificateConverter;
 import se.inera.intyg.intygmockservice.application.registercertificate.dto.RegisterCertificateDTO;
+import se.inera.intyg.intygmockservice.domain.BehaviorEventLogger;
+import se.inera.intyg.intygmockservice.domain.DelayApplier;
 import se.inera.intyg.intygmockservice.domain.MatchContext;
 import se.inera.intyg.intygmockservice.domain.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RegisterCertificatePassthroughClient;
+import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RegisterCertificateRepository;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
@@ -30,8 +31,9 @@ public class RegisterCertificateService {
   private final RegisterCertificateRepository repository;
   private final RegisterCertificateConverter converter;
   private final RegisterCertificatePassthroughClient passthroughClient;
-  private final BehaviorService behaviorService;
-  private final BehaviorLogger behaviorLogger;
+  private final BehaviorRuleRepository behaviorRuleRepository;
+  private final DelayApplier delayApplier;
+  private final BehaviorEventLogger eventLogger;
   private final CertificateBehaviorResponseBuilder responseBuilder;
 
   private static final JAXBContext JAXB_CONTEXT;
@@ -67,15 +69,17 @@ public class RegisterCertificateService {
             .personId(personId)
             .build();
 
-    final var ruleOpt = behaviorService.evaluate(ServiceName.REGISTER_CERTIFICATE, context);
+    final var ruleOpt =
+        behaviorRuleRepository.findBestMatch(ServiceName.REGISTER_CERTIFICATE, context);
 
     if (ruleOpt.isPresent()) {
       final var rule = ruleOpt.get();
-      if (rule.getResultCode() != null) {
-        behaviorLogger.logErrorSkipped(ServiceName.REGISTER_CERTIFICATE, certificateId, rule);
-        return Optional.of(responseBuilder.build(rule));
-      } else {
-        behaviorLogger.logDelayApplied(ServiceName.REGISTER_CERTIFICATE, certificateId, rule);
+      final var resultOpt = rule.evaluate(context, delayApplier, eventLogger);
+      if (rule.isExhausted()) {
+        behaviorRuleRepository.delete(rule.getId());
+      }
+      if (resultOpt.isPresent()) {
+        return Optional.of(responseBuilder.build(resultOpt.get()));
       }
     }
 
