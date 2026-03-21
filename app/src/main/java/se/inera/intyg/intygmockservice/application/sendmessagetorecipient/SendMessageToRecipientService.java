@@ -7,7 +7,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.converter.SendMessageToRecipientConverter;
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
+import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.service.SendMessageToRecipientResponseFactory;
+import se.inera.intyg.intygmockservice.domain.MatchContext;
+import se.inera.intyg.intygmockservice.domain.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.SendMessageToRecipientPassthroughClient;
+import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.SendMessageToRecipientRepository;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
@@ -20,12 +24,31 @@ public class SendMessageToRecipientService {
   private final SendMessageToRecipientRepository repository;
   private final SendMessageToRecipientConverter converter;
   private final SendMessageToRecipientPassthroughClient passthroughClient;
+  private final BehaviorRuleRepository behaviorRuleRepository;
+  private final SendMessageToRecipientResponseFactory responseFactory;
 
   public Optional<SendMessageToRecipientResponseType> store(
       final String logicalAddress, final SendMessageToRecipientType message) {
-    repository.add(logicalAddress, message);
-
     final var dto = converter.convert(message);
+
+    final var context =
+        MatchContext.builder()
+            .logicalAddress(logicalAddress)
+            .certificateId(dto.getIntygsId().getExtension())
+            .personId(dto.getPatientPersonId().getExtension())
+            .build();
+
+    final var ruleOpt =
+        behaviorRuleRepository.findBestMatch(ServiceName.SEND_MESSAGE_TO_RECIPIENT, context);
+
+    if (ruleOpt.isPresent()) {
+      final var resultOpt = ruleOpt.get().evaluate(context);
+      if (resultOpt.isPresent()) {
+        return Optional.of(responseFactory.create(resultOpt.get()));
+      }
+    }
+
+    repository.add(logicalAddress, message);
 
     log.atInfo()
         .setMessage(

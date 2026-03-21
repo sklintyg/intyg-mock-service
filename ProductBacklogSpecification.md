@@ -81,7 +81,7 @@ Reuse all infrastructure from MB-01. Only new work:
 
 Prerequisites: MB-01
 
-### MB-03 — Error response rules for SendMessageToRecipient
+### ~~MB-03 — Error response rules for SendMessageToRecipient~~ ✓ Done
 
 Same pattern as MB-02:
 - Add `SendMessageToRecipientResponseFactory` (`@Component`) — wraps `certificate.v3.ResultType` in `SendMessageToRecipientResponseType`

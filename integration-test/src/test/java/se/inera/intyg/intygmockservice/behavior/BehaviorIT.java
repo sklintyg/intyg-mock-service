@@ -31,9 +31,12 @@ class BehaviorIT {
       "/services/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21";
   private static final String REVOKE_SOAP_PATH =
       "/services/clinicalprocess/healthcond/certificate/RevokeCertificate/2/rivtabp21";
+  private static final String SEND_MESSAGE_SOAP_PATH =
+      "/services/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21";
   private static final String BEHAVIOR_PATH = "/api/behavior";
   private static final String REGISTER_CERT_PATH = "/api/register-certificate";
   private static final String REVOKE_CERT_PATH = "/api/revoke-certificate";
+  private static final String SEND_MESSAGE_PATH = "/api/send-message-to-recipient";
 
   @Autowired private TestRestTemplate restTemplate;
 
@@ -133,6 +136,39 @@ class BehaviorIT {
     assertTrue(soapResponse.contains("ERROR"), "Expected ERROR in SOAP response");
     final var count =
         restTemplate.getForEntity(REVOKE_CERT_PATH + "/count", CountResponse.class).getBody();
+    assertEquals(0, count.count());
+  }
+
+  @Test
+  void errorRuleForSendMessageToRecipientShouldReturnErrorAndNotStoreMessage() throws IOException {
+    final var body =
+        Map.of(
+            "serviceName",
+            "SEND_MESSAGE_TO_RECIPIENT",
+            "resultCode",
+            "ERROR",
+            "errorId",
+            "VALIDATION_ERROR");
+    final var ruleResponse = restTemplate.postForEntity(BEHAVIOR_PATH, body, Map.class);
+    assertEquals(HttpStatus.CREATED, ruleResponse.getStatusCode());
+
+    final var resource = new ClassPathResource("soap/send-message-to-recipient.xml");
+    final var soapBody = resource.getContentAsString(StandardCharsets.UTF_8);
+    final var headers = new HttpHeaders();
+    headers.setContentType(MediaType.TEXT_XML);
+    headers.set("SOAPAction", "\"\"");
+    final var soapResponse =
+        restTemplate
+            .exchange(
+                SEND_MESSAGE_SOAP_PATH,
+                HttpMethod.POST,
+                new HttpEntity<>(soapBody, headers),
+                String.class)
+            .getBody();
+
+    assertTrue(soapResponse.contains("ERROR"), "Expected ERROR in SOAP response");
+    final var count =
+        restTemplate.getForEntity(SEND_MESSAGE_PATH + "/count", CountResponse.class).getBody();
     assertEquals(0, count.count());
   }
 
