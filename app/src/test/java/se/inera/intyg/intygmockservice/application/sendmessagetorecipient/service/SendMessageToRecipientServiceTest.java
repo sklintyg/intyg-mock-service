@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.statusupdates;
+package se.inera.intyg.intygmockservice.application.sendmessagetorecipient.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,52 +18,46 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
-import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO;
 import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO.IntygsId;
-import se.inera.intyg.intygmockservice.application.common.dto.PatientDTO;
 import se.inera.intyg.intygmockservice.application.common.dto.PatientDTO.PersonId;
-import se.inera.intyg.intygmockservice.application.statusupdates.converter.CertificateStatusUpdateForCareConverter;
-import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO;
-import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse;
-import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse.Handelsekod;
-import se.inera.intyg.intygmockservice.application.statusupdates.service.CertificateStatusUpdateForCareResponseFactory;
-import se.inera.intyg.intygmockservice.domain.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.EvaluationResult;
-import se.inera.intyg.intygmockservice.infrastructure.passthrough.CertificateStatusUpdateForCarePassthroughClient;
+import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.converter.SendMessageToRecipientConverter;
+import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
+import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
+import se.inera.intyg.intygmockservice.infrastructure.passthrough.SendMessageToRecipientPassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
-import se.inera.intyg.intygmockservice.infrastructure.repository.CertificateStatusUpdateForCareRepository;
-import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponseType;
-import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
+import se.inera.intyg.intygmockservice.infrastructure.repository.SendMessageToRecipientRepository;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultType;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-class CertificateStatusUpdateForCareServiceTest {
+class SendMessageToRecipientServiceTest {
 
   private static final String LOGICAL_ADDRESS = "logical-address-1";
+  private static final String MESSAGE_ID = "msg-123";
   private static final String CERTIFICATE_ID = "cert-123";
-  private static final String PERSON_ID = "191212121212";
-  private static final String EVENT_CODE = "SKAPAT";
 
-  @Mock private CertificateStatusUpdateForCareRepository repository;
-  @Mock private CertificateStatusUpdateForCareConverter converter;
-  @Mock private CertificateStatusUpdateForCarePassthroughClient passthroughClient;
+  @Mock private SendMessageToRecipientRepository repository;
+  @Mock private SendMessageToRecipientConverter converter;
+  @Mock private SendMessageToRecipientPassthroughClient passthroughClient;
   @Mock private BehaviorRuleRepository behaviorRuleRepository;
-  @Mock private CertificateStatusUpdateForCareResponseFactory responseFactory;
+  @Mock private SendMessageToRecipientResponseFactory responseFactory;
 
-  @InjectMocks private CertificateStatusUpdateForCareService service;
+  @InjectMocks private SendMessageToRecipientService service;
 
   @BeforeEach
   void setUp() {
-    when(converter.convert(any())).thenReturn(buildDto(CERTIFICATE_ID));
+    when(converter.convert(any())).thenReturn(buildDto());
     when(passthroughClient.forward(any(), any())).thenReturn(Optional.empty());
     when(behaviorRuleRepository.findBestMatch(any(), any())).thenReturn(Optional.empty());
   }
 
   @Test
   void shouldAddToRepositoryWhenStore() {
-    final var type = new CertificateStatusUpdateForCareType();
+    final var type = new SendMessageToRecipientType();
 
     service.store(LOGICAL_ADDRESS, type);
 
@@ -72,7 +66,7 @@ class CertificateStatusUpdateForCareServiceTest {
 
   @Test
   void shouldDelegateToPassthroughClientWhenStore() {
-    final var type = new CertificateStatusUpdateForCareType();
+    final var type = new SendMessageToRecipientType();
 
     service.store(LOGICAL_ADDRESS, type);
 
@@ -81,7 +75,7 @@ class CertificateStatusUpdateForCareServiceTest {
 
   @Test
   void shouldReturnPassthroughResultWhenStore() {
-    final var type = new CertificateStatusUpdateForCareType();
+    final var type = new SendMessageToRecipientType();
     final var response = okResponse();
     when(passthroughClient.forward(any(), any())).thenReturn(Optional.of(response));
 
@@ -93,7 +87,7 @@ class CertificateStatusUpdateForCareServiceTest {
 
   @Test
   void shouldReturnEmptyOptionalWhenPassthroughDisabled() {
-    final var result = service.store(LOGICAL_ADDRESS, new CertificateStatusUpdateForCareType());
+    final var result = service.store(LOGICAL_ADDRESS, new SendMessageToRecipientType());
 
     assertTrue(result.isEmpty());
   }
@@ -105,7 +99,7 @@ class CertificateStatusUpdateForCareServiceTest {
     when(behaviorRuleRepository.findBestMatch(any(), any())).thenReturn(Optional.of(rule));
     when(responseFactory.create(any(EvaluationResult.class))).thenReturn(errorResponse);
 
-    final var result = service.store(LOGICAL_ADDRESS, new CertificateStatusUpdateForCareType());
+    final var result = service.store(LOGICAL_ADDRESS, new SendMessageToRecipientType());
 
     assertTrue(result.isPresent());
     assertEquals(errorResponse, result.get());
@@ -118,15 +112,15 @@ class CertificateStatusUpdateForCareServiceTest {
     final var rule = delayOnlyRule();
     when(behaviorRuleRepository.findBestMatch(any(), any())).thenReturn(Optional.of(rule));
 
-    service.store(LOGICAL_ADDRESS, new CertificateStatusUpdateForCareType());
+    service.store(LOGICAL_ADDRESS, new SendMessageToRecipientType());
 
     verify(repository).add(any(), any());
   }
 
   @Test
   void shouldReturnAllWhenGetAll() {
-    final var type = new CertificateStatusUpdateForCareType();
-    final var dto = CertificateStatusUpdateForCareDTO.builder().build();
+    final var type = new SendMessageToRecipientType();
+    final var dto = SendMessageToRecipientDTO.builder().build();
     when(repository.findAll()).thenReturn(List.of(type));
     when(converter.convert(type)).thenReturn(dto);
 
@@ -136,25 +130,35 @@ class CertificateStatusUpdateForCareServiceTest {
   }
 
   @Test
+  void shouldReturnDtoWhenGetByMessageIdExists() {
+    final var type = new SendMessageToRecipientType();
+    final var dto = SendMessageToRecipientDTO.builder().build();
+    when(repository.findByMessageId(MESSAGE_ID)).thenReturn(Optional.of(type));
+    when(converter.convert(type)).thenReturn(dto);
+
+    final var result = service.getByMessageId(MESSAGE_ID);
+
+    assertTrue(result.isPresent());
+    assertEquals(dto, result.get());
+  }
+
+  @Test
+  void shouldReturnEmptyWhenGetByMessageIdNotFound() {
+    when(repository.findByMessageId(MESSAGE_ID)).thenReturn(Optional.empty());
+
+    final var result = service.getByMessageId(MESSAGE_ID);
+
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
   void shouldReturnDtosWhenGetByCertificateId() {
-    final var type = new CertificateStatusUpdateForCareType();
-    final var dto = CertificateStatusUpdateForCareDTO.builder().build();
+    final var type = new SendMessageToRecipientType();
+    final var dto = SendMessageToRecipientDTO.builder().build();
     when(repository.findByCertificateId(CERTIFICATE_ID)).thenReturn(List.of(type));
     when(converter.convert(type)).thenReturn(dto);
 
     final var result = service.getByCertificateId(CERTIFICATE_ID);
-
-    assertEquals(List.of(dto), result);
-  }
-
-  @Test
-  void shouldReturnDtosWhenGetByLogicalAddress() {
-    final var type = new CertificateStatusUpdateForCareType();
-    final var dto = CertificateStatusUpdateForCareDTO.builder().build();
-    when(repository.findByLogicalAddress(LOGICAL_ADDRESS)).thenReturn(List.of(type));
-    when(converter.convert(type)).thenReturn(dto);
-
-    final var result = service.getByLogicalAddress(LOGICAL_ADDRESS);
 
     assertEquals(List.of(dto), result);
   }
@@ -170,24 +174,24 @@ class CertificateStatusUpdateForCareServiceTest {
 
   @Test
   void shouldReturnDtosWhenGetByPersonId() {
-    final var type = new CertificateStatusUpdateForCareType();
-    final var dto = CertificateStatusUpdateForCareDTO.builder().build();
+    final var type = new SendMessageToRecipientType();
+    final var dto = SendMessageToRecipientDTO.builder().build();
     when(repository.findByPersonId(any())).thenReturn(List.of(type));
     when(converter.convert(type)).thenReturn(dto);
 
-    final var result = service.getByPersonId(PERSON_ID);
+    final var result = service.getByPersonId("191212121212");
 
     assertEquals(List.of(dto), result);
   }
 
   @Test
-  void shouldReturnDtosWhenGetByEventCode() {
-    final var type = new CertificateStatusUpdateForCareType();
-    final var dto = CertificateStatusUpdateForCareDTO.builder().build();
-    when(repository.findByEventCode(EVENT_CODE)).thenReturn(List.of(type));
+  void shouldReturnDtosWhenGetByLogicalAddress() {
+    final var type = new SendMessageToRecipientType();
+    final var dto = SendMessageToRecipientDTO.builder().build();
+    when(repository.findByLogicalAddress(LOGICAL_ADDRESS)).thenReturn(List.of(type));
     when(converter.convert(type)).thenReturn(dto);
 
-    final var result = service.getByEventCode(EVENT_CODE);
+    final var result = service.getByLogicalAddress(LOGICAL_ADDRESS);
 
     assertEquals(List.of(dto), result);
   }
@@ -200,24 +204,18 @@ class CertificateStatusUpdateForCareServiceTest {
   }
 
   @Test
-  void shouldDelegateToRepositoryWhenDeleteByCertificateId() {
-    service.deleteByCertificateId(CERTIFICATE_ID);
+  void shouldDelegateToRepositoryWhenDeleteByMessageId() {
+    service.deleteByMessageId(MESSAGE_ID);
 
-    verify(repository).deleteByCertificateId(CERTIFICATE_ID);
+    verify(repository).deleteByMessageId(MESSAGE_ID);
   }
 
-  private static CertificateStatusUpdateForCareDTO buildDto(String certificateId) {
-    return CertificateStatusUpdateForCareDTO.builder()
-        .intyg(
-            IntygDTO.builder()
-                .intygsId(IntygsId.builder().root("root").extension(certificateId).build())
-                .patient(
-                    PatientDTO.builder()
-                        .personId(PersonId.builder().root("root").extension(PERSON_ID).build())
-                        .build())
-                .build())
-        .handelse(
-            Handelse.builder().handelsekod(Handelsekod.builder().code(EVENT_CODE).build()).build())
+  private SendMessageToRecipientDTO buildDto() {
+    return SendMessageToRecipientDTO.builder()
+        .meddelandeId(MESSAGE_ID)
+        .intygsId(IntygsId.builder().root("root").extension(CERTIFICATE_ID).build())
+        .patientPersonId(PersonId.builder().root("root").extension("191212121212").build())
+        .meddelande("content")
         .build();
   }
 
@@ -239,16 +237,16 @@ class CertificateStatusUpdateForCareServiceTest {
     return rule;
   }
 
-  private CertificateStatusUpdateForCareResponseType okResponse() {
-    final var response = new CertificateStatusUpdateForCareResponseType();
+  private SendMessageToRecipientResponseType okResponse() {
+    final var response = new SendMessageToRecipientResponseType();
     final var result = new ResultType();
     result.setResultCode(ResultCodeType.OK);
     response.setResult(result);
     return response;
   }
 
-  private CertificateStatusUpdateForCareResponseType errorResponse() {
-    final var response = new CertificateStatusUpdateForCareResponseType();
+  private SendMessageToRecipientResponseType errorResponse() {
+    final var response = new SendMessageToRecipientResponseType();
     final var result = new ResultType();
     result.setResultCode(ResultCodeType.ERROR);
     response.setResult(result);

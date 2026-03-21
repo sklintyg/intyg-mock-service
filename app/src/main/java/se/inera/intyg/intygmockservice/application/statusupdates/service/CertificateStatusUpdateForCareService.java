@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.statusupdates;
+package se.inera.intyg.intygmockservice.application.statusupdates.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,9 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.application.statusupdates.converter.CertificateStatusUpdateForCareConverter;
 import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO;
-import se.inera.intyg.intygmockservice.application.statusupdates.service.CertificateStatusUpdateForCareResponseFactory;
-import se.inera.intyg.intygmockservice.domain.MatchContext;
-import se.inera.intyg.intygmockservice.domain.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
+import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.CertificateStatusUpdateForCarePassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.CertificateStatusUpdateForCareRepository;

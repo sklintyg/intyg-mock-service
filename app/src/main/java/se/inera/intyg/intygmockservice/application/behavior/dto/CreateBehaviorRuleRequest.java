@@ -1,6 +1,6 @@
 package se.inera.intyg.intygmockservice.application.behavior.dto;
 
-import se.inera.intyg.intygmockservice.domain.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 
 public record CreateBehaviorRuleRequest(
     ServiceName serviceName,

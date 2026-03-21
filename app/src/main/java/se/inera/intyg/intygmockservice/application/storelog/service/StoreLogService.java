@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.storelog;
+package se.inera.intyg.intygmockservice.application.storelog.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,9 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.application.storelog.converter.StoreLogTypeConverter;
 import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO;
-import se.inera.intyg.intygmockservice.application.storelog.service.StoreLogResponseFactory;
-import se.inera.intyg.intygmockservice.domain.MatchContext;
-import se.inera.intyg.intygmockservice.domain.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
+import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.StoreLogPassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.StoreLogTypeRepository;

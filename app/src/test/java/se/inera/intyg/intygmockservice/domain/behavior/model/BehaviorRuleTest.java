@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.domain;
+package se.inera.intyg.intygmockservice.domain.behavior.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.intygmockservice.domain.behavior.service.BehaviorEventLogger;
+import se.inera.intyg.intygmockservice.domain.behavior.service.DelayApplier;
 
 @ExtendWith(MockitoExtension.class)
 class BehaviorRuleTest {

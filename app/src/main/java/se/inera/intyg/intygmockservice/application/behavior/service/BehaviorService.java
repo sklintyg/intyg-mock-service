@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.application.behavior.dto.BehaviorRuleDTO;
 import se.inera.intyg.intygmockservice.application.behavior.dto.BehaviorRuleDTO.MatchCriteriaDTO;
 import se.inera.intyg.intygmockservice.application.behavior.dto.CreateBehaviorRuleRequest;
-import se.inera.intyg.intygmockservice.domain.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.MatchCriteria;
-import se.inera.intyg.intygmockservice.domain.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MatchCriteria;
+import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 
 @Service

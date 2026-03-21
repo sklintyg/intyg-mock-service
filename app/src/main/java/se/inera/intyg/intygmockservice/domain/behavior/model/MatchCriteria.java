@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.domain;
+package se.inera.intyg.intygmockservice.domain.behavior.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;

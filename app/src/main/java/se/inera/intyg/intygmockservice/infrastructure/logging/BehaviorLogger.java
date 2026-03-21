@@ -2,9 +2,9 @@ package se.inera.intyg.intygmockservice.infrastructure.logging;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.domain.BehaviorEventLogger;
-import se.inera.intyg.intygmockservice.domain.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.service.BehaviorEventLogger;
 
 @Component
 @Slf4j

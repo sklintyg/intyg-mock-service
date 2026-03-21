@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO;
+import se.inera.intyg.intygmockservice.application.statusupdates.service.CertificateStatusUpdateForCareService;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateStatusForCareControllerTest {

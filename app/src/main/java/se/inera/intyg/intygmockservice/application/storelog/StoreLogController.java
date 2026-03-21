@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygmockservice.application.common.dto.CountResponse;
 import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO;
+import se.inera.intyg.intygmockservice.application.storelog.service.StoreLogService;
 
 @RestController
 @RequestMapping("/api/store-log")

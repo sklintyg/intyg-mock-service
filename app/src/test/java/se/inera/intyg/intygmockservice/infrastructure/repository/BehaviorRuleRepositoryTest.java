@@ -12,12 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygmockservice.domain.BehaviorEventLogger;
-import se.inera.intyg.intygmockservice.domain.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.DelayApplier;
-import se.inera.intyg.intygmockservice.domain.MatchContext;
-import se.inera.intyg.intygmockservice.domain.MatchCriteria;
-import se.inera.intyg.intygmockservice.domain.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.service.BehaviorEventLogger;
+import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.behavior.service.DelayApplier;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MatchCriteria;
+import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 
 @ExtendWith(MockitoExtension.class)
 class BehaviorRuleRepositoryTest {

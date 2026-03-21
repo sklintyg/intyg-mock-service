@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.revokecertificate;
+package se.inera.intyg.intygmockservice.application.revokecertificate.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,9 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.application.revokecertificate.converter.RevokeCertificateConverter;
 import se.inera.intyg.intygmockservice.application.revokecertificate.dto.RevokeCertificateDTO;
-import se.inera.intyg.intygmockservice.application.revokecertificate.service.RevokeCertificateResponseFactory;
-import se.inera.intyg.intygmockservice.domain.MatchContext;
-import se.inera.intyg.intygmockservice.domain.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
+import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RevokeCertificatePassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;

@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygmockservice.application.behavior.service.BehaviorService;
 import se.inera.intyg.intygmockservice.application.registercertificate.service.RegisterCertificateService;
-import se.inera.intyg.intygmockservice.application.revokecertificate.RevokeCertificateService;
-import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.SendMessageToRecipientService;
-import se.inera.intyg.intygmockservice.application.statusupdates.CertificateStatusUpdateForCareService;
-import se.inera.intyg.intygmockservice.application.storelog.StoreLogService;
+import se.inera.intyg.intygmockservice.application.revokecertificate.service.RevokeCertificateService;
+import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.service.SendMessageToRecipientService;
+import se.inera.intyg.intygmockservice.application.statusupdates.service.CertificateStatusUpdateForCareService;
+import se.inera.intyg.intygmockservice.application.storelog.service.StoreLogService;
 
 @Tag(name = "Reset")
 @RestController

@@ -1,7 +1,7 @@
 package se.inera.intyg.intygmockservice.application.statusupdates.service;
 
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.domain.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;

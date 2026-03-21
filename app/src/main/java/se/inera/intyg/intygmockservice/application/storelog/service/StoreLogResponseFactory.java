@@ -1,7 +1,7 @@
 package se.inera.intyg.intygmockservice.application.storelog.service;
 
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.domain.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogResponseType;
 import se.riv.informationsecurity.auditing.log.v2.ResultCodeType;
 import se.riv.informationsecurity.auditing.log.v2.ResultType;

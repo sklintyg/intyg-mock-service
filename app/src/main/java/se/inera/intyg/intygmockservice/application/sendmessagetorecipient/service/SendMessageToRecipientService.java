@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.sendmessagetorecipient;
+package se.inera.intyg.intygmockservice.application.sendmessagetorecipient.service;
 
 import java.util.List;
 import java.util.Optional;
@@ -7,9 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.converter.SendMessageToRecipientConverter;
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
-import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.service.SendMessageToRecipientResponseFactory;
-import se.inera.intyg.intygmockservice.domain.MatchContext;
-import se.inera.intyg.intygmockservice.domain.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
+import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.SendMessageToRecipientPassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.SendMessageToRecipientRepository;

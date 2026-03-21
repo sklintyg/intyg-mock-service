@@ -3,8 +3,8 @@ package se.inera.intyg.intygmockservice.application.behavior.service;
 import java.time.Instant;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import se.inera.intyg.intygmockservice.domain.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.logging.BehaviorLogger;
 
 class BehaviorLoggerTest {

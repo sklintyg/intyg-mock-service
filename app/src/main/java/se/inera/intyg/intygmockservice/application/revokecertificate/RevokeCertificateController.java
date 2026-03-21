@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygmockservice.application.common.dto.CountResponse;
 import se.inera.intyg.intygmockservice.application.revokecertificate.dto.RevokeCertificateDTO;
+import se.inera.intyg.intygmockservice.application.revokecertificate.service.RevokeCertificateService;
 
 @RestController
 @RequestMapping("/api/revoke-certificate")

@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
-import se.inera.intyg.intygmockservice.domain.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
 import se.riv.informationsecurity.auditing.log.v2.ResultCodeType;
 
 class StoreLogResponseFactoryTest {

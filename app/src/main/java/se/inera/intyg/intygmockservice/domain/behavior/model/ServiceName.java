@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.domain;
+package se.inera.intyg.intygmockservice.domain.behavior.model;
 
 public enum ServiceName {
   REGISTER_CERTIFICATE,

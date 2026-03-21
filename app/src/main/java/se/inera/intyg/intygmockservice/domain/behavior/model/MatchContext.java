@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.domain;
+package se.inera.intyg.intygmockservice.domain.behavior.model;
 
 import lombok.Builder;
 import lombok.Value;

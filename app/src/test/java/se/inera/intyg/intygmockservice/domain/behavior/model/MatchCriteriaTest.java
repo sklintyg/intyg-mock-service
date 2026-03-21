@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.domain;
+package se.inera.intyg.intygmockservice.domain.behavior.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;

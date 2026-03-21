@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.storelog;
+package se.inera.intyg.intygmockservice.application.storelog.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,9 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import se.inera.intyg.intygmockservice.application.storelog.converter.StoreLogTypeConverter;
-import se.inera.intyg.intygmockservice.application.storelog.service.StoreLogResponseFactory;
-import se.inera.intyg.intygmockservice.domain.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.StoreLogPassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.StoreLogTypeRepository;

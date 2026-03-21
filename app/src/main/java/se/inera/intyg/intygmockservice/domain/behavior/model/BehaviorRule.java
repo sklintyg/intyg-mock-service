@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.domain;
+package se.inera.intyg.intygmockservice.domain.behavior.model;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
@@ -7,6 +7,8 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
+import se.inera.intyg.intygmockservice.domain.behavior.service.BehaviorEventLogger;
+import se.inera.intyg.intygmockservice.domain.behavior.service.DelayApplier;
 
 @Getter
 @Builder(toBuilder = true)
