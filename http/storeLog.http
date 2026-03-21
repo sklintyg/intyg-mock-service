@@ -4,40 +4,40 @@ Content-Type: text/xml
 SOAPAction: ""
 
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"
-    xmlns:ns1="urn:riv:itintegration:registry:1"
-    xmlns:ns2="urn:riv:informationsecurity:auditing:log:2"
-    xmlns:ns3="urn:riv:informationsecurity:auditing:log:StoreLogResponder:2">
-  <soapenv:Header>
-    <ns1:LogicalAddress>TSTNMT2321000156-ALMC</ns1:LogicalAddress>
-  </soapenv:Header>
-  <soapenv:Body>
-    <ns3:StoreLog>
-      <ns3:log>
-        <ns2:logId>log-001</ns2:logId>
-        <ns2:system>
-          <ns2:systemId>WEBCERT</ns2:systemId>
-          <ns2:systemName>Webcert</ns2:systemName>
-        </ns2:system>
-        <ns2:activity>
-          <ns2:activityType>Läsa</ns2:activityType>
-          <ns2:activityLevel>cert-001</ns2:activityLevel>
-          <ns2:startDate>2024-11-09T07:40:13</ns2:startDate>
-        </ns2:activity>
-        <ns2:user>
-          <ns2:userId>user-001</ns2:userId>
-          <ns2:assignment>Läkare</ns2:assignment>
-          <ns2:careProvider>
-            <ns2:careProviderId>TSTNMT2321000156-ALFA</ns2:careProviderId>
-            <ns2:careProviderName>Alfa Regionen</ns2:careProviderName>
-          </ns2:careProvider>
-          <ns2:careUnit>
-            <ns2:careUnitId>TSTNMT2321000156-ALMC</ns2:careUnitId>
-            <ns2:careUnitName>Alfa Medicincentrum</ns2:careUnitName>
-          </ns2:careUnit>
-        </ns2:user>
-      </ns3:log>
-    </ns3:StoreLog>
-  </soapenv:Body>
+		xmlns:ns1="urn:riv:itintegration:registry:1"
+		xmlns:ns2="urn:riv:informationsecurity:auditing:log:2"
+		xmlns:ns3="urn:riv:informationsecurity:auditing:log:StoreLogResponder:2">
+	<soapenv:Header>
+		<ns1:LogicalAddress>TSTNMT2321000156-ALMC</ns1:LogicalAddress>
+	</soapenv:Header>
+	<soapenv:Body>
+		<ns3:StoreLog>
+			<ns3:log>
+				<ns2:logId>log-001</ns2:logId>
+				<ns2:system>
+					<ns2:systemId>WEBCERT</ns2:systemId>
+					<ns2:systemName>Webcert</ns2:systemName>
+				</ns2:system>
+				<ns2:activity>
+					<ns2:activityType>Läsa</ns2:activityType>
+					<ns2:activityLevel>cert-001</ns2:activityLevel>
+					<ns2:startDate>2024-11-09T07:40:13</ns2:startDate>
+				</ns2:activity>
+				<ns2:user>
+					<ns2:userId>user-001</ns2:userId>
+					<ns2:assignment>Läkare</ns2:assignment>
+					<ns2:careProvider>
+						<ns2:careProviderId>TSTNMT2321000156-ALFA</ns2:careProviderId>
+						<ns2:careProviderName>Alfa Regionen</ns2:careProviderName>
+					</ns2:careProvider>
+					<ns2:careUnit>
+						<ns2:careUnitId>TSTNMT2321000156-ALMC</ns2:careUnitId>
+						<ns2:careUnitName>Alfa Medicincentrum</ns2:careUnitName>
+					</ns2:careUnit>
+				</ns2:user>
+			</ns3:log>
+		</ns3:StoreLog>
+	</soapenv:Body>
 </soapenv:Envelope>
 
 ### GET all store logs
@@ -52,7 +52,8 @@ Content-Type: application/json
 
 {
   "serviceName": "STORE_LOG",
-  "resultCode": "VALIDATION_ERROR"
+  "resultCode": "VALIDATION_ERROR",
+  "maxTriggerCount": 1
 }
 
 ### DELETE all behavior rules for store log
