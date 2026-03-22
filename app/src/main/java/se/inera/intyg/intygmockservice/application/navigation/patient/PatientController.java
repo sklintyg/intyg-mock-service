@@ -28,6 +28,12 @@ public class PatientController {
   private final MessageNavigationService messageNavigationService;
   private final MessageAssembler messageAssembler;
 
+  @Operation(summary = "List all patients known to the service")
+  @GetMapping
+  public CollectionModel<EntityModel<PatientResponse>> getAllPatients() {
+    return assembler.toCollectionModel(service.getAll());
+  }
+
   @Operation(summary = "Get a patient by person ID (normalised, no dashes)")
   @GetMapping("/{personId}")
   public ResponseEntity<EntityModel<PatientResponse>> getPatientByPersonId(

@@ -21,6 +21,10 @@ public class MessageAssembler {
 
     final var model = EntityModel.of(response, self);
 
+    if (id != null) {
+      model.add(Link.of("/api/send-message-to-recipient/" + id + "/xml", "xml"));
+    }
+
     if (message.getCertificateId() != null) {
       model.add(Link.of("/api/navigate/certificates/" + message.getCertificateId(), "certificate"));
     }

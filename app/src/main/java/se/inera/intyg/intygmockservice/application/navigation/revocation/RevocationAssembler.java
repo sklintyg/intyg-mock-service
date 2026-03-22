@@ -21,6 +21,7 @@ public class RevocationAssembler {
 
     if (id != null) {
       model.add(Link.of("/api/navigate/certificates/" + id, "certificate"));
+      model.add(Link.of("/api/revoke-certificate/" + id + "/xml", "xml"));
     }
 
     if (revocation.getPersonId() != null) {

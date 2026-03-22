@@ -16,6 +16,10 @@ public class PatientNavigationService {
   private final PatientNavigationRepository patientNavigationRepository;
   private final CertificateNavigationRepository certificateNavigationRepository;
 
+  public List<Patient> getAll() {
+    return patientNavigationRepository.findAll();
+  }
+
   public Optional<Patient> findByPersonId(final String normalizedPersonId) {
     return patientNavigationRepository.findByPersonId(normalizedPersonId);
   }

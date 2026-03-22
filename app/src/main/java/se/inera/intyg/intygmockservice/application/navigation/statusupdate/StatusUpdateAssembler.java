@@ -24,6 +24,7 @@ public class StatusUpdateAssembler {
 
     if (certId != null) {
       model.add(Link.of("/api/navigate/certificates/" + certId, "certificate"));
+      model.add(Link.of("/api/certificate-status-for-care/" + certId + "/xml", "xml"));
     }
 
     if (statusUpdate.getPersonId() != null) {

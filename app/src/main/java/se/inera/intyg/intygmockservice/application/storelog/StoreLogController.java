@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,6 +46,18 @@ public class StoreLogController {
   @GetMapping("/certificate/{certificateId}")
   public List<LogTypeDTO> getStoreLogsByCertificateId(@PathVariable String certificateId) {
     return storeLogService.getByCertificateId(certificateId);
+  }
+
+  @Operation(
+      summary = "Get store log entry as XML",
+      description =
+          "Retrieve the raw StoreLog SOAP request that contains the given log entry ID as XML")
+  @GetMapping(value = "/{logId}/xml", produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity<String> getStoreLogAsXml(@PathVariable final String logId) {
+    return storeLogService
+        .getAsXml(logId)
+        .map(xml -> ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(xml))
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   @Operation(summary = "Get count of stored store-log calls")

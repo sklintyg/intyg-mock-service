@@ -25,6 +25,10 @@ public class LogEntryAssembler {
             : linkTo(methodOn(LogEntryController.class).getAllLogEntries()).withSelfRel();
     final var model = EntityModel.of(response, self);
 
+    if (logEntry.getLogId() != null) {
+      model.add(Link.of("/api/store-log/" + logEntry.getLogId() + "/xml", "xml"));
+    }
+
     if (certId != null) {
       model.add(Link.of("/api/navigate/certificates/" + certId, "certificate"));
     }

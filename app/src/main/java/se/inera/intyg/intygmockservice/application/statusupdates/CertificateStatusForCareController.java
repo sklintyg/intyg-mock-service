@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,6 +45,18 @@ public class CertificateStatusForCareController {
   @DeleteMapping
   public void deleteAllCertificateStatusUpdates() {
     service.deleteAll();
+  }
+
+  @Operation(
+      summary = "Get certificate status updates as XML",
+      description = "Retrieve all certificate status updates for a given certificate ID as raw XML")
+  @GetMapping(value = "/{certificateId}/xml", produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity<String> getCertificateStatusUpdatesAsXml(
+      @PathVariable final String certificateId) {
+    return service
+        .getAsXmlByCertificateId(certificateId)
+        .map(xml -> ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(xml))
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   @Operation(

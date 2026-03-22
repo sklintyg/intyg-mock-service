@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +39,17 @@ public class SendMessageToRecipientController {
   @Operation(summary = "Delete all messages", description = "Delete all messages")
   public void deleteAllMessages() {
     service.deleteAll();
+  }
+
+  @GetMapping(value = "/{messageId}/xml", produces = MediaType.APPLICATION_XML_VALUE)
+  @Operation(
+      summary = "Get message as XML",
+      description = "Retrieve a message as raw XML by message ID")
+  public ResponseEntity<String> getMessageAsXml(@PathVariable final String messageId) {
+    return service
+        .getAsXml(messageId)
+        .map(xml -> ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(xml))
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   @GetMapping("/{messageId}")

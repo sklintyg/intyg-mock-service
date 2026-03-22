@@ -42,8 +42,10 @@ public class CertificateAssembler {
         linkTo(methodOn(RevocationController.class).getCertificateRevocation(id))
             .withRel("revocation");
 
+    final var xml = Link.of("/api/register-certificate/" + id + "/xml", "xml");
+
     final var model =
-        EntityModel.of(response, self, messages, statusUpdates, logEntries, revocation);
+        EntityModel.of(response, self, messages, statusUpdates, logEntries, revocation, xml);
 
     if (certificate.getPatient() != null && certificate.getPatient().getPersonId() != null) {
       final var patientLink =
