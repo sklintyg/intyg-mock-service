@@ -99,11 +99,4 @@ class CertificateControllerTest {
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
   }
-
-  @Test
-  void getCertificateRevocation_ShouldReturn404() {
-    final var response = controller.getCertificateRevocation("cert-001");
-
-    assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-  }
 }

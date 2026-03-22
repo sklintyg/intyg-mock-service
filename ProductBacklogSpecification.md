@@ -147,7 +147,7 @@ Prerequisites: NAV-01
 
 ---
 
-### NAV-04 — Revocation resource
+### ~~NAV-04 — Revocation resource~~ ✓ Done
 
 Deliver revocation as certificate sub-resource.
 

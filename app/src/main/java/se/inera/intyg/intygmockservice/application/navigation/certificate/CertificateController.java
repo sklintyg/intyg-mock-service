@@ -63,12 +63,4 @@ public class CertificateController {
       @PathVariable final String certificateId) {
     return ResponseEntity.ok(CollectionModel.empty());
   }
-
-  @Operation(
-      summary = "Get revocation for a certificate (see /api/navigate/certificates/{id}/revocation)")
-  @GetMapping("/{certificateId}/revocation")
-  public ResponseEntity<EntityModel<?>> getCertificateRevocation(
-      @PathVariable final String certificateId) {
-    return ResponseEntity.notFound().build();
-  }
 }
