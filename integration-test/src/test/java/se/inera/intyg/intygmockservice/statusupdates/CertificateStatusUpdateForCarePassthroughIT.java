@@ -4,37 +4,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockserver.client.MockServerClient;
 import org.mockserver.model.MediaType;
 import org.mockserver.verify.VerificationTimes;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.MockServerContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
-import se.inera.intyg.intygmockservice.IntygMockServiceApplication;
 import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO;
+import se.inera.intyg.intygmockservice.common.AbstractPassthroughIT;
 
-@Testcontainers
-@ActiveProfiles("integration-test")
-@SpringBootTest(classes = IntygMockServiceApplication.class, webEnvironment = RANDOM_PORT)
-class CertificateStatusUpdateForCarePassthroughIT {
+class CertificateStatusUpdateForCarePassthroughIT extends AbstractPassthroughIT {
 
   private static final String SOAP_PATH =
       "/services/clinicalprocess/healthcond/certificate/CertificateStatusUpdateForCare/3/rivtabp21";
@@ -56,31 +40,8 @@ class CertificateStatusUpdateForCarePassthroughIT {
       </soapenv:Envelope>
       """;
 
-  @Container
-  static final MockServerContainer mockServer =
-      new MockServerContainer(DockerImageName.parse("mockserver/mockserver:5.15.0"));
-
-  static MockServerClient mockServerClient;
-
-  @DynamicPropertySource
-  static void configurePassthrough(DynamicPropertyRegistry registry) {
-    registry.add("app.passthrough.certificate-status-update-for-care.enabled", () -> "true");
-    registry.add(
-        "app.passthrough.certificate-status-update-for-care.url",
-        () -> "http://" + mockServer.getHost() + ":" + mockServer.getServerPort() + SOAP_PATH);
-  }
-
-  @BeforeAll
-  static void initMockServerClient() {
-    mockServerClient = new MockServerClient(mockServer.getHost(), mockServer.getServerPort());
-  }
-
-  @Autowired private TestRestTemplate restTemplate;
-
   @BeforeEach
   void setUp() {
-    restTemplate.delete(REST_PATH);
-    mockServerClient.reset();
     mockServerClient
         .when(request().withMethod("POST").withPath(SOAP_PATH))
         .respond(
@@ -92,7 +53,7 @@ class CertificateStatusUpdateForCarePassthroughIT {
 
   @Test
   void shouldForwardToUpstreamAfterStoringLocally() throws IOException {
-    postSoap("soap/certificate-status-update-for-care.xml");
+    postSoap(SOAP_PATH, "soap/certificate-status-update-for-care.xml");
 
     mockServerClient.verify(
         request().withMethod("POST").withPath(SOAP_PATH), VerificationTimes.exactly(1));
@@ -100,7 +61,7 @@ class CertificateStatusUpdateForCarePassthroughIT {
 
   @Test
   void shouldStoreLocallyEvenWhenPassthroughEnabled() throws IOException {
-    postSoap("soap/certificate-status-update-for-care.xml");
+    postSoap(SOAP_PATH, "soap/certificate-status-update-for-care.xml");
 
     final var response =
         restTemplate.getForEntity(REST_PATH, CertificateStatusUpdateForCareDTO[].class);
@@ -131,14 +92,5 @@ class CertificateStatusUpdateForCarePassthroughIT {
     final var stored =
         restTemplate.getForEntity(REST_PATH, CertificateStatusUpdateForCareDTO[].class);
     assertEquals(1, stored.getBody().length);
-  }
-
-  private void postSoap(String resourcePath) throws IOException {
-    final var body = new ClassPathResource(resourcePath).getContentAsString(StandardCharsets.UTF_8);
-    final var headers = new HttpHeaders();
-    headers.setContentType(org.springframework.http.MediaType.TEXT_XML);
-    headers.set("SOAPAction", "\"\"");
-    restTemplate.exchange(
-        SOAP_PATH, HttpMethod.POST, new HttpEntity<>(body, headers), String.class);
   }
 }
