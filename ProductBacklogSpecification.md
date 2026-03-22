@@ -203,7 +203,7 @@ Prerequisites: NAV-01
 
 ---
 
-### NAV-07 — Unit resource
+### ~~NAV-07 — Unit resource~~ ✓ Done
 
 Deliver care units as top-level navigable resources.
 
@@ -250,7 +250,7 @@ NAV-01 (Foundation + Certificate — merged view, full HATEOAS infra)  ✓ Done
   ├── NAV-04 (Revocation)
   ├── NAV-05 (StatusUpdate) ✓ Done
   ├── NAV-06 (LogEntry) ✓ Done
-  ├── NAV-07 (Unit)
+  ├── NAV-07 (Unit) ✓ Done
   └── NAV-08 (Staff)
 ```
 
