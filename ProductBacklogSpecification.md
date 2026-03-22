@@ -125,7 +125,7 @@ Prerequisites: NAV-01
 
 ---
 
-### NAV-03 — Message resource
+### ~~NAV-03 — Message resource~~ ✓ Done
 
 Deliver message list, detail, and cross-references.
 

@@ -17,7 +17,11 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateAssembler;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateResponse;
+import se.inera.intyg.intygmockservice.application.navigation.message.MessageAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.message.MessageNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.message.MessageResponse;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
+import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +30,8 @@ class PatientControllerTest {
   @Mock private PatientNavigationService service;
   @Mock private PatientAssembler assembler;
   @Mock private CertificateAssembler certificateAssembler;
+  @Mock private MessageNavigationService messageNavigationService;
+  @Mock private MessageAssembler messageAssembler;
 
   @InjectMocks private PatientController controller;
 
@@ -69,10 +75,17 @@ class PatientControllerTest {
   }
 
   @Test
-  void getPatientMessages_ShouldReturnEmptyCollection() {
-    final var response = controller.getPatientMessages("191212121212");
+  void getPatientMessages_ShouldDelegateToServiceAndAssembler() {
+    final var message = Message.builder().messageId("msg-001").build();
+    final var collectionModel = CollectionModel.<EntityModel<MessageResponse>>empty();
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertNotNull(response.getBody());
+    when(messageNavigationService.findByPersonId("191212121212")).thenReturn(List.of(message));
+    when(messageAssembler.toCollectionModel(List.of(message))).thenReturn(collectionModel);
+
+    final var result = controller.getPatientMessages("191212121212");
+
+    assertNotNull(result);
+    verify(messageNavigationService).findByPersonId("191212121212");
+    verify(messageAssembler).toCollectionModel(List.of(message));
   }
 }

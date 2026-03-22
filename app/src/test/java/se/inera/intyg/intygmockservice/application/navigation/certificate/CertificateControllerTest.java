@@ -15,13 +15,19 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import se.inera.intyg.intygmockservice.application.navigation.message.MessageAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.message.MessageNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.message.MessageResponse;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
+import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateControllerTest {
 
   @Mock private CertificateNavigationService service;
   @Mock private CertificateAssembler assembler;
+  @Mock private MessageNavigationService messageNavigationService;
+  @Mock private MessageAssembler messageAssembler;
 
   @InjectMocks private CertificateController controller;
 
@@ -66,11 +72,18 @@ class CertificateControllerTest {
   }
 
   @Test
-  void getCertificateMessages_ShouldReturnEmptyCollection() {
-    final var response = controller.getCertificateMessages("cert-001");
+  void getCertificateMessages_ShouldDelegateToServiceAndAssembler() {
+    final var message = Message.builder().messageId("msg-001").build();
+    final var collectionModel = CollectionModel.<EntityModel<MessageResponse>>empty();
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertNotNull(response.getBody());
+    when(messageNavigationService.findByCertificateId("cert-001")).thenReturn(List.of(message));
+    when(messageAssembler.toCollectionModel(List.of(message))).thenReturn(collectionModel);
+
+    final var result = controller.getCertificateMessages("cert-001");
+
+    assertNotNull(result);
+    verify(messageNavigationService).findByCertificateId("cert-001");
+    verify(messageAssembler).toCollectionModel(List.of(message));
   }
 
   @Test

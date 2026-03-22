@@ -21,11 +21,11 @@ import se.inera.intyg.intygmockservice.IntygMockServiceApplication;
 
 @ActiveProfiles("integration-test")
 @SpringBootTest(classes = IntygMockServiceApplication.class, webEnvironment = RANDOM_PORT)
-class PatientNavigationIT {
+class MessageNavigationIT {
 
-  private static final String REGISTER_SOAP_PATH =
-      "/services/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21";
-  private static final String NAV_PATH = "/api/navigate/patients";
+  private static final String SEND_MESSAGE_SOAP_PATH =
+      "/services/clinicalprocess/healthcond/certificate/SendMessageToRecipient/2/rivtabp21";
+  private static final String NAV_PATH = "/api/navigate/messages";
 
   @Autowired private TestRestTemplate restTemplate;
 
@@ -35,47 +35,64 @@ class PatientNavigationIT {
   }
 
   @Test
-  void shouldReturn404ForUnknownPersonId() {
+  void shouldReturn404ForUnknownMessageId() {
     final var response = restTemplate.getForEntity(NAV_PATH + "/unknown", String.class);
 
     assertEquals(404, response.getStatusCode().value());
   }
 
   @Test
-  void shouldReturnPatientWithHalLinksAfterRegisterCertificate() throws IOException {
-    postSoap(REGISTER_SOAP_PATH, "soap/register-certificate.xml");
+  void shouldReturnAllMessagesWithHalLinks() throws IOException {
+    postSoap(SEND_MESSAGE_SOAP_PATH, "soap/send-message-to-recipient.xml");
 
-    final var response = restTemplate.getForEntity(NAV_PATH + "/191212121212", String.class);
+    final var response = restTemplate.getForEntity(NAV_PATH, String.class);
     final var body = response.getBody();
 
     assertEquals(200, response.getStatusCode().value());
+    assertTrue(body.contains("it-message-001"), "Response should contain message ID");
+    assertTrue(body.contains("\"_links\""), "Response should have HAL _links");
+  }
+
+  @Test
+  void shouldReturnMessageByIdWithHalLinks() throws IOException {
+    postSoap(SEND_MESSAGE_SOAP_PATH, "soap/send-message-to-recipient.xml");
+
+    final var response = restTemplate.getForEntity(NAV_PATH + "/it-message-001", String.class);
+    final var body = response.getBody();
+
+    assertEquals(200, response.getStatusCode().value());
+    assertTrue(body.contains("it-message-001"), "Response should contain message ID");
+    assertTrue(body.contains("it-send-message-cert-001"), "Response should contain certificate ID");
     assertTrue(body.contains("191212121212"), "Response should contain person ID");
     assertTrue(body.contains("\"_links\""), "Response should have HAL _links");
     assertTrue(body.contains("\"self\""), "Response should have self link");
-    assertTrue(body.contains("\"certificates\""), "Response should have certificates link");
-    assertTrue(body.contains("\"messages\""), "Response should have messages link");
+    assertTrue(body.contains("\"certificate\""), "Response should have certificate link");
+    assertTrue(body.contains("\"patient\""), "Response should have patient link");
   }
 
   @Test
-  void shouldReturnCertificatesForPatient() throws IOException {
-    postSoap(REGISTER_SOAP_PATH, "soap/register-certificate.xml");
+  void shouldReturnMessagesForCertificate() throws IOException {
+    postSoap(SEND_MESSAGE_SOAP_PATH, "soap/send-message-to-recipient.xml");
 
     final var response =
-        restTemplate.getForEntity(NAV_PATH + "/191212121212/certificates", String.class);
+        restTemplate.getForEntity(
+            "/api/navigate/certificates/it-send-message-cert-001/messages", String.class);
     final var body = response.getBody();
 
     assertEquals(200, response.getStatusCode().value());
-    assertTrue(body.contains("it-register-cert-001"), "Response should contain certificate ID");
+    assertTrue(body.contains("it-message-001"), "Response should contain message ID");
   }
 
   @Test
-  void shouldReturnEmptyMessagesWhenNoMessagesSent() throws IOException {
-    postSoap(REGISTER_SOAP_PATH, "soap/register-certificate.xml");
+  void shouldReturnMessagesForPatient() throws IOException {
+    postSoap(SEND_MESSAGE_SOAP_PATH, "soap/send-message-to-recipient.xml");
 
     final var response =
-        restTemplate.getForEntity(NAV_PATH + "/191212121212/messages", String.class);
+        restTemplate.getForEntity("/api/navigate/patients/191212121212/messages", String.class);
+    final var body = response.getBody();
 
     assertEquals(200, response.getStatusCode().value());
+    assertTrue(body.contains("it-message-001"), "Response should contain message ID");
   }
 
   private void postSoap(final String soapPath, final String resourcePath) throws IOException {

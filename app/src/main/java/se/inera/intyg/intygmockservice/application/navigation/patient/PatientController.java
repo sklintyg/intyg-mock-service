@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateAssembler;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateResponse;
+import se.inera.intyg.intygmockservice.application.navigation.message.MessageAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.message.MessageNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.message.MessageResponse;
 
 @RestController
 @RequestMapping("/api/navigate/patients")
@@ -22,6 +25,8 @@ public class PatientController {
   private final PatientNavigationService service;
   private final PatientAssembler assembler;
   private final CertificateAssembler certificateAssembler;
+  private final MessageNavigationService messageNavigationService;
+  private final MessageAssembler messageAssembler;
 
   @Operation(summary = "Get a patient by person ID (normalised, no dashes)")
   @GetMapping("/{personId}")
@@ -41,10 +46,10 @@ public class PatientController {
     return certificateAssembler.toCollectionModel(service.findCertificatesByPersonId(personId));
   }
 
-  @Operation(summary = "List messages for a patient (see /api/navigate/messages)")
+  @Operation(summary = "List messages for a patient")
   @GetMapping("/{personId}/messages")
-  public ResponseEntity<CollectionModel<EntityModel<?>>> getPatientMessages(
+  public CollectionModel<EntityModel<MessageResponse>> getPatientMessages(
       @PathVariable final String personId) {
-    return ResponseEntity.ok(CollectionModel.empty());
+    return messageAssembler.toCollectionModel(messageNavigationService.findByPersonId(personId));
   }
 }
