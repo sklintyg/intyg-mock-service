@@ -50,13 +50,6 @@ public class CertificateController {
         messageNavigationService.findByCertificateId(certificateId));
   }
 
-  @Operation(summary = "Get status updates for a certificate (see /api/navigate/status-updates)")
-  @GetMapping("/{certificateId}/status-updates")
-  public ResponseEntity<CollectionModel<EntityModel<?>>> getCertificateStatusUpdates(
-      @PathVariable final String certificateId) {
-    return ResponseEntity.ok(CollectionModel.empty());
-  }
-
   @Operation(summary = "Get log entries for a certificate (see /api/navigate/log-entries)")
   @GetMapping("/{certificateId}/log-entries")
   public ResponseEntity<CollectionModel<EntityModel<?>>> getCertificateLogEntries(

@@ -87,13 +87,6 @@ class CertificateControllerTest {
   }
 
   @Test
-  void getCertificateStatusUpdates_ShouldReturnEmptyCollection() {
-    final var response = controller.getCertificateStatusUpdates("cert-001");
-
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-  }
-
-  @Test
   void getCertificateLogEntries_ShouldReturnEmptyCollection() {
     final var response = controller.getCertificateLogEntries("cert-001");
 

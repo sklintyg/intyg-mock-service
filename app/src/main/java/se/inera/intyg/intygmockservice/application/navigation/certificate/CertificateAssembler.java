@@ -13,6 +13,7 @@ import se.inera.intyg.intygmockservice.application.navigation.certificate.Certif
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateResponse.StaffData;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateResponse.UnitData;
 import se.inera.intyg.intygmockservice.application.navigation.revocation.RevocationController;
+import se.inera.intyg.intygmockservice.application.navigation.statusupdate.StatusUpdateController;
 import se.inera.intyg.intygmockservice.domain.navigation.model.CareProvider;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;
@@ -32,7 +33,7 @@ public class CertificateAssembler {
         linkTo(methodOn(CertificateController.class).getCertificateMessages(id))
             .withRel("messages");
     final var statusUpdates =
-        linkTo(methodOn(CertificateController.class).getCertificateStatusUpdates(id))
+        linkTo(methodOn(StatusUpdateController.class).getCertificateStatusUpdates(id))
             .withRel("status-updates");
     final var logEntries =
         linkTo(methodOn(CertificateController.class).getCertificateLogEntries(id))

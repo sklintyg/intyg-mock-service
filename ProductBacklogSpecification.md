@@ -164,7 +164,7 @@ Prerequisites: NAV-01
 
 ---
 
-### NAV-05 — StatusUpdate resource
+### ~~NAV-05 — StatusUpdate resource~~ ✓ Done
 
 Deliver status update list and certificate sub-resource.
 
@@ -248,7 +248,7 @@ NAV-01 (Foundation + Certificate — merged view, full HATEOAS infra)  ✓ Done
   ├── NAV-02 (Patient)
   ├── NAV-03 (Message)
   ├── NAV-04 (Revocation)
-  ├── NAV-05 (StatusUpdate)
+  ├── NAV-05 (StatusUpdate) ✓ Done
   ├── NAV-06 (LogEntry)
   ├── NAV-07 (Unit)
   └── NAV-08 (Staff)
