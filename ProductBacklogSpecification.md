@@ -222,7 +222,7 @@ Prerequisites: NAV-01
 
 ---
 
-### NAV-08 — Staff resource
+### ~~NAV-08 — Staff resource~~ ✓ Done
 
 Deliver staff (health professionals) as top-level navigable resources.
 
@@ -251,7 +251,7 @@ NAV-01 (Foundation + Certificate — merged view, full HATEOAS infra)  ✓ Done
   ├── NAV-05 (StatusUpdate) ✓ Done
   ├── NAV-06 (LogEntry) ✓ Done
   ├── NAV-07 (Unit) ✓ Done
-  └── NAV-08 (Staff)
+  └── NAV-08 (Staff) ✓ Done
 ```
 
 NAV-02 through NAV-08 are independent of each other and can be implemented in any order after
