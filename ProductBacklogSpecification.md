@@ -99,7 +99,7 @@ Prerequisites: none
 
 ---
 
-### NAV-02 — Patient resource
+### ~~NAV-02 — Patient resource~~ ✓ Done
 
 Deliver patient endpoint and patient sub-collection of certificates.
 
