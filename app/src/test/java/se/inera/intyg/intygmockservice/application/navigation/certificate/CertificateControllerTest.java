@@ -15,10 +15,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryResponse;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageAssembler;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageNavigationService;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageResponse;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
+import se.inera.intyg.intygmockservice.domain.navigation.model.LogEntry;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,6 +32,8 @@ class CertificateControllerTest {
   @Mock private CertificateAssembler assembler;
   @Mock private MessageNavigationService messageNavigationService;
   @Mock private MessageAssembler messageAssembler;
+  @Mock private LogEntryNavigationService logEntryNavigationService;
+  @Mock private LogEntryAssembler logEntryAssembler;
 
   @InjectMocks private CertificateController controller;
 
@@ -87,9 +93,17 @@ class CertificateControllerTest {
   }
 
   @Test
-  void getCertificateLogEntries_ShouldReturnEmptyCollection() {
-    final var response = controller.getCertificateLogEntries("cert-001");
+  void getCertificateLogEntries_ShouldDelegateToServiceAndAssembler() {
+    final var entry = LogEntry.builder().logId("it-log-001").certificateId("cert-001").build();
+    final var collectionModel = CollectionModel.<EntityModel<LogEntryResponse>>empty();
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
+    when(logEntryNavigationService.findByCertificateId("cert-001")).thenReturn(List.of(entry));
+    when(logEntryAssembler.toCollectionModel(List.of(entry))).thenReturn(collectionModel);
+
+    final var result = controller.getCertificateLogEntries("cert-001");
+
+    assertNotNull(result);
+    verify(logEntryNavigationService).findByCertificateId("cert-001");
+    verify(logEntryAssembler).toCollectionModel(List.of(entry));
   }
 }

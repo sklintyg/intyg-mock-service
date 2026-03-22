@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryResponse;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageAssembler;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageNavigationService;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageResponse;
@@ -24,6 +27,8 @@ public class CertificateController {
   private final CertificateAssembler assembler;
   private final MessageNavigationService messageNavigationService;
   private final MessageAssembler messageAssembler;
+  private final LogEntryNavigationService logEntryNavigationService;
+  private final LogEntryAssembler logEntryAssembler;
 
   @Operation(summary = "List all certificates (merged view across all services)")
   @GetMapping
@@ -50,10 +55,11 @@ public class CertificateController {
         messageNavigationService.findByCertificateId(certificateId));
   }
 
-  @Operation(summary = "Get log entries for a certificate (see /api/navigate/log-entries)")
+  @Operation(summary = "List log entries for a certificate")
   @GetMapping("/{certificateId}/log-entries")
-  public ResponseEntity<CollectionModel<EntityModel<?>>> getCertificateLogEntries(
+  public CollectionModel<EntityModel<LogEntryResponse>> getCertificateLogEntries(
       @PathVariable final String certificateId) {
-    return ResponseEntity.ok(CollectionModel.empty());
+    return logEntryAssembler.toCollectionModel(
+        logEntryNavigationService.findByCertificateId(certificateId));
   }
 }

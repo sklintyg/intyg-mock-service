@@ -184,7 +184,7 @@ Prerequisites: NAV-01
 
 ---
 
-### NAV-06 — LogEntry resource
+### ~~NAV-06 — LogEntry resource~~ ✓ Done
 
 Deliver log entry list and certificate sub-resource.
 
@@ -249,7 +249,7 @@ NAV-01 (Foundation + Certificate — merged view, full HATEOAS infra)  ✓ Done
   ├── NAV-03 (Message)
   ├── NAV-04 (Revocation)
   ├── NAV-05 (StatusUpdate) ✓ Done
-  ├── NAV-06 (LogEntry)
+  ├── NAV-06 (LogEntry) ✓ Done
   ├── NAV-07 (Unit)
   └── NAV-08 (Staff)
 ```
