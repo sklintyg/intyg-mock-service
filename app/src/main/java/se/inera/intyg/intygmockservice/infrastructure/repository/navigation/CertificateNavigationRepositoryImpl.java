@@ -131,12 +131,34 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
                       .build());
             });
 
-    // Store log — activity level is the certificate ID; no personId available
+    // Store log — activity level is the certificate ID (single-char values 1-3 are level codes,
+    // not cert IDs); personId from first resource patient
     storeLogTypeRepository.findAll().stream()
         .flatMap(storeLog -> storeLog.getLog().stream())
-        .map(log -> log.getActivity().getActivityLevel())
-        .filter(certId -> certId != null && !certId.isBlank() && !map.containsKey(certId))
-        .forEach(certId -> map.put(certId, Certificate.builder().certificateId(certId).build()));
+        .filter(
+            log -> {
+              final var certId = log.getActivity().getActivityLevel();
+              return certId != null && certId.length() > 1 && !map.containsKey(certId);
+            })
+        .forEach(
+            log -> {
+              final var certId = log.getActivity().getActivityLevel();
+              final var personId =
+                  log.getResources() != null
+                      ? log.getResources().getResource().stream()
+                          .filter(r -> r.getPatient() != null)
+                          .findFirst()
+                          .map(r -> normalize(r.getPatient().getPatientId().getExtension()))
+                          .orElse(null)
+                      : null;
+              map.put(
+                  certId,
+                  Certificate.builder()
+                      .certificateId(certId)
+                      .patient(
+                          personId != null ? Patient.builder().personId(personId).build() : null)
+                      .build());
+            });
 
     return map;
   }

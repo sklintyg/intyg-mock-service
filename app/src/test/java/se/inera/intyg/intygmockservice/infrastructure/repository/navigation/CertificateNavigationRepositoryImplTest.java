@@ -222,6 +222,35 @@ class CertificateNavigationRepositoryImplTest {
     assertEquals("cert-001", result.get(0).getCertificateId());
   }
 
+  @Test
+  void findAll_ShouldExcludeStoreLogEntryWhenActivityLevelIsSingleCharLevelCode() {
+    when(registerCertificateRepository.findAll()).thenReturn(List.of());
+    when(revokeCertificateRepository.findAll()).thenReturn(List.of());
+    when(sendMessageToRecipientRepository.findAll()).thenReturn(List.of());
+    when(statusUpdateRepository.findAll()).thenReturn(List.of());
+    when(storeLogTypeRepository.findAll())
+        .thenReturn(List.of(buildStoreLogType("2", "191212121212")));
+
+    assertTrue(repository.findAll().isEmpty());
+  }
+
+  @Test
+  void findAll_ShouldIncludeStoreLogCertificateWithPersonIdFromResource() {
+    when(registerCertificateRepository.findAll()).thenReturn(List.of());
+    when(revokeCertificateRepository.findAll()).thenReturn(List.of());
+    when(sendMessageToRecipientRepository.findAll()).thenReturn(List.of());
+    when(statusUpdateRepository.findAll()).thenReturn(List.of());
+    when(storeLogTypeRepository.findAll())
+        .thenReturn(List.of(buildStoreLogType("cert-from-log-001", "191212121212")));
+
+    final var result = repository.findAll();
+
+    assertEquals(1, result.size());
+    assertEquals("cert-from-log-001", result.get(0).getCertificateId());
+    assertNotNull(result.get(0).getPatient());
+    assertEquals("191212121212", result.get(0).getPatient().getPersonId());
+  }
+
   // --- helpers ---
 
   private static RegisterCertificateDTO buildRegisterCertificateDTO(
@@ -255,6 +284,27 @@ class CertificateNavigationRepositoryImplTest {
                         .build())
                 .build())
         .build();
+  }
+
+  private static se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType
+      buildStoreLogType(final String activityLevel, final String personId) {
+    final var patientId = new se.riv.informationsecurity.auditing.log.v2.IIType();
+    patientId.setExtension(personId);
+    final var patient = new se.riv.informationsecurity.auditing.log.v2.PatientType();
+    patient.setPatientId(patientId);
+    final var resource = new se.riv.informationsecurity.auditing.log.v2.ResourceType();
+    resource.setPatient(patient);
+    final var resources = new se.riv.informationsecurity.auditing.log.v2.ResourcesType();
+    resources.getResource().add(resource);
+    final var activity = new se.riv.informationsecurity.auditing.log.v2.ActivityType();
+    activity.setActivityLevel(activityLevel);
+    final var log = new se.riv.informationsecurity.auditing.log.v2.LogType();
+    log.setResources(resources);
+    log.setActivity(activity);
+    final var storeLog =
+        new se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType();
+    storeLog.getLog().add(log);
+    return storeLog;
   }
 
   private static RevokeCertificateType buildRevokeType(final String certId, final String personId) {
