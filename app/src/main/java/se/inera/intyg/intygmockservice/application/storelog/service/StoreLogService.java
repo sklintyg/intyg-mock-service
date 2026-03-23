@@ -1,5 +1,9 @@
 package se.inera.intyg.intygmockservice.application.storelog.service;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +16,7 @@ import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.StoreLogPassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.StoreLogTypeRepository;
+import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.ObjectFactory;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogResponseType;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType;
 
@@ -19,6 +24,19 @@ import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType
 @RequiredArgsConstructor
 @Slf4j
 public class StoreLogService {
+
+  private static final JAXBContext JAXB_CONTEXT;
+
+  static {
+    try {
+      JAXB_CONTEXT =
+          JAXBContext.newInstance(
+              "se.riv.informationsecurity.auditing.log.StoreLogResponder.v2"
+                  + ":se.riv.informationsecurity.auditing.log.v2");
+    } catch (JAXBException e) {
+      throw new ExceptionInInitializerError(e);
+    }
+  }
 
   private final StoreLogTypeRepository repository;
   private final StoreLogTypeConverter converter;
@@ -111,6 +129,15 @@ public class StoreLogService {
     return repository.count();
   }
 
+  public Optional<String> getAsXml(final String logId) {
+    return repository.findAll().stream()
+        .filter(
+            storeLogType ->
+                storeLogType.getLog().stream().anyMatch(l -> logId.equals(l.getLogId())))
+        .findFirst()
+        .map(this::marshalToXml);
+  }
+
   public void deleteAll() {
     log.atInfo()
         .setMessage("Deleting all store logs")
@@ -143,5 +170,18 @@ public class StoreLogService {
         storeLogType ->
             storeLogType.getLog().stream()
                 .anyMatch(l -> certificateId.equals(l.getActivity().getActivityLevel())));
+  }
+
+  private String marshalToXml(final StoreLogType storeLogType) {
+    try {
+      final var marshaller = JAXB_CONTEXT.createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+      final var element = new ObjectFactory().createStoreLog(storeLogType);
+      final var sw = new StringWriter();
+      marshaller.marshal(element, sw);
+      return sw.toString();
+    } catch (JAXBException e) {
+      throw new IllegalStateException("Failed to marshal store log to XML", e);
+    }
   }
 }

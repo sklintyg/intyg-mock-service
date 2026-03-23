@@ -1,5 +1,9 @@
 package se.inera.intyg.intygmockservice.application.sendmessagetorecipient.service;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +16,7 @@ import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.SendMessageToRecipientPassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.SendMessageToRecipientRepository;
+import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 
@@ -19,6 +24,22 @@ import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.S
 @RequiredArgsConstructor
 @Slf4j
 public class SendMessageToRecipientService {
+
+  private static final JAXBContext JAXB_CONTEXT;
+
+  static {
+    try {
+      JAXB_CONTEXT =
+          JAXBContext.newInstance(
+              "se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2"
+                  + ":se.riv.clinicalprocess.healthcond.certificate.v3"
+                  + ":se.riv.clinicalprocess.healthcond.certificate.types.v3"
+                  + ":org.w3._2000._09.xmldsig_"
+                  + ":org.w3._2002._06.xmldsig_filter2");
+    } catch (JAXBException e) {
+      throw new ExceptionInInitializerError(e);
+    }
+  }
 
   private final SendMessageToRecipientRepository repository;
   private final SendMessageToRecipientConverter converter;
@@ -73,6 +94,10 @@ public class SendMessageToRecipientService {
     return repository.findByMessageId(messageId).map(converter::convert);
   }
 
+  public Optional<String> getAsXml(final String messageId) {
+    return repository.findByMessageId(messageId).map(this::marshalToXml);
+  }
+
   public void deleteByMessageId(final String messageId) {
     repository.deleteByMessageId(messageId);
   }
@@ -106,5 +131,18 @@ public class SendMessageToRecipientService {
 
   private static String normalizePersonId(final String personId) {
     return personId == null ? null : personId.replace("-", "");
+  }
+
+  private String marshalToXml(final SendMessageToRecipientType type) {
+    try {
+      final var marshaller = JAXB_CONTEXT.createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+      final var element = new ObjectFactory().createSendMessageToRecipient(type);
+      final var sw = new StringWriter();
+      marshaller.marshal(element, sw);
+      return sw.toString();
+    } catch (JAXBException e) {
+      throw new IllegalStateException("Failed to marshal message to XML", e);
+    }
   }
 }

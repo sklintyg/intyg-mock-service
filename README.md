@@ -1,6 +1,8 @@
 # Intyg Mock Service
 
-Spring Boot application that mocks five RIV-TA SOAP services that Intygstjanster depends on, enabling isolated testing without real external dependencies. Incoming SOAP requests are stored in memory and exposed via REST inspection endpoints. Supports configurable behavior rules for stubbing error responses and delays, and optional passthrough mode to forward requests to real upstream services over mTLS.
+Spring Boot application that mocks five RIV-TA SOAP services that Intygstjanster depends on, enabling isolated testing without real external
+dependencies. Incoming SOAP requests are stored in memory and exposed via REST inspection endpoints. Supports configurable behavior rules
+for stubbing error responses and delays, and optional passthrough mode to forward requests to real upstream services over mTLS.
 
 ## Quick Start
 
@@ -13,6 +15,7 @@ Spring Boot application that mocks five RIV-TA SOAP services that Intygstjanster
 ```
 
 Once running:
+
 - **Swagger UI** — [localhost:18888/swagger-ui/index.html](http://localhost:18888/swagger-ui/index.html)
 - **CXF services list** — [localhost:18888/services](http://localhost:18888/services)
 
@@ -43,7 +46,8 @@ app:
       url: https://upstream-host/services/clinicalprocess/healthcond/certificate/RegisterCertificate/3/rivtabp21
 ```
 
-Available services: `register-certificate`, `revoke-certificate`, `send-message-to-recipient`, `certificate-status-update-for-care`, `store-log`.
+Available services: `register-certificate`, `revoke-certificate`, `send-message-to-recipient`, `certificate-status-update-for-care`,
+`store-log`.
 
 If the upstream service requires mutual TLS, activate the `mtls-enabled` Spring profile (see below).
 
@@ -64,25 +68,36 @@ app:
       truststore-type: JKS
 ```
 
-### Behavior rules
+## Behavior API
 
-The `/api/behavior` REST endpoint lets you configure mock responses at runtime — error codes, custom result text, and artificial delays. Rules can optionally match on logical address, certificate ID, or person ID, and can be limited to trigger a set number of times. See [Swagger UI](http://localhost:18888/swagger-ui/index.html) for full request/response schemas.
+The `/api/behavior` REST endpoint lets you configure mock responses at runtime — error codes, custom result text, and artificial delays.
+Rules can optionally match on logical address, certificate ID, or person ID, and can be limited to trigger a set number of times.
+See [Swagger UI](http://localhost:18888/swagger-ui/index.html) for full request/response schemas.
+
+## Navigation API
+
+Read-only HATEOAS REST API at `/api/navigate/` that provides a domain-centric view across all five SOAP services. Data from the per-service
+in-memory stores is merged into unified resources — certificates, patients, messages, units, staff, status updates, and log entries — with
+hypermedia links for discoverability. Each resource includes `_links` for navigating to related resources and back to the raw SOAP XML.
+See [Swagger UI](http://localhost:18888/swagger-ui/index.html) for the full list of endpoints and response schemas.
 
 ## Local Development vs Kubernetes
 
 ### Local
 
-`./gradlew appRun` activates the `dev` profile automatically. Dev-specific config lives in `devops/dev/config/application-dev.yml` (sets port 18888 and disables ECS structured logging). To enable passthrough or mTLS locally, add the properties to that file and set `SPRING_PROFILES_ACTIVE=dev,mtls-enabled`.
+`./gradlew appRun` activates the `dev` profile automatically. Dev-specific config lives in `devops/dev/config/application-dev.yml` (sets
+port 18888 and disables ECS structured logging). To enable passthrough or mTLS locally, add the properties to that file and set
+`SPRING_PROFILES_ACTIVE=dev,mtls-enabled`.
 
 ### Kubernetes
 
-Build the Docker image using the project `Dockerfile`. Configuration is supplied via environment variables or ConfigMaps using Spring Boot's relaxed binding:
+Configuration is supplied via environment variables or ConfigMaps using Spring Boot's relaxed binding:
 
-| YAML property | Environment variable |
-|---|---|
+| YAML property                                  | Environment variable                          |
+|------------------------------------------------|-----------------------------------------------|
 | `app.passthrough.register-certificate.enabled` | `APP_PASSTHROUGH_REGISTERCERTIFICATE_ENABLED` |
-| `app.passthrough.register-certificate.url` | `APP_PASSTHROUGH_REGISTERCERTIFICATE_URL` |
-| `app.repository.register-certificate.max-size` | `APP_REPOSITORY_REGISTERCERTIFICATE_MAXSIZE` |
+| `app.passthrough.register-certificate.url`     | `APP_PASSTHROUGH_REGISTERCERTIFICATE_URL`     |
+| `app.repository.register-certificate.max-size` | `APP_REPOSITORY_REGISTERCERTIFICATE_MAXSIZE`  |
 
 Activate mTLS by setting `SPRING_PROFILES_ACTIVE=mtls-enabled` and mounting certificate/truststore files into the container.
 
@@ -94,14 +109,16 @@ Activate mTLS by setting `SPRING_PROFILES_ACTIVE=mtls-enabled` and mounting cert
 | Intygstjanst | RegisterCertificate            | registercertificatev3.endpoint.url                | REGISTERCERTIFICATEV3_ENDPOINT_URL                |
 | Intygstjanst | RevokeCertificate              | revokecertificatev2.endpoint.url                  | REVOKECERTIFICATEV2_ENDPOINT_URL                  |
 | Intygstjanst | SendMessageToRecipient         | sendmessagetocarev2.endpoint.url                  | SENDMESSAGETOCAREV2_ENDPOINT_URL                  |
+| Logsender    | StoreLog                       | app.store-log.ntjp-base-url                       | APP_STORE_LOG_NTJP_BASE_URL                       |
 
 ## Architecture
 
 ```mermaid
 flowchart LR
-    subgraph callers["Intygstjanster"]
+    subgraph callers["Intyg services"]
         Webcert
         Intygstjanst
+        Logsender
     end
 
     subgraph mock["intyg-mock-service (:18888)"]
@@ -120,6 +137,10 @@ flowchart LR
             behavior["/behavior\nPOST · GET · DELETE"]
             reset["/reset\nDELETE all"]
         end
+
+        subgraph nav["Navigation API /api/navigate/…"]
+            navEndpoints["GET certificates · patients\nmessages · units · staff\nstatus-updates · log-entries"]
+        end
     end
 
     ExtSvc["Real external\ntest services"]
@@ -128,16 +149,18 @@ flowchart LR
     Intygstjanst -->|SOAP| RC
     Intygstjanst -->|SOAP| RvC
     Intygstjanst -->|SOAP| SMTR
-    Intygstjanst -->|SOAP| SL
+    Logsender -->|SOAP| SL
     RC -->|store| db
     RvC -->|store| db
     SMTR -->|store| db
     CSUFC -->|store| db
     SL -->|store| db
     db --- inspect
+    db --- navEndpoints
     TestClient -->|HTTP| inspect
     TestClient -->|HTTP| behavior
     TestClient -->|HTTP| reset
+    TestClient -->|HTTP| navEndpoints
     RC -.->|" passthrough (mTLS, opt.) "| ExtSvc
     RvC -.->|passthrough| ExtSvc
     SMTR -.->|passthrough| ExtSvc
@@ -154,7 +177,7 @@ matches, the service returns the configured stub response immediately — no sto
 
 ```mermaid
 sequenceDiagram
-    participant Consumer as Consumer<br/>(Webcert / Intygstjanst)
+    participant Consumer as Consumer<br/>(Webcert / Intygstjanst / Logsender)
     participant Responder as *ResponderImpl
     participant Service as *Service
     participant BehaviorRepo as BehaviorRuleRepository
@@ -178,7 +201,7 @@ service's response is returned to the caller.
 
 ```mermaid
 sequenceDiagram
-    participant Consumer as Consumer<br/>(Webcert / Intygstjanst)
+    participant Consumer as Consumer<br/>(Webcert / Intygstjanst / Logsender)
     participant Responder as *ResponderImpl
     participant Service as *Service
     participant BehaviorRepo as BehaviorRuleRepository

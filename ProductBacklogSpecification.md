@@ -1,143 +1,258 @@
 # Product Backlog Specification — intyg-mock-service
 
-This document captures suggested future development items for intyg-mock-service. Each item is intentionally scoped to a single module or concern so it can be picked up and implemented independently.
+This document captures the planned development items for intyg-mock-service. Items are horizontally
+sliced so each can be implemented and verified independently.
 
 ---
 
 ## Previously Implemented
 
-- REST API parity for all five services (GET/DELETE by ID, logical address, person ID, etc.)
-- Cross-cutting: count endpoints (`GET /api/{module}/count`) and global reset (`DELETE /api/reset`)
-- SOAP passthrough for all five services with mTLS support
+### Mock Behavior Control (`/api/behavior`)
+
+A centralized REST API for creating runtime rules that control how each SOAP service responds.
+Rules combine delay and/or error response, are evaluated per incoming SOAP call, and selected by
+specificity-based matching (certificateId + logicalAddress + personId). All five services wired:
+RegisterCertificate, RevokeCertificate, SendMessageToRecipient, CertificateStatusUpdateForCare,
+StoreLog.
+
+### REST Inspection API (`/api/`)
+
+Per-service GET/DELETE endpoints exposing stored SOAP data as DTOs. Cross-cutting count endpoints
+and global reset (`DELETE /api/reset`). SOAP passthrough with mTLS for all five services.
 
 ---
 
-## Mock Behavior Control
+## Navigation API — HATEOAS domain-centric REST (`/api/navigate/`)
 
-A centralized REST API at `/api/behavior` for creating runtime rules that control how each SOAP service responds. Rules are evaluated on every incoming SOAP call. Error rules prevent the request from being stored (it was rejected); delay-only rules store normally. Skipped stores are logged via a generic `BehaviorLogger`.
+A read-only REST API that exposes a rich **domain model** assembled from the five existing
+in-memory repositories. The model reflects clinical concepts (Certificate, Message, Revocation,
+StatusUpdate, LogEntry) and organizational entities (Patient, Unit, Staff). Navigation links
+(HATEOAS / HAL format via Spring HATEOAS) allow clients to traverse mock data without prior
+knowledge of the internal structure.
 
-A rule can combine delay AND error response in a single rule (e.g., `delayMillis=30000` + `resultCode=ERROR` + `errorId=VALIDATION_ERROR` → wait 30s then return error). Delay-only or error-only also supported.
+### Architecture
 
-### ~~MB-01 — Error response rules for RegisterCertificate (full vertical slice)~~ ✓ Done
-
-~~First item — establishes the entire pattern that subsequent items follow.~~
-
-~~Deliver:~~
-
-~~**Domain model** (`se.inera.intyg.intygmockservice.domain`):~~
-- ~~`BehaviorRule` — `@Getter @Builder(toBuilder = true)` rich entity. Fields: `id` (UUID), `serviceName` (ServiceName), `resultCode` (String, nullable), `errorId` (String, nullable), `resultText` (String, nullable), `delayMillis` (Long, nullable), `matchCriteria` (MatchCriteria, nullable), `maxTriggerCount` (Integer, nullable), `triggerCount` (mutable int), `createdAt` (Instant). Runtime-injected fields: `delayApplier`, `eventLogger`, `onExhausted`. Methods: `wire(DelayApplier, BehaviorEventLogger, Runnable onExhausted)`, `matches(MatchContext)`, `specificity()`, `evaluate(MatchContext)` → `Optional<EvaluationResult>`, `trigger()`, `isExhausted()`, `hasErrorEffect()`, `hasDelay()`~~
-- ~~`MatchCriteria` — `@Value @Builder` with `logicalAddress`, `certificateId`, `personId` (all nullable). Methods: `matches(MatchContext)`, `specificity()` (count of non-null fields). Person ID matching strips hyphens before comparing.~~
-- ~~`MatchContext` — `@Value @Builder` with `logicalAddress`, `certificateId`, `personId` (extracted from SOAP request)~~
-- ~~`EvaluationResult` — `@Value @Builder` with `resultCode`, `errorId`, `resultText`~~
-- ~~`ServiceName` — enum: `REGISTER_CERTIFICATE`, `REVOKE_CERTIFICATE`, `SEND_MESSAGE_TO_RECIPIENT`, `CERTIFICATE_STATUS_UPDATE_FOR_CARE`, `STORE_LOG`~~
-- ~~`DelayApplier` — interface: `void apply(long millis)`~~
-- ~~`BehaviorEventLogger` — interface: `logDelayApplied(ServiceName, String certificateId, BehaviorRule)` and `logErrorSkipped(ServiceName, String certificateId, BehaviorRule)`~~
-
-~~Note: No `BehaviorRuleEvaluator` class — evaluation logic lives in `BehaviorRule.evaluate()`, matching and specificity-based selection in `BehaviorRuleRepository.findBestMatch()`.~~
-
-~~**Infrastructure**:~~
-- ~~`BehaviorRuleRepository` (`@Repository`) — `ConcurrentHashMap<UUID, BehaviorRule>` with `save`, `findById`, `findAll`, `findByServiceName`, `findBestMatch(ServiceName, MatchContext)`, `delete`, `deleteAll`, `deleteByServiceName`. `findBestMatch` filters by service and context, picks highest specificity (tiebreak: most recent `createdAt`), then **wires** the rule with `delayApplier`, `eventLogger`, and auto-delete callback before returning.~~
-- ~~`BehaviorLogger` (`@Component`) — implements `BehaviorEventLogger`, structured ECS logging via `log.atInfo()`. Logs delay and error-skipped events with rule ID, result code, and certificate ID.~~
-- ~~`ThreadSleepDelayApplier` (`@Component`) — implements `DelayApplier` via `Thread.sleep`. Handles `InterruptedException` by restoring interrupt flag and logging a warning.~~
-
-~~**Application** (`application/behavior/`):~~
-- ~~`BehaviorController` (`@RestController`) — full REST API at `/api/behavior`: `POST`, `GET` (all, optionally `?service=`), `GET /{ruleId}`, `DELETE /{ruleId}`, `DELETE` (all, optionally `?service=`). OpenAPI annotations on all endpoints.~~
-- ~~`BehaviorService` (`@Service`) — CRUD operations, converts domain ↔ DTO~~
-- ~~`CreateBehaviorRuleRequest` — Java record (input DTO) with inner `MatchCriteriaRequest` record~~
-- ~~`BehaviorRuleDTO` — `@Value @Builder` (output DTO) with inner `MatchCriteriaDTO`~~
-
-~~Wire into `ResetController` so `DELETE /api/reset` clears behavior rules.~~
-
-~~**Service integration**:~~
-- ~~`RegisterCertificateResponseFactory` (`@Component`) — `create(EvaluationResult)` → `RegisterCertificateResponseType`. Maps `resultCode` → `ResultCodeType`, `errorId` → `ErrorIdType`, `resultText` → string.~~
-- ~~In `RegisterCertificateService.store()`: convert SOAP type → DTO first, build `MatchContext` from DTO fields, call `behaviorRuleRepository.findBestMatch(REGISTER_CERTIFICATE, context)`, if present call `rule.evaluate(context)`, if result present return error response without storing. Delay-only rules (no `resultCode`) cause `evaluate()` to return `Optional.empty()` → store proceeds normally.~~
-
-~~**Unit tests** (one class per production class, no Spring context): `BehaviorRuleTest` (evaluate, trigger, exhaustion, delay), `MatchCriteriaTest` (matching, specificity, person ID normalisation), `BehaviorRuleRepositoryTest` (CRUD, findBestMatch specificity/tiebreak, wiring, auto-delete), `BehaviorLoggerTest`, `BehaviorServiceTest`, `RegisterCertificateResponseFactoryTest`, `RegisterCertificateServiceTest` (error rule skips store, delay-only rule stores, no rule stores).~~
-
-~~**Integration tests**: create error rule via REST → send SOAP → verify error response + request **not** stored; `maxTriggerCount=1` fires once then auto-removed; reset clears rules; delay-only rule stores normally.~~
-
-Example POST:
-```json
-{
-  "serviceName": "REGISTER_CERTIFICATE",
-  "resultCode": "ERROR",
-  "errorId": "VALIDATION_ERROR",
-  "resultText": "Certificate validation failed",
-  "matchCriteria": { "certificateId": "abc-123" },
-  "maxTriggerCount": 1
-}
 ```
+domain/navigation/model/          ← Certificate, Patient, Staff, Unit, CareProvider,
+                                     Message, Revocation, StatusUpdate, LogEntry
+domain/navigation/repository/     ← Query repository interfaces (domain ports)
+infrastructure/repository/navigation/  ← Implementations federating existing repos
+application/navigation/           ← Controllers, Services, Assemblers, Response records
+```
+
+Assemblers use `WebMvcLinkBuilder.linkTo(methodOn(...))` for typed, controller-method-based links.
+Controllers delegate to `*NavigationService` beans (never directly to domain repositories).
+
+### Domain Model
+
+| Entity | Key Fields | Primary Source |
+|---|---|---|
+| `Certificate` | `certificateId`, `certificateType?`, `signingTimestamp?`, `sentTimestamp?`, `version?`, `logicalAddress?`, `patient?`, `issuedBy?` | RegisterCertificate (merged from all 5 repos) |
+| `Patient` | `personId` (normalised), `firstName?`, `lastName?`, `streetAddress?`, `postalCode?`, `city?` | PatientDTO |
+| `Staff` | `staffId`, `fullName?`, `prescriptionCode?`, `unit?` | HoSPersonalDTO |
+| `Unit` | `unitId`, `unitName?`, `streetAddress?`, `postalCode?`, `city?`, `phone?`, `email?`, `careProvider?` | EnhetDTO |
+| `CareProvider` | `careProviderId`, `careProviderName?` | VardgivareDTO |
+| `Message` | `messageId`, `certificateId`, `recipient`, `subject?`, `heading?`, `body?`, `sentTimestamp`, `personId`, `sentBy?` | SendMessageToRecipient |
+| `Revocation` | `certificateId`, `personId`, `revokedAt`, `reason?`, `revokedBy?` | RevokeCertificate |
+| `StatusUpdate` | `certificateId`, `personId`, `eventCode`, `eventDisplayName?`, `eventTimestamp`, `questionsSentTotal`, `questionsReceivedTotal`, `logicalAddress?` | CertificateStatusUpdateForCare |
+| `LogEntry` | `logId`, `systemId?`, `systemName?`, `activityType?`, `certificateId` (=activityLevel), `purpose?`, `activityStart?`, `userId?`, `userAssignment?`, `careUnitId?`, `careProviderName?` | StoreLog |
+
+Certificate list is a **merged view**: all unique certificate IDs from all five services.
+RegisterCertificate provides full data; other services contribute certificateId + personId stubs
+for IDs not seen via registration.
+
+Patient IDs in URLs are **normalised** (hyphens removed).
+
+### HATEOAS Links Per Entity
+
+| Entity | Links |
+|---|---|
+| `CertificateResponse` | `self`, `patient?`, `unit?`, `issuer?`, `revocation`, `messages`, `status-updates`, `log-entries` |
+| `PatientResponse` | `self`, `certificates`, `messages` |
+| `MessageResponse` | `self`, `certificate`, `patient` |
+| `RevocationResponse` | `self`, `certificate`, `patient` |
+| `StatusUpdateResponse` | `self`, `certificate`, `patient` |
+| `LogEntryResponse` | `self`, `certificate?` |
+| `UnitResponse` | `self`, `certificates` |
+| `StaffResponse` | `self`, `certificates` |
+
+---
+
+### ~~NAV-01 — Foundation + Certificate resource~~ ✓ Done
+
+Spring HATEOAS added. Domain model (`Certificate`, `Patient`, `Staff`, `Unit`, `CareProvider`)
+created. `CertificateNavigationRepositoryImpl` federates all five existing repositories.
+`CertificateController` at `/api/navigate/certificates` with full HAL links. Unit tests and
+integration tests verified.
+
+Endpoints delivered:
+- `GET /api/navigate/certificates`
+- `GET /api/navigate/certificates/{certificateId}`
+- `GET /api/navigate/certificates/{id}/messages` (stub — returns empty)
+- `GET /api/navigate/certificates/{id}/status-updates` (stub — returns empty)
+- `GET /api/navigate/certificates/{id}/log-entries` (stub — returns empty)
+- `GET /api/navigate/certificates/{id}/revocation` (stub — returns 404)
+
+springdoc-openapi upgraded to 2.8.16 for Spring Boot 3.5.x + HATEOAS compatibility.
 
 Prerequisites: none
 
-### ~~MB-02 — Error response rules for RevokeCertificate~~ ✓ Done
+---
 
-Reuse all infrastructure from MB-01. Only new work:
-- Add `RevokeCertificateResponseFactory` (`@Component`) — `create(EvaluationResult)` → `RevokeCertificateResponseType`. Same mapping logic as `RegisterCertificateResponseFactory` but wraps `certificate.v3.ResultType` in the Revoke-specific response type.
-- Wire `behaviorRuleRepository.findBestMatch(REVOKE_CERTIFICATE, context)` + `rule.evaluate(context)` into `RevokeCertificateService.store()`
-- Extract match context from `RevokeCertificateType`: logicalAddress, `intygsId.extension`, `patientPersonId.extension`
-- Unit tests for `RevokeCertificateService` (error rule skips store, delay-only rule stores) and `RevokeCertificateResponseFactory`
-- Integration test: error rule → SOAP → verify error response + request **not** stored
+### ~~NAV-02 — Patient resource~~ ✓ Done
 
-Prerequisites: MB-01
+Deliver patient endpoint and patient sub-collection of certificates.
 
-### ~~MB-03 — Error response rules for SendMessageToRecipient~~ ✓ Done
+**Domain model:** `Patient` already exists from NAV-01.
 
-Same pattern as MB-02:
-- Add `SendMessageToRecipientResponseFactory` (`@Component`) — wraps `certificate.v3.ResultType` in `SendMessageToRecipientResponseType`
-- Wire into `SendMessageToRecipientService.store()` with `ServiceName.SEND_MESSAGE_TO_RECIPIENT`
-- Extract match context from `SendMessageToRecipientType`: logicalAddress, `intygsId.extension`, `patientPersonId.extension`
-- Unit tests for service and response factory + integration test
+**New work:**
+- `PatientNavigationRepository` interface — `findByPersonId(String normalizedPersonId)` returning
+  `Optional<Patient>` (assembled from first RegisterCertificate match; falls back to partial data
+  from other repos)
+- `PatientNavigationRepositoryImpl` in `infrastructure/repository/navigation/`
+- `PatientNavigationService` (`@Service`) in `application/navigation/patient/`
+- `PatientResponse` (record), `PatientAssembler`, `PatientController`
+- Endpoints:
+  - `GET /api/navigate/patients/{personId}`
+  - `GET /api/navigate/patients/{personId}/certificates`
+- Fill in `GET /api/navigate/patients/{personId}/messages` stub (returns empty for now)
+- Unit tests: `PatientNavigationRepositoryImplTest`, `PatientAssemblerTest`,
+  `PatientNavigationServiceTest`, `PatientControllerTest`
+- Integration test: post SOAP → GET `/api/navigate/patients/{personId}` → assert HAL with
+  `certificates` and `patient` links
 
-Prerequisites: MB-01
+Prerequisites: NAV-01
 
-### ~~MB-04 — Error response rules for CertificateStatusUpdateForCare~~ ✓ Done
+---
 
-Same pattern as MB-02:
-- ~~Add `CertificateStatusUpdateForCareResponseFactory` (`@Component`) — wraps `certificate.v3.ResultType` in `CertificateStatusUpdateForCareResponseType`~~
-- ~~Wire into `CertificateStatusUpdateForCareService.store()` with `ServiceName.CERTIFICATE_STATUS_UPDATE_FOR_CARE`~~
-- ~~Extract match context from `CertificateStatusUpdateForCareType`: logicalAddress, `intyg.intygsId.extension`, `intyg.patient.personId.extension`~~
-- ~~Unit tests for service and response factory + integration test~~
+### ~~NAV-03 — Message resource~~ ✓ Done
 
-Prerequisites: MB-01
+Deliver message list, detail, and cross-references.
 
-### ~~MB-05 — Error response rules for StoreLog~~ ✓ Done
+**New work:**
+- Domain model: `Message`
+- `MessageNavigationRepository` interface — `findAll()`, `findById(String)`,
+  `findByCertificateId(String)`, `findByPersonId(String normalizedPersonId)`
+- `MessageNavigationRepositoryImpl` using `SendMessageToRecipientRepository` + existing
+  `SendMessageToRecipientConverter`
+- `MessageNavigationService`, `MessageResponse`, `MessageAssembler`, `MessageController`
+- Endpoints:
+  - `GET /api/navigate/messages`
+  - `GET /api/navigate/messages/{messageId}`
+- Fill in `GET /api/navigate/certificates/{id}/messages` (replaces NAV-01 stub)
+- Fill in `GET /api/navigate/patients/{personId}/messages` (replaces NAV-02 stub)
+- Unit tests + integration test
 
-~~Different schema — requires a separate `StoreLogResponseFactory`:~~
-- ~~Add `StoreLogResponseFactory` (`@Component`) — `create(EvaluationResult)` → `StoreLogResponseType`. Uses `auditing.log.v2.ResultType` which has **no `errorId` field** and a different `ResultCodeType` enum (VALIDATION_ERROR, ACCESSDENIED, etc.). Maps rule's `resultCode` string to `auditing.log.v2.ResultCodeType`; ignore `errorId` from `EvaluationResult`.~~
-- ~~Wire `behaviorRuleRepository.findBestMatch(STORE_LOG, context)` + `rule.evaluate(context)` into `StoreLogService.store()`~~
-- ~~Extract match context: `logicalAddress` + certificate ID from `log.activity.activityLevel` (no personId for StoreLog)~~
-- ~~Unit tests for service and response factory + integration test~~
+Prerequisites: NAV-01
 
-Prerequisites: MB-01
+---
+
+### ~~NAV-04 — Revocation resource~~ ✓ Done
+
+Deliver revocation as certificate sub-resource.
+
+**New work:**
+- Domain model: `Revocation`
+- `RevocationNavigationRepository` — `findByCertificateId(String)`, `findByPersonId(String)`
+- `RevocationNavigationRepositoryImpl` using `RevokeCertificateRepository`
+- `RevocationNavigationService`, `RevocationResponse`, `RevocationAssembler`,
+  `RevocationController`
+- Fill in `GET /api/navigate/certificates/{id}/revocation` (replaces NAV-01 stub)
+- Unit tests + integration test
+
+Prerequisites: NAV-01
+
+---
+
+### ~~NAV-05 — StatusUpdate resource~~ ✓ Done
+
+Deliver status update list and certificate sub-resource.
+
+**New work:**
+- Domain model: `StatusUpdate`
+- `StatusUpdateNavigationRepository` — `findAll()`, `findByCertificateId(String)`,
+  `findByPersonId(String)`
+- `StatusUpdateNavigationRepositoryImpl` using `CertificateStatusUpdateForCareRepository`
+- `StatusUpdateNavigationService`, `StatusUpdateResponse`, `StatusUpdateAssembler`,
+  `StatusUpdateController`
+- Endpoints:
+  - `GET /api/navigate/status-updates`
+- Fill in `GET /api/navigate/certificates/{id}/status-updates` (replaces NAV-01 stub)
+- Unit tests + integration test
+
+Prerequisites: NAV-01
+
+---
+
+### ~~NAV-06 — LogEntry resource~~ ✓ Done
+
+Deliver log entry list and certificate sub-resource.
+
+**New work:**
+- Domain model: `LogEntry`
+- `LogEntryNavigationRepository` — `findAll()`, `findByCertificateId(String)`
+- `LogEntryNavigationRepositoryImpl` using `StoreLogTypeRepository` + reuse
+  `StoreLogTypeConverter`
+- `LogEntryNavigationService`, `LogEntryResponse`, `LogEntryAssembler`, `LogEntryController`
+- Endpoints:
+  - `GET /api/navigate/log-entries`
+- Fill in `GET /api/navigate/certificates/{id}/log-entries` (replaces NAV-01 stub)
+- Unit tests + integration test
+
+Prerequisites: NAV-01
+
+---
+
+### ~~NAV-07 — Unit resource~~ ✓ Done
+
+Deliver care units as top-level navigable resources.
+
+**New work:**
+- `UnitNavigationRepository` — `findAll()` (collects all unique units from RegisterCertificate
+  data), `findById(String unitId)`, `findCertificatesByUnitId(String)`
+- `UnitNavigationRepositoryImpl`
+- `UnitNavigationService`, `UnitResponse`, `UnitAssembler`, `UnitController`
+- Endpoints:
+  - `GET /api/navigate/units`
+  - `GET /api/navigate/units/{unitId}`
+  - `GET /api/navigate/units/{unitId}/certificates`
+- Unit tests + integration test
+
+Prerequisites: NAV-01
+
+---
+
+### ~~NAV-08 — Staff resource~~ ✓ Done
+
+Deliver staff (health professionals) as top-level navigable resources.
+
+**New work:**
+- `StaffNavigationRepository` — `findAll()` (collects all unique staff from RegisterCertificate
+  data), `findById(String staffId)`, `findCertificatesByStaffId(String)`
+- `StaffNavigationRepositoryImpl`
+- `StaffNavigationService`, `StaffResponse`, `StaffAssembler`, `StaffController`
+- Endpoints:
+  - `GET /api/navigate/staff`
+  - `GET /api/navigate/staff/{staffId}`
+  - `GET /api/navigate/staff/{staffId}/certificates`
+- Unit tests + integration test
+
+Prerequisites: NAV-01
+
+---
 
 ### Dependency Graph
 
 ```
-MB-01 (RegisterCertificate — full infra + first service)
-  ├── MB-02 (RevokeCertificate)
-  ├── MB-03 (SendMessageToRecipient)
-  ├── MB-04 (CertificateStatusUpdateForCare)
-  └── MB-05 (StoreLog — different schema)
+NAV-01 (Foundation + Certificate — merged view, full HATEOAS infra)  ✓ Done
+  ├── NAV-02 (Patient)
+  ├── NAV-03 (Message)
+  ├── NAV-04 (Revocation)
+  ├── NAV-05 (StatusUpdate) ✓ Done
+  ├── NAV-06 (LogEntry) ✓ Done
+  ├── NAV-07 (Unit) ✓ Done
+  └── NAV-08 (Staff) ✓ Done
 ```
 
-MB-02 through MB-05 are independent of each other and can be done in any order after MB-01.
-
-### Key Design Decisions
-
-1. **Centralized `/api/behavior` endpoint** — one place to manage all rules, `serviceName` field provides scoping
-2. **Combined delay + error** — a single rule can have both `delayMillis` and error fields; delay-only or error-only also work
-3. **Rules evaluated in domain entity** — `BehaviorRule.evaluate()` contains evaluation logic (apply delay, trigger count, return `EvaluationResult`); `BehaviorRuleRepository.findBestMatch()` handles specificity-based selection and wires dependencies into the rule before returning it. Each service has its own `*ResponseFactory` because the JAXB response wrapper type differs per service.
-4. **Behavior rules override passthrough** — most useful for testing (override upstream for specific scenarios)
-5. **Don't store on error** — if a rule produces an error response, the request is **not** stored (it was rejected). Delay-only rules still store normally. The skipped store is logged via a generic `BehaviorLogger` (see below)
-6. **Thread-safe `ConcurrentHashMap`** — rules managed via REST while SOAP requests processed concurrently
-7. **Specificity-based matching** — more specific rules win (certificateId+logicalAddress beats logicalAddress-only)
-8. **Domain interfaces for testability** — `DelayApplier` and `BehaviorEventLogger` are domain interfaces injected at runtime via `BehaviorRule.wire()`. Unit tests can pass no-op or spy implementations without mocking infrastructure beans.
-
-### Schema Reference
-
-**Certificate v3** (RegisterCertificate, RevokeCertificate, SendMessageToRecipient, CertificateStatusUpdateForCare):
-- `ResultType`: `resultCode` (OK | INFO | ERROR) + `errorId` (VALIDATION_ERROR | APPLICATION_ERROR | TECHNICAL_ERROR | REVOKED) + `resultText` (String)
-
-**StoreLog v2**:
-- `ResultType`: `resultCode` (OK | INFO | ERROR | VALIDATION_ERROR | ACCESSDENIED | ...) + `resultText` (String) — **no `errorId` field**
+NAV-02 through NAV-08 are independent of each other and can be implemented in any order after
+NAV-01. Each fills in stub endpoints from earlier slices as it goes.

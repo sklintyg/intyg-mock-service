@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,7 @@ import se.inera.intyg.intygmockservice.application.revokecertificate.service.Rev
 @RestController
 @RequestMapping("/api/revoke-certificate")
 @RequiredArgsConstructor
-@Tag(name = "RevokeCertificate", description = "API for managing certificate revocations")
+@Tag(name = "Mock — RevokeCertificate", description = "API for managing certificate revocations")
 public class RevokeCertificateController {
 
   private final RevokeCertificateService service;
@@ -42,6 +43,18 @@ public class RevokeCertificateController {
   @DeleteMapping
   public void deleteAllRevokeCertificates() {
     service.deleteAll();
+  }
+
+  @Operation(
+      summary = "Get revoke certificate as XML",
+      description = "Retrieve a revoke certificate as raw XML by certificate ID")
+  @GetMapping(value = "/{certificateId}/xml", produces = MediaType.APPLICATION_XML_VALUE)
+  public ResponseEntity<String> getRevokeCertificateAsXml(
+      @PathVariable final String certificateId) {
+    return service
+        .getAsXml(certificateId)
+        .map(xml -> ResponseEntity.ok().contentType(MediaType.APPLICATION_XML).body(xml))
+        .orElseGet(() -> ResponseEntity.notFound().build());
   }
 
   @Operation(
