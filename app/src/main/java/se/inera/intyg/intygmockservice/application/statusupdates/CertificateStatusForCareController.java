@@ -19,7 +19,7 @@ import se.inera.intyg.intygmockservice.application.statusupdates.service.Certifi
 @RequestMapping("/api/certificate-status-for-care")
 @RequiredArgsConstructor
 @Tag(
-    name = "CertificateStatusForCare",
+    name = "Mock — CertificateStatusUpdateForCare",
     description = "API for managing certificate status updates for care")
 public class CertificateStatusForCareController {
 

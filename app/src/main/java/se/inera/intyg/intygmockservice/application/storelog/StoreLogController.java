@@ -17,7 +17,7 @@ import se.inera.intyg.intygmockservice.application.storelog.service.StoreLogServ
 
 @RestController
 @RequestMapping("/api/store-log")
-@Tag(name = "StoreLog", description = "API for managing store logs")
+@Tag(name = "Mock — StoreLog", description = "API for managing store logs")
 @RequiredArgsConstructor
 public class StoreLogController {
 

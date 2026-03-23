@@ -46,5 +46,6 @@ logging:
 
 springdoc:
   swagger-ui:
-    path: /swagger-ui
     enabled: true
+    path: /swagger-ui
+    tags-sorter: alpha

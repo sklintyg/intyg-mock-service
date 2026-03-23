@@ -18,7 +18,7 @@ import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.servic
 @RestController
 @RequestMapping("/api/send-message-to-recipient")
 @RequiredArgsConstructor
-@Tag(name = "SendMessageToRecipient", description = "APIs for sending messages to recipients")
+@Tag(name = "Mock — SendMessageToRecipient", description = "APIs for sending messages to recipients")
 public class SendMessageToRecipientController {
 
   private final SendMessageToRecipientService service;
