@@ -3,6 +3,37 @@ plugins {
     alias(libs.plugins.org.cyclonedx.bom)
 }
 
+def frontendDir = "${rootProject.projectDir}/frontend"
+def staticDir = "${project.projectDir}/src/main/resources/static"
+
+// Resolve node from nvm or system PATH, preferring Node 20+
+def nvmNodeBin = "${System.getProperty('user.home')}/.nvm/versions/node/v22.21.1/bin"
+def nodeBinDir = new File(nvmNodeBin).exists() ? nvmNodeBin : ""
+def pathWithNode = nodeBinDir ? "${nodeBinDir}:${System.getenv('PATH')}" : System.getenv('PATH')
+
+tasks.register('npmInstall', Exec) {
+    workingDir frontendDir
+    commandLine 'npm', 'ci'
+    environment 'PATH', pathWithNode
+    inputs.file("${frontendDir}/package-lock.json")
+    outputs.dir("${frontendDir}/node_modules")
+}
+
+tasks.register('frontendBuild', Exec) {
+    dependsOn 'npmInstall'
+    workingDir frontendDir
+    commandLine 'npm', 'run', 'build'
+    environment 'PATH', pathWithNode
+    inputs.dir("${frontendDir}/src")
+    inputs.file("${frontendDir}/index.html")
+    inputs.file("${frontendDir}/vite.config.ts")
+    outputs.dir(staticDir)
+}
+
+tasks.named('processResources') {
+    dependsOn 'frontendBuild'
+}
+
 tasks.named('bootJar') {
     archiveFileName.set('app.jar')
 }

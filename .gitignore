@@ -29,3 +29,5 @@ out
 
 CLAUDE.md
 /.claude/
+frontend/node_modules/
+app/src/main/resources/static/

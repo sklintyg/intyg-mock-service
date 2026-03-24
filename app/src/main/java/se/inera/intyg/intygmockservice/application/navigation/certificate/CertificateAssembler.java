@@ -6,7 +6,9 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import java.util.List;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.IanaLinkRelations;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.stereotype.Component;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateResponse.CareProviderData;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateResponse.PatientData;
@@ -16,6 +18,7 @@ import se.inera.intyg.intygmockservice.application.navigation.revocation.Revocat
 import se.inera.intyg.intygmockservice.application.navigation.statusupdate.StatusUpdateController;
 import se.inera.intyg.intygmockservice.domain.navigation.model.CareProvider;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PageResult;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Staff;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Unit;
@@ -71,8 +74,56 @@ public class CertificateAssembler {
       final List<Certificate> certificates) {
     final var items = certificates.stream().map(this::toModel).toList();
     final var selfLink =
-        linkTo(methodOn(CertificateController.class).getAllCertificates()).withSelfRel();
+        linkTo(methodOn(CertificateController.class).getAllCertificates(0, 20)).withSelfRel();
     return CollectionModel.of(items, selfLink);
+  }
+
+  public PagedModel<EntityModel<CertificateResponse>> toPagedModel(
+      final PageResult<Certificate> pageResult) {
+    final var items = pageResult.content().stream().map(this::toModel).toList();
+    final var metadata =
+        new PagedModel.PageMetadata(
+            pageResult.size(),
+            pageResult.page(),
+            pageResult.totalElements(),
+            pageResult.totalPages());
+
+    final var selfLink =
+        linkTo(
+                methodOn(CertificateController.class)
+                    .getAllCertificates(pageResult.page(), pageResult.size()))
+            .withSelfRel();
+
+    final var model = PagedModel.of(items, metadata, selfLink);
+
+    if (pageResult.hasNext()) {
+      model.add(
+          linkTo(
+                  methodOn(CertificateController.class)
+                      .getAllCertificates(pageResult.page() + 1, pageResult.size()))
+              .withRel(IanaLinkRelations.NEXT));
+    }
+
+    if (pageResult.hasPrevious()) {
+      model.add(
+          linkTo(
+                  methodOn(CertificateController.class)
+                      .getAllCertificates(pageResult.page() - 1, pageResult.size()))
+              .withRel(IanaLinkRelations.PREV));
+    }
+
+    model.add(
+        linkTo(methodOn(CertificateController.class).getAllCertificates(0, pageResult.size()))
+            .withRel(IanaLinkRelations.FIRST));
+
+    final var lastPage = Math.max(0, (int) pageResult.totalPages() - 1);
+    model.add(
+        linkTo(
+                methodOn(CertificateController.class)
+                    .getAllCertificates(lastPage, pageResult.size()))
+            .withRel(IanaLinkRelations.LAST));
+
+    return model;
   }
 
   private CertificateResponse toResponse(final Certificate certificate) {

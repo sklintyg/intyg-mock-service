@@ -10,6 +10,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import se.inera.intyg.intygmockservice.domain.navigation.model.CareProvider;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PageResult;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Staff;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Unit;
@@ -217,6 +218,67 @@ class CertificateAssemblerTest {
 
     assertTrue(collection.getLink("self").isPresent());
     assertEquals(2, collection.getContent().size());
+  }
+
+  @Test
+  void toPagedModel_ShouldIncludePageMetadata() {
+    final var certificates =
+        List.of(minimalCertificate("cert-001"), minimalCertificate("cert-002"));
+    final var pageResult = new PageResult<>(certificates, 0, 2, 5);
+
+    final var paged = assembler.toPagedModel(pageResult);
+
+    assertNotNull(paged.getMetadata());
+    assertEquals(2, paged.getMetadata().getSize());
+    assertEquals(0, paged.getMetadata().getNumber());
+    assertEquals(5, paged.getMetadata().getTotalElements());
+    assertEquals(3, paged.getMetadata().getTotalPages());
+  }
+
+  @Test
+  void toPagedModel_ShouldIncludeNextLinkWhenNotLastPage() {
+    final var pageResult = new PageResult<>(List.of(minimalCertificate("cert-001")), 0, 1, 3);
+
+    final var paged = assembler.toPagedModel(pageResult);
+
+    assertTrue(paged.getLink("next").isPresent());
+  }
+
+  @Test
+  void toPagedModel_ShouldNotIncludeNextLinkOnLastPage() {
+    final var pageResult = new PageResult<>(List.of(minimalCertificate("cert-001")), 2, 1, 3);
+
+    final var paged = assembler.toPagedModel(pageResult);
+
+    assertTrue(paged.getLink("next").isEmpty());
+  }
+
+  @Test
+  void toPagedModel_ShouldIncludePrevLinkWhenNotFirstPage() {
+    final var pageResult = new PageResult<>(List.of(minimalCertificate("cert-001")), 1, 1, 3);
+
+    final var paged = assembler.toPagedModel(pageResult);
+
+    assertTrue(paged.getLink("prev").isPresent());
+  }
+
+  @Test
+  void toPagedModel_ShouldNotIncludePrevLinkOnFirstPage() {
+    final var pageResult = new PageResult<>(List.of(minimalCertificate("cert-001")), 0, 1, 3);
+
+    final var paged = assembler.toPagedModel(pageResult);
+
+    assertTrue(paged.getLink("prev").isEmpty());
+  }
+
+  @Test
+  void toPagedModel_ShouldAlwaysIncludeFirstAndLastLinks() {
+    final var pageResult = new PageResult<>(List.of(minimalCertificate("cert-001")), 1, 1, 3);
+
+    final var paged = assembler.toPagedModel(pageResult);
+
+    assertTrue(paged.getLink("first").isPresent());
+    assertTrue(paged.getLink("last").isPresent());
   }
 
   private static Certificate minimalCertificate(final String certificateId) {

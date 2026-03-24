@@ -48,4 +48,49 @@ class CertificateNavigationServiceTest {
 
     assertTrue(service.findById("nonexistent").isEmpty());
   }
+
+  @Test
+  void findAllPaginated_ShouldReturnFirstPage() {
+    final var certs =
+        List.of(
+            Certificate.builder().certificateId("cert-001").build(),
+            Certificate.builder().certificateId("cert-002").build(),
+            Certificate.builder().certificateId("cert-003").build());
+    when(repository.findAll()).thenReturn(certs);
+
+    final var result = service.findAll(0, 2);
+
+    assertEquals(2, result.content().size());
+    assertEquals("cert-001", result.content().get(0).getCertificateId());
+    assertEquals("cert-002", result.content().get(1).getCertificateId());
+    assertEquals(0, result.page());
+    assertEquals(2, result.size());
+    assertEquals(3, result.totalElements());
+  }
+
+  @Test
+  void findAllPaginated_ShouldReturnLastPartialPage() {
+    final var certs =
+        List.of(
+            Certificate.builder().certificateId("cert-001").build(),
+            Certificate.builder().certificateId("cert-002").build(),
+            Certificate.builder().certificateId("cert-003").build());
+    when(repository.findAll()).thenReturn(certs);
+
+    final var result = service.findAll(1, 2);
+
+    assertEquals(1, result.content().size());
+    assertEquals("cert-003", result.content().get(0).getCertificateId());
+  }
+
+  @Test
+  void findAllPaginated_ShouldReturnEmptyWhenPageBeyondRange() {
+    final var certs = List.of(Certificate.builder().certificateId("cert-001").build());
+    when(repository.findAll()).thenReturn(certs);
+
+    final var result = service.findAll(5, 20);
+
+    assertTrue(result.content().isEmpty());
+    assertEquals(1, result.totalElements());
+  }
 }
