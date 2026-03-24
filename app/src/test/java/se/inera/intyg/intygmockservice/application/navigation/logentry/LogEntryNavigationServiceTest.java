@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -47,6 +48,24 @@ class LogEntryNavigationServiceTest {
 
     assertEquals(1, result.size());
     assertEquals("cert-001", result.get(0).getCertificateId());
+  }
+
+  @Test
+  void findById_ShouldDelegateToRepository() {
+    final var entry = LogEntry.builder().logId("it-log-001").certificateId("cert-001").build();
+    when(logEntryNavigationRepository.findById("it-log-001")).thenReturn(Optional.of(entry));
+
+    final var result = service.findById("it-log-001");
+
+    assertTrue(result.isPresent());
+    assertEquals("it-log-001", result.get().getLogId());
+  }
+
+  @Test
+  void findById_ShouldReturnEmptyWhenNotFound() {
+    when(logEntryNavigationRepository.findById("unknown")).thenReturn(Optional.empty());
+
+    assertTrue(service.findById("unknown").isEmpty());
   }
 
   @Test

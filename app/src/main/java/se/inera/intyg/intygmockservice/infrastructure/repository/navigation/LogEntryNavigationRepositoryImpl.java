@@ -1,6 +1,7 @@
 package se.inera.intyg.intygmockservice.infrastructure.repository.navigation;
 
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import se.inera.intyg.intygmockservice.application.storelog.converter.StoreLogTypeConverter;
@@ -22,6 +23,15 @@ public class LogEntryNavigationRepositoryImpl implements LogEntryNavigationRepos
         .flatMap(storeLogType -> converter.convertToLogTypeDTO(storeLogType).stream())
         .map(this::toLogEntry)
         .toList();
+  }
+
+  @Override
+  public Optional<LogEntry> findById(final String logId) {
+    return storeLogTypeRepository.findAll().stream()
+        .flatMap(storeLogType -> converter.convertToLogTypeDTO(storeLogType).stream())
+        .filter(dto -> logId.equals(dto.getLogId()))
+        .map(this::toLogEntry)
+        .findFirst();
   }
 
   @Override
