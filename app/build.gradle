@@ -1,6 +1,32 @@
 plugins {
     alias(libs.plugins.org.springframework.boot)
     alias(libs.plugins.org.cyclonedx.bom)
+    id 'com.github.node-gradle.node' version '7.1.0'
+}
+
+def frontendDir = "${rootProject.projectDir}/frontend"
+def staticDir = "${project.projectDir}/src/main/resources/static"
+
+node {
+    download = true
+    version = '22.21.1'
+    workDir = file("${rootDir}/.gradle/nodejs")
+    npmWorkDir = file("${rootDir}/.gradle/npm")
+    nodeProjectDir = file(frontendDir)
+}
+
+tasks.register('frontendBuild', NpmTask) {
+    dependsOn npmInstall
+    workingDir = file(frontendDir)
+    args = ['run', 'build']
+    inputs.dir("${frontendDir}/src")
+    inputs.file("${frontendDir}/index.html")
+    inputs.file("${frontendDir}/vite.config.ts")
+    outputs.dir(staticDir)
+}
+
+tasks.named('processResources') {
+    dependsOn 'frontendBuild'
 }
 
 tasks.named('bootJar') {

@@ -134,4 +134,28 @@ class LogEntryNavigationRepositoryImplTest {
 
     assertTrue(repository.findByCertificateId("unknown").isEmpty());
   }
+
+  @Test
+  void findById_ShouldReturnMatchingLogEntry() {
+    final var soap = soapLog();
+    final var dto = dto("cert-001");
+
+    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soap));
+    when(converter.convertToLogTypeDTO(soap)).thenReturn(List.of(dto));
+
+    final var result = repository.findById("it-log-001");
+
+    assertTrue(result.isPresent());
+    assertEquals("it-log-001", result.get().getLogId());
+  }
+
+  @Test
+  void findById_ShouldReturnEmptyWhenNotFound() {
+    final var soap = soapLog();
+
+    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soap));
+    when(converter.convertToLogTypeDTO(soap)).thenReturn(List.of(dto("cert-001")));
+
+    assertTrue(repository.findById("unknown").isEmpty());
+  }
 }

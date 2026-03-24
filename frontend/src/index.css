@@ -1,0 +1,88 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap");
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-tertiary: var(--tertiary);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+}
+
+:root {
+  --radius: 0.5rem;
+
+  /* Brand palette */
+  --background: #fff7ff;
+  --foreground: #2a0053;
+  --card: #ffffff;
+  --card-foreground: #2a0053;
+  --popover: #eedbff;
+  --popover-foreground: #2a0053;
+  --primary: #cf022b;
+  --primary-foreground: #ffffff;
+  --secondary: #4d1d82;
+  --secondary-foreground: #ffffff;
+  --muted: #f7e9ff;
+  --muted-foreground: #5c4677;
+  --accent: #fbf0ff;
+  --accent-foreground: #2a0053;
+  --destructive: #ba1a1a;
+  --destructive-foreground: #ffffff;
+  --tertiary: #3f4e77;
+
+  /* Surface hierarchy */
+  --surface-container-low: #fbf0ff;
+  --surface-container: #f7e9ff;
+  --surface-container-highest: #e1d1ee;
+  --outline-variant: #cdb8e2;
+
+  /* Ghost border — outline-variant at 15% opacity */
+  --border: rgba(205, 184, 226, 0.15);
+  --input: #fbf0ff;
+  --ring: rgba(207, 2, 43, 0.4);
+
+  /* Gradient & shadow */
+  --primary-gradient: linear-gradient(135deg, #a2001f, #cf022b);
+  --shadow-ambient: 0 10px 40px -10px rgba(42, 0, 83, 0.08);
+
+  /* Typography */
+  --font-display: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    margin: 0;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+  }
+}

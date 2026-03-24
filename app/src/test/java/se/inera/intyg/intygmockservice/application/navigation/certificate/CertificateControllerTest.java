@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryAssembler;
 import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryNavigationService;
@@ -24,6 +25,7 @@ import se.inera.intyg.intygmockservice.application.navigation.message.MessageRes
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.LogEntry;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PageResult;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateControllerTest {
@@ -40,16 +42,19 @@ class CertificateControllerTest {
   @Test
   void getAllCertificates_ShouldDelegateToServiceAndAssembler() {
     final var certificate = Certificate.builder().certificateId("cert-001").build();
-    final var collectionModel = CollectionModel.<EntityModel<CertificateResponse>>empty();
+    final var pageResult = new PageResult<>(List.of(certificate), 0, 20, 1);
+    final var pagedModel =
+        PagedModel.<EntityModel<CertificateResponse>>empty(
+            new PagedModel.PageMetadata(20, 0, 1, 1));
 
-    when(service.findAll()).thenReturn(List.of(certificate));
-    when(assembler.toCollectionModel(List.of(certificate))).thenReturn(collectionModel);
+    when(service.findAll(0, 20)).thenReturn(pageResult);
+    when(assembler.toPagedModel(pageResult)).thenReturn(pagedModel);
 
-    final var result = controller.getAllCertificates();
+    final var result = controller.getAllCertificates(0, 20);
 
     assertNotNull(result);
-    verify(service).findAll();
-    verify(assembler).toCollectionModel(List.of(certificate));
+    verify(service).findAll(0, 20);
+    verify(assembler).toPagedModel(pageResult);
   }
 
   @Test

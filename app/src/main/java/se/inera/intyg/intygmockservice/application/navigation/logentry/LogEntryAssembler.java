@@ -8,7 +8,6 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateController;
 import se.inera.intyg.intygmockservice.domain.navigation.model.LogEntry;
 
 @Component
@@ -16,11 +15,10 @@ public class LogEntryAssembler {
 
   public EntityModel<LogEntryResponse> toModel(final LogEntry logEntry) {
     final var response = toResponse(logEntry);
-    final var certId = logEntry.getCertificateId();
 
     final var self =
-        certId != null
-            ? linkTo(methodOn(CertificateController.class).getCertificateLogEntries(certId))
+        logEntry.getLogId() != null
+            ? linkTo(methodOn(LogEntryController.class).getLogEntryById(logEntry.getLogId()))
                 .withSelfRel()
             : linkTo(methodOn(LogEntryController.class).getAllLogEntries()).withSelfRel();
     final var model = EntityModel.of(response, self);
@@ -29,8 +27,9 @@ public class LogEntryAssembler {
       model.add(Link.of("/api/store-log/" + logEntry.getLogId() + "/xml", "xml"));
     }
 
-    if (certId != null) {
-      model.add(Link.of("/api/navigate/certificates/" + certId, "certificate"));
+    if (logEntry.getCertificateId() != null) {
+      model.add(
+          Link.of("/api/navigate/certificates/" + logEntry.getCertificateId(), "certificate"));
     }
 
     return model;

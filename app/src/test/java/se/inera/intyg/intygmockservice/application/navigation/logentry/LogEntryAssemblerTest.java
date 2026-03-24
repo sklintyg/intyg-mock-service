@@ -14,21 +14,17 @@ class LogEntryAssemblerTest {
   private final LogEntryAssembler assembler = new LogEntryAssembler();
 
   @Test
-  void toModel_ShouldIncludeSelfLinkPointingToCertificateLogEntriesWhenCertIdPresent() {
+  void toModel_ShouldIncludeSelfLinkPointingToLogEntryByIdWhenLogIdPresent() {
     final var model = assembler.toModel(logEntry("cert-001"));
 
     assertTrue(model.getLink("self").isPresent());
     assertTrue(
-        model
-            .getLink("self")
-            .get()
-            .getHref()
-            .contains("/api/navigate/certificates/cert-001/log-entries"));
+        model.getLink("self").get().getHref().contains("/api/navigate/log-entries/it-log-001"));
   }
 
   @Test
-  void toModel_ShouldIncludeSelfLinkPointingToAllLogEntriesWhenCertIdNull() {
-    final var entry = LogEntry.builder().logId("it-log-001").build();
+  void toModel_ShouldIncludeSelfLinkPointingToAllLogEntriesWhenLogIdNull() {
+    final var entry = LogEntry.builder().certificateId("cert-001").build();
 
     assertTrue(
         assembler
