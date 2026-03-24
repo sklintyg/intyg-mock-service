@@ -28,7 +28,8 @@ public class LogEntryAssembler {
     }
 
     if (logEntry.getCertificateId() != null) {
-      model.add(Link.of("/api/navigate/certificates/" + logEntry.getCertificateId(), "certificate"));
+      model.add(
+          Link.of("/api/navigate/certificates/" + logEntry.getCertificateId(), "certificate"));
     }
 
     return model;

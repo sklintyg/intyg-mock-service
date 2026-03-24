@@ -19,11 +19,7 @@ class LogEntryAssemblerTest {
 
     assertTrue(model.getLink("self").isPresent());
     assertTrue(
-        model
-            .getLink("self")
-            .get()
-            .getHref()
-            .contains("/api/navigate/log-entries/it-log-001"));
+        model.getLink("self").get().getHref().contains("/api/navigate/log-entries/it-log-001"));
   }
 
   @Test

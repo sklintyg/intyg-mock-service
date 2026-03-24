@@ -37,7 +37,10 @@ class LogEntryControllerTest {
   @Test
   void getLogEntryById_ShouldReturn200WithModelWhenFound() {
     final var entry = LogEntry.builder().logId("it-log-001").build();
-    final var model = EntityModel.of(new LogEntryResponse("it-log-001", null, null, null, null, null, null, null, null, null, null));
+    final var model =
+        EntityModel.of(
+            new LogEntryResponse(
+                "it-log-001", null, null, null, null, null, null, null, null, null, null));
 
     when(service.findById("it-log-001")).thenReturn(Optional.of(entry));
     when(assembler.toModel(entry)).thenReturn(model);
