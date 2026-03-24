@@ -1,5 +1,6 @@
 import { Outlet, NavLink } from "react-router-dom"
 import { Separator } from "@/components/ui/separator"
+import { PageToolbar } from "@/components/PageToolbar"
 
 export function Layout() {
   return (
@@ -31,6 +32,7 @@ export function Layout() {
         </div>
       </header>
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">
+        <PageToolbar />
         <Outlet />
       </main>
     </div>

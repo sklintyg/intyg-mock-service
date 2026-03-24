@@ -239,7 +239,7 @@ export function CertificateDetailPage() {
           <ul className="space-y-2 text-sm">
             {messages.map((m) => (
               <li key={m.messageId}>
-                <Link to={`/messages/${m.messageId}`} className="flex flex-col gap-0.5 hover:bg-muted/50 rounded p-1 -m-1 transition-colors">
+                <Link to={`/messages/${m.messageId}`} state={{ certId: id }} className="flex flex-col gap-0.5 hover:bg-muted/50 rounded p-1 -m-1 transition-colors">
                   <span className="font-medium text-primary hover:underline">{m.subject ?? m.heading ?? "Message"}</span>
                   <span className="text-xs text-muted-foreground font-mono">{m.messageId}</span>
                   {m.sentTimestamp && (
@@ -286,7 +286,7 @@ export function CertificateDetailPage() {
           <ul className="space-y-2 text-sm">
             {logEntries.map((le) => (
               <li key={le.logId}>
-                <Link to={`/log-entries/${le.logId}`} className="flex flex-col gap-0.5 hover:bg-muted/50 rounded p-1 -m-1 transition-colors">
+                <Link to={`/log-entries/${le.logId}`} state={{ certId: id }} className="flex flex-col gap-0.5 hover:bg-muted/50 rounded p-1 -m-1 transition-colors">
                   <span className="font-medium text-primary hover:underline">{le.activityType ?? "Log Entry"}</span>
                   <span className="text-xs text-muted-foreground font-mono">{le.logId}</span>
                   {le.activityStart && (
