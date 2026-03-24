@@ -16,9 +16,9 @@ function formatDateTime(ts: string | null): string {
 
 function Field({ label, value, mono }: { label: string; value: string | null | undefined; mono?: boolean }) {
   return (
-    <div className="space-y-0.5">
-      <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>
-      <p className={mono ? "font-mono text-xs" : "text-sm"}>{value ?? "—"}</p>
+    <div className="space-y-1">
+      <p className="text-xs text-muted-foreground uppercase tracking-[0.05em]">{label}</p>
+      <p className={mono ? "font-mono text-xs" : "text-sm font-medium"}>{value ?? "—"}</p>
     </div>
   )
 }
@@ -31,9 +31,9 @@ export function MessageDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-40 w-full" />
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-48 w-full" />
       </div>
     )
   }
@@ -45,28 +45,30 @@ export function MessageDetailPage() {
   const xmlHref = hrefOptional(message, "xml")
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-muted-foreground mb-1">Message</p>
-          <h2 className="text-xl font-semibold">{message.subject ?? message.heading ?? "Message"}</h2>
+          <p className="text-xs text-muted-foreground uppercase tracking-[0.05em] mb-2">Message</p>
+          <h1 className="text-3xl font-bold text-foreground">{message.subject ?? message.heading ?? "Message"}</h1>
           <p className="font-mono text-sm text-muted-foreground mt-1">{message.messageId}</p>
         </div>
         {xmlHref && (
-          <a href={xmlHref} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline">
+          <a href={xmlHref} target="_blank" rel="noreferrer" className="text-xs text-primary hover:underline pt-2">
             View XML ↗
           </a>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[var(--surface-container)] rounded-2xl p-6">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.05em]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
               Message Details
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-sm space-y-3">
+          <CardContent className="text-sm space-y-4">
             <Field label="Message ID" value={message.messageId} mono />
             <Field label="Subject" value={message.subject} />
             <Field label="Heading" value={message.heading} />
@@ -77,29 +79,31 @@ export function MessageDetailPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.05em]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
               Sender &amp; References
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-sm space-y-3">
-            <div className="space-y-0.5">
-              <p className="text-xs text-muted-foreground uppercase tracking-wide">Certificate</p>
+          <CardContent className="text-sm space-y-4">
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground uppercase tracking-[0.05em]">Certificate</p>
               {message.certificateId ? (
                 <Link to={`/certificates/${message.certificateId}`} className="text-primary hover:underline font-mono text-xs">
                   {message.certificateId}
                 </Link>
               ) : (
-                <p className="text-sm">—</p>
+                <p className="text-sm font-medium">—</p>
               )}
             </div>
-            <div className="space-y-0.5">
-              <p className="text-xs text-muted-foreground uppercase tracking-wide">Patient</p>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground uppercase tracking-[0.05em]">Patient</p>
               {message.personId ? (
                 <Link to={`/patients/${message.personId}`} className="text-primary hover:underline font-mono text-xs">
                   {message.personId}
                 </Link>
               ) : (
-                <p className="text-sm">—</p>
+                <p className="text-sm font-medium">—</p>
               )}
             </div>
             <Field label="Sent by" value={message.sentByFullName} />
@@ -111,12 +115,14 @@ export function MessageDetailPage() {
       {message.body && (
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.05em]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
               Body
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm whitespace-pre-wrap">{message.body}</p>
+            <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.body}</p>
           </CardContent>
         </Card>
       )}

@@ -1,20 +1,26 @@
 import { Outlet, NavLink } from "react-router-dom"
-import { Separator } from "@/components/ui/separator"
 import { PageToolbar } from "@/components/PageToolbar"
 
 export function Layout() {
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="border-b bg-white sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-6">
-          <span className="font-semibold text-sm text-foreground">Intyg Mock Service</span>
-          <Separator orientation="vertical" className="h-5" />
-          <nav className="flex items-center gap-4">
+    <div className="min-h-screen flex flex-col bg-background">
+      <header
+        className="bg-[var(--surface-container-low)] sticky top-0 z-10"
+        style={{ boxShadow: "var(--shadow-ambient)" }}
+      >
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center gap-8">
+          <span
+            className="text-base font-bold text-foreground"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
+            Intyg Mock Service
+          </span>
+          <nav className="flex items-center gap-6">
             <NavLink
               to="/certificates"
               className={({ isActive }) =>
                 `text-sm transition-colors hover:text-foreground ${
-                  isActive ? "text-foreground font-medium" : "text-muted-foreground"
+                  isActive ? "text-foreground font-semibold" : "text-muted-foreground"
                 }`
               }
             >
@@ -31,7 +37,7 @@ export function Layout() {
           </nav>
         </div>
       </header>
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-6">
+      <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-10">
         <PageToolbar />
         <Outlet />
       </main>

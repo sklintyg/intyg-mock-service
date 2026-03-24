@@ -2,12 +2,22 @@ import type { ReactNode } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
+type RibbonColor = "primary" | "secondary" | "tertiary" | "destructive"
+
+const ribbonColors: Record<RibbonColor, string> = {
+  primary: "var(--primary)",
+  secondary: "var(--secondary)",
+  tertiary: "var(--tertiary)",
+  destructive: "var(--destructive)",
+}
+
 interface Props {
   title: string
   isLoading: boolean
   isError: boolean
   isEmpty?: boolean
   emptyMessage?: string
+  ribbonColor?: RibbonColor
   children: ReactNode
 }
 
@@ -17,12 +27,18 @@ export function RelatedResourceCard({
   isError,
   isEmpty,
   emptyMessage = "None",
+  ribbonColor = "tertiary",
   children,
 }: Props) {
   return (
-    <Card>
+    <Card
+      className="pl-0 overflow-hidden"
+      style={{ borderLeft: `4px solid ${ribbonColors[ribbonColor]}` }}
+    >
       <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+        <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.05em]"
+          style={{ fontFamily: "var(--font-display)" }}
+        >
           {title}
         </CardTitle>
       </CardHeader>

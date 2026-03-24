@@ -18,9 +18,9 @@ function formatDateTime(ts: string | null): string {
 
 function Field({ label, value }: { label: string; value: string | number | null | undefined }) {
   return (
-    <div className="space-y-0.5">
-      <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>
-      <p className="text-sm">{value != null ? String(value) : "—"}</p>
+    <div className="space-y-1">
+      <p className="text-xs text-muted-foreground uppercase tracking-[0.05em]">{label}</p>
+      <p className="text-sm font-medium">{value != null ? String(value) : "—"}</p>
     </div>
   )
 }
@@ -39,9 +39,9 @@ export function StatusUpdatesDetailPage() {
 
   if (query.isLoading) {
     return (
-      <div className="space-y-4">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-40 w-full" />
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-48 w-full" />
       </div>
     )
   }
@@ -53,31 +53,33 @@ export function StatusUpdatesDetailPage() {
   const updates = embedded<StatusUpdateResponse & HalResource>(query.data, "statusUpdateResponseList")
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <div>
-        <p className="text-sm text-muted-foreground mb-1">
+        <p className="text-xs text-muted-foreground uppercase tracking-[0.05em] mb-2">
           Certificate{" "}
           {certId && (
-            <Link to={`/certificates/${certId}`} className="text-primary hover:underline font-mono">
+            <Link to={`/certificates/${certId}`} className="text-primary hover:underline font-mono normal-case">
               {certId}
             </Link>
           )}
         </p>
-        <h2 className="text-xl font-semibold">Status Updates</h2>
+        <h1 className="text-3xl font-bold text-foreground">Status Updates</h1>
         <p className="text-sm text-muted-foreground mt-1">{updates.length} update{updates.length !== 1 ? "s" : ""}</p>
       </div>
 
       {updates.length === 0 ? (
-        <p className="text-muted-foreground text-sm">No status updates.</p>
+        <p className="text-muted-foreground text-sm py-12 text-center">No status updates.</p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-6">
           {updates.map((su, i) => {
             const xmlHref = hrefOptional(su, "xml")
             return (
               <Card key={i}>
                 <CardHeader className="pb-2">
                   <div className="flex items-start justify-between">
-                    <CardTitle className="text-base font-medium">
+                    <CardTitle className="text-base font-semibold"
+                      style={{ fontFamily: "var(--font-display)" }}
+                    >
                       {su.eventDisplayName ?? su.eventCode ?? `Update ${i + 1}`}
                     </CardTitle>
                     {xmlHref && (
@@ -92,9 +94,9 @@ export function StatusUpdatesDetailPage() {
                     )}
                   </div>
                 </CardHeader>
-                <CardContent className="text-sm grid grid-cols-2 md:grid-cols-3 gap-3">
+                <CardContent className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   <Field label="Event Code" value={su.eventCode} />
-                  <Field label="Event Display Name" value={su.eventDisplayName} />
+                  <Field label="Display Name" value={su.eventDisplayName} />
                   <Field label="Timestamp" value={formatDateTime(su.eventTimestamp)} />
                   <Field label="Questions Sent" value={su.questionsSentTotal} />
                   <Field label="Questions Received" value={su.questionsReceivedTotal} />

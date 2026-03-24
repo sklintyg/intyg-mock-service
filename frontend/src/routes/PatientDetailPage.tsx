@@ -21,8 +21,8 @@ export function PatientDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        <Skeleton className="h-8 w-48" />
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-48" />
         <Skeleton className="h-32 w-full" />
       </div>
     )
@@ -33,18 +33,20 @@ export function PatientDetailPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <div>
-        <p className="text-sm text-muted-foreground mb-1">Patient</p>
-        <h2 className="text-xl font-semibold">
+        <p className="text-xs text-muted-foreground uppercase tracking-[0.05em] mb-2">Patient</p>
+        <h1 className="text-3xl font-bold text-foreground">
           {[patient.firstName, patient.lastName].filter(Boolean).join(" ") || patient.personId}
-        </h2>
-        <p className="font-mono text-sm text-muted-foreground">{patient.personId}</p>
+        </h1>
+        <p className="font-mono text-sm text-muted-foreground mt-1">{patient.personId}</p>
       </div>
 
       <Card className="max-w-sm">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+          <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.05em]"
+            style={{ fontFamily: "var(--font-display)" }}
+          >
             Address
           </CardTitle>
         </CardHeader>
@@ -63,7 +65,7 @@ export function PatientDetailPage() {
       </Card>
 
       <div>
-        <h3 className="text-base font-medium mb-3">Certificates</h3>
+        <h2 className="text-lg font-semibold mb-6">Certificates</h2>
         <CertificateTable data={certsQuery.data} isLoading={certsQuery.isLoading} />
       </div>
     </div>

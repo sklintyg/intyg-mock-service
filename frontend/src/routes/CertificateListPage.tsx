@@ -19,11 +19,11 @@ export function CertificateListPage() {
     usePaginatedCollection<CertificateResponse>({ baseUrl })
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Certificates</h2>
+    <div className="space-y-8">
+      <div className="flex items-end justify-between">
+        <h1 className="text-3xl font-bold text-foreground">Certificates</h1>
         {data?.page && (
-          <span className="text-sm text-muted-foreground">
+          <span className="text-sm text-muted-foreground pb-1">
             {data.page.totalElements} total
           </span>
         )}
@@ -36,38 +36,40 @@ export function CertificateListPage() {
       <CertificateTable data={data} isLoading={isLoading} />
 
       {totalPages > 1 && (
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                onClick={() => hasPrev && goToPage(page - 1)}
-                aria-disabled={!hasPrev}
-                className={!hasPrev ? "pointer-events-none opacity-50" : "cursor-pointer"}
-              />
-            </PaginationItem>
-            {Array.from({ length: Math.min(totalPages, 7) }).map((_, i) => {
-              const p = totalPages <= 7 ? i : getPageNumber(i, page, totalPages)
-              return (
-                <PaginationItem key={p}>
-                  <PaginationLink
-                    isActive={p === page}
-                    onClick={() => goToPage(p)}
-                    className="cursor-pointer"
-                  >
-                    {p + 1}
-                  </PaginationLink>
-                </PaginationItem>
-              )
-            })}
-            <PaginationItem>
-              <PaginationNext
-                onClick={() => hasNext && goToPage(page + 1)}
-                aria-disabled={!hasNext}
-                className={!hasNext ? "pointer-events-none opacity-50" : "cursor-pointer"}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <div className="pt-2">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => hasPrev && goToPage(page - 1)}
+                  aria-disabled={!hasPrev}
+                  className={!hasPrev ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+              {Array.from({ length: Math.min(totalPages, 7) }).map((_, i) => {
+                const p = totalPages <= 7 ? i : getPageNumber(i, page, totalPages)
+                return (
+                  <PaginationItem key={p}>
+                    <PaginationLink
+                      isActive={p === page}
+                      onClick={() => goToPage(p)}
+                      className="cursor-pointer"
+                    >
+                      {p + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                )
+              })}
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => hasNext && goToPage(page + 1)}
+                  aria-disabled={!hasNext}
+                  className={!hasNext ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
       )}
     </div>
   )

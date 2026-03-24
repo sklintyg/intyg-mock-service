@@ -27,7 +27,7 @@ export function PageToolbar() {
   }
 
   return (
-    <div className="flex items-center justify-between mb-4">
+    <div className="flex items-center justify-between mb-8">
       <Breadcrumb>
         <BreadcrumbList>
           {crumbs.map((crumb, i) => {
@@ -35,7 +35,7 @@ export function PageToolbar() {
             return (
               <BreadcrumbItem key={i}>
                 {isLast ? (
-                  <BreadcrumbPage className="font-mono text-xs">{crumb.label}</BreadcrumbPage>
+                  <BreadcrumbPage className="font-mono text-xs text-muted-foreground">{crumb.label}</BreadcrumbPage>
                 ) : (
                   <BreadcrumbLink asChild>
                     <Link to={crumb.to!}>{crumb.label}</Link>

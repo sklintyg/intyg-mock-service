@@ -64,9 +64,9 @@ export function CertificateDetailPage() {
 
   if (isLoading) {
     return (
-      <div className="space-y-4">
-        <Skeleton className="h-8 w-64" />
-        <Skeleton className="h-40 w-full" />
+      <div className="space-y-6">
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-48 w-full" />
       </div>
     )
   }
@@ -95,17 +95,17 @@ export function CertificateDetailPage() {
   const staffId = cert.issuedBy?.staffId
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-muted-foreground mb-1">Certificate</p>
-          <h2 className="text-xl font-semibold font-mono">{cert.certificateId}</h2>
-          <p className="text-muted-foreground text-sm mt-1">
+          <p className="text-xs text-muted-foreground uppercase tracking-[0.05em] mb-2">Certificate</p>
+          <h1 className="text-3xl font-bold font-mono text-foreground">{cert.certificateId}</h1>
+          <p className="text-muted-foreground text-sm mt-2">
             {cert.certificateTypeDisplayName ?? cert.certificateType}
           </p>
         </div>
-        <div className="flex gap-2">
-          {cert.sentTimestamp && <Badge variant="secondary">Sent</Badge>}
+        <div className="flex items-center gap-3 pt-2">
+          {cert.sentTimestamp && <Badge variant="tertiary">Sent</Badge>}
           {xmlHref && (
             <a
               href={xmlHref}
@@ -119,17 +119,19 @@ export function CertificateDetailPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 bg-[var(--surface-container)] rounded-2xl p-6">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.05em]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
               Patient
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm space-y-1">
             {cert.patient ? (
               <>
-                <p className="font-medium">
+                <p className="font-semibold text-base">
                   {[cert.patient.firstName, cert.patient.lastName].filter(Boolean).join(" ") || "—"}
                 </p>
                 {patientPersonId && (
@@ -152,14 +154,16 @@ export function CertificateDetailPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.05em]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
               Issuer
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm space-y-1">
             {cert.issuedBy ? (
               <>
-                <p className="font-medium">{cert.issuedBy.fullName ?? "—"}</p>
+                <p className="font-semibold text-base">{cert.issuedBy.fullName ?? "—"}</p>
                 {staffId && (
                   <Link to={`/staff/${staffId}`} className="text-primary hover:underline text-xs font-mono">
                     {staffId}
@@ -177,14 +181,16 @@ export function CertificateDetailPage() {
 
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wide">
+            <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-[0.05em]"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
               Unit
             </CardTitle>
           </CardHeader>
           <CardContent className="text-sm space-y-1">
             {cert.issuedBy?.unit ? (
               <>
-                <p className="font-medium">{cert.issuedBy.unit.unitName}</p>
+                <p className="font-semibold text-base">{cert.issuedBy.unit.unitName}</p>
                 {unitId && (
                   <Link to={`/units/${unitId}`} className="text-primary hover:underline text-xs font-mono">
                     {unitId}
@@ -203,44 +209,45 @@ export function CertificateDetailPage() {
         </Card>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="space-y-1 text-sm">
-          <p className="text-muted-foreground text-xs uppercase tracking-wide">Signing time</p>
-          <p>{formatDateTime(cert.signingTimestamp)}</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground uppercase tracking-[0.05em]">Signing time</p>
+          <p className="text-sm font-medium">{formatDateTime(cert.signingTimestamp)}</p>
         </div>
         {cert.sentTimestamp && (
-          <div className="space-y-1 text-sm">
-            <p className="text-muted-foreground text-xs uppercase tracking-wide">Sent time</p>
-            <p>{formatDateTime(cert.sentTimestamp)}</p>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground uppercase tracking-[0.05em]">Sent time</p>
+            <p className="text-sm font-medium">{formatDateTime(cert.sentTimestamp)}</p>
           </div>
         )}
         {cert.version && (
-          <div className="space-y-1 text-sm">
-            <p className="text-muted-foreground text-xs uppercase tracking-wide">Version</p>
-            <p>{cert.version}</p>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground uppercase tracking-[0.05em]">Version</p>
+            <p className="text-sm font-medium">{cert.version}</p>
           </div>
         )}
         {cert.logicalAddress && (
-          <div className="space-y-1 text-sm">
-            <p className="text-muted-foreground text-xs uppercase tracking-wide">Logical address</p>
+          <div className="space-y-1">
+            <p className="text-xs text-muted-foreground uppercase tracking-[0.05em]">Logical address</p>
             <p className="font-mono text-xs">{cert.logicalAddress}</p>
           </div>
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <RelatedResourceCard
           title="Messages"
           isLoading={messagesQuery.isLoading}
           isError={messagesQuery.isError}
           isEmpty={messages.length === 0}
           emptyMessage="No messages"
+          ribbonColor="tertiary"
         >
-          <ul className="space-y-2 text-sm">
+          <ul className="space-y-3 text-sm">
             {messages.map((m) => (
               <li key={m.messageId}>
-                <Link to={`/messages/${m.messageId}`} state={{ certId: id }} className="flex flex-col gap-0.5 hover:bg-muted/50 rounded p-1 -m-1 transition-colors">
-                  <span className="font-medium text-primary hover:underline">{m.subject ?? m.heading ?? "Message"}</span>
+                <Link to={`/messages/${m.messageId}`} state={{ certId: id }} className="flex flex-col gap-0.5 hover:bg-[var(--surface-container)] rounded-lg p-2 -m-2 transition-colors">
+                  <span className="font-semibold text-primary hover:underline">{m.subject ?? m.heading ?? "Message"}</span>
                   <span className="text-xs text-muted-foreground font-mono">{m.messageId}</span>
                   {m.sentTimestamp && (
                     <span className="text-xs text-muted-foreground">
@@ -259,12 +266,13 @@ export function CertificateDetailPage() {
           isError={statusUpdatesQuery.isError}
           isEmpty={statusUpdates.length === 0}
           emptyMessage="No status updates"
+          ribbonColor="secondary"
         >
-          <ul className="space-y-2 text-sm">
+          <ul className="space-y-3 text-sm">
             {statusUpdates.map((su, i) => (
               <li key={i}>
-                <Link to={`/certificates/${id}/status-updates`} className="flex flex-col gap-0.5 hover:bg-muted/50 rounded p-1 -m-1 transition-colors">
-                  <span className="font-medium text-primary hover:underline">{su.eventDisplayName ?? su.eventCode ?? "Update"}</span>
+                <Link to={`/certificates/${id}/status-updates`} className="flex flex-col gap-0.5 hover:bg-[var(--surface-container)] rounded-lg p-2 -m-2 transition-colors">
+                  <span className="font-semibold text-primary hover:underline">{su.eventDisplayName ?? su.eventCode ?? "Update"}</span>
                   {su.eventTimestamp && (
                     <span className="text-xs text-muted-foreground">
                       {formatDateTime(su.eventTimestamp)}
@@ -282,12 +290,13 @@ export function CertificateDetailPage() {
           isError={logEntriesQuery.isError}
           isEmpty={logEntries.length === 0}
           emptyMessage="No log entries"
+          ribbonColor="tertiary"
         >
-          <ul className="space-y-2 text-sm">
+          <ul className="space-y-3 text-sm">
             {logEntries.map((le) => (
               <li key={le.logId}>
-                <Link to={`/log-entries/${le.logId}`} state={{ certId: id }} className="flex flex-col gap-0.5 hover:bg-muted/50 rounded p-1 -m-1 transition-colors">
-                  <span className="font-medium text-primary hover:underline">{le.activityType ?? "Log Entry"}</span>
+                <Link to={`/log-entries/${le.logId}`} state={{ certId: id }} className="flex flex-col gap-0.5 hover:bg-[var(--surface-container)] rounded-lg p-2 -m-2 transition-colors">
+                  <span className="font-semibold text-primary hover:underline">{le.activityType ?? "Log Entry"}</span>
                   <span className="text-xs text-muted-foreground font-mono">{le.logId}</span>
                   {le.activityStart && (
                     <span className="text-xs text-muted-foreground">
@@ -306,11 +315,12 @@ export function CertificateDetailPage() {
           isError={revocationQuery.isError && !revocationNotFound}
           isEmpty={!revocation && revocationNotFound}
           emptyMessage="Not revoked"
+          ribbonColor={revocation ? "destructive" : "tertiary"}
         >
           {revocation && (
-            <Link to={`/certificates/${id}/revocation`} className="block hover:bg-muted/50 rounded p-1 -m-1 transition-colors">
+            <Link to={`/certificates/${id}/revocation`} className="block hover:bg-[var(--surface-container)] rounded-lg p-2 -m-2 transition-colors">
               <div className="text-sm space-y-1">
-                <p className="font-medium text-destructive hover:underline">Revoked</p>
+                <p className="font-bold text-destructive hover:underline">Revoked</p>
                 {revocation.revokedAt && (
                   <p className="text-xs text-muted-foreground">
                     {formatDateTime(revocation.revokedAt)}
