@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import se.inera.intyg.intygmockservice.application.revokecertificate.converter.RevokeCertificateConverter;
 import se.inera.intyg.intygmockservice.application.revokecertificate.dto.RevokeCertificateDTO;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Revocation;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.RevocationNavigationRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
@@ -45,16 +46,12 @@ public class RevocationNavigationRepositoryImpl implements RevocationNavigationR
         .certificateId(dto.getIntygsId() != null ? dto.getIntygsId().getExtension() : null)
         .personId(
             dto.getPatientPersonId() != null
-                ? normalize(dto.getPatientPersonId().getExtension())
+                ? PersonId.of(dto.getPatientPersonId().getExtension()).normalized()
                 : null)
         .revokedAt(dto.getSkickatTidpunkt())
         .reason(dto.getMeddelande())
         .revokedByStaffId(staffId)
         .revokedByFullName(staffName)
         .build();
-  }
-
-  private static String normalize(final String personId) {
-    return personId == null ? null : personId.replace("-", "");
   }
 }

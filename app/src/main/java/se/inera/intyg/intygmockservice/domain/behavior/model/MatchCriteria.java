@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 
 @Value
 @Builder
@@ -44,7 +45,7 @@ public class MatchCriteria {
     if (contextPersonId == null) {
       return false;
     }
-    return personId.replace("-", "").equals(contextPersonId.replace("-", ""));
+    return PersonId.of(personId).matchesIgnoringHyphens(PersonId.of(contextPersonId));
   }
 
   @JsonPOJOBuilder(withPrefix = "")

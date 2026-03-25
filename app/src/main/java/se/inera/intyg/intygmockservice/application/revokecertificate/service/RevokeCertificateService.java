@@ -13,6 +13,7 @@ import se.inera.intyg.intygmockservice.application.revokecertificate.converter.R
 import se.inera.intyg.intygmockservice.application.revokecertificate.dto.RevokeCertificateDTO;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RevokeCertificatePassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
@@ -100,8 +101,9 @@ public class RevokeCertificateService {
   }
 
   public List<RevokeCertificateDTO> getByPersonId(final String personId) {
-    final var normalized = normalizePersonId(personId);
-    return repository.findByPersonId(normalized).stream().map(converter::convert).toList();
+    return repository.findByPersonId(PersonId.of(personId).normalized()).stream()
+        .map(converter::convert)
+        .toList();
   }
 
   public int getCount() {
@@ -114,10 +116,6 @@ public class RevokeCertificateService {
 
   public void deleteById(final String certificateId) {
     repository.deleteById(certificateId);
-  }
-
-  private static String normalizePersonId(final String personId) {
-    return personId == null ? null : personId.replace("-", "");
   }
 
   private String marshalToXml(final RevokeCertificateType type) {

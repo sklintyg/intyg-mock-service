@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import se.inera.intyg.intygmockservice.application.statusupdates.converter.CertificateStatusUpdateForCareConverter;
 import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.model.StatusUpdate;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.StatusUpdateNavigationRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.CertificateStatusUpdateForCareRepository;
@@ -51,7 +52,7 @@ public class StatusUpdateNavigationRepositoryImpl implements StatusUpdateNavigat
         intyg != null && intyg.getIntygsId() != null ? intyg.getIntygsId().getExtension() : null;
     final var personId =
         intyg != null && intyg.getPatient() != null && intyg.getPatient().getPersonId() != null
-            ? normalize(intyg.getPatient().getPersonId().getExtension())
+            ? PersonId.of(intyg.getPatient().getPersonId().getExtension()).normalized()
             : null;
     final var eventCode =
         handelse != null && handelse.getHandelsekod() != null
@@ -87,9 +88,5 @@ public class StatusUpdateNavigationRepositoryImpl implements StatusUpdateNavigat
     } catch (DateTimeParseException e) {
       return OffsetDateTime.parse(tidpunkt).toLocalDateTime();
     }
-  }
-
-  private static String normalize(final String personId) {
-    return personId == null ? null : personId.replace("-", "");
   }
 }

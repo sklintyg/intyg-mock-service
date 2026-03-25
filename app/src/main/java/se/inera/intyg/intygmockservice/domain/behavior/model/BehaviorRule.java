@@ -68,6 +68,9 @@ public class BehaviorRule {
   }
 
   public Optional<EvaluationResult> evaluate(MatchContext context) {
+    if (eventLogger == null) {
+      throw new IllegalStateException("BehaviorRule must be wired before evaluation");
+    }
     if (hasDelay()) {
       delayApplier.apply(delayMillis);
       eventLogger.logDelayApplied(serviceName, context.getCertificateId(), this);

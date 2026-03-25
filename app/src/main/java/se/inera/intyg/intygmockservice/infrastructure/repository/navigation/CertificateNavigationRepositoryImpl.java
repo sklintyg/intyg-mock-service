@@ -10,6 +10,7 @@ import se.inera.intyg.intygmockservice.application.registercertificate.converter
 import se.inera.intyg.intygmockservice.domain.navigation.model.CareProvider;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Staff;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Unit;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.CertificateNavigationRepository;
@@ -91,7 +92,7 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
         .forEach(
             r -> {
               final var certId = r.getIntygsId().getExtension();
-              final var personId = normalize(r.getPatientPersonId().getExtension());
+              final var personId = PersonId.of(r.getPatientPersonId().getExtension()).normalized();
               map.put(
                   certId,
                   Certificate.builder()
@@ -106,7 +107,7 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
         .forEach(
             m -> {
               final var certId = m.getIntygsId().getExtension();
-              final var personId = normalize(m.getPatientPersonId().getExtension());
+              final var personId = PersonId.of(m.getPatientPersonId().getExtension()).normalized();
               map.put(
                   certId,
                   Certificate.builder()
@@ -122,7 +123,7 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
             s -> {
               final var certId = s.getIntyg().getIntygsId().getExtension();
               final var personId =
-                  normalize(s.getIntyg().getPatient().getPersonId().getExtension());
+                  PersonId.of(s.getIntyg().getPatient().getPersonId().getExtension()).normalized();
               map.put(
                   certId,
                   Certificate.builder()
@@ -148,7 +149,10 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
                       ? log.getResources().getResource().stream()
                           .filter(r -> r.getPatient() != null)
                           .findFirst()
-                          .map(r -> normalize(r.getPatient().getPatientId().getExtension()))
+                          .map(
+                              r ->
+                                  PersonId.of(r.getPatient().getPatientId().getExtension())
+                                      .normalized())
                           .orElse(null)
                       : null;
               map.put(
@@ -186,7 +190,10 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
       return null;
     }
     return Patient.builder()
-        .personId(dto.getPersonId() != null ? normalize(dto.getPersonId().getExtension()) : null)
+        .personId(
+            dto.getPersonId() != null
+                ? PersonId.of(dto.getPersonId().getExtension()).normalized()
+                : null)
         .firstName(dto.getFornamn())
         .lastName(dto.getEfternamn())
         .streetAddress(dto.getPostadress())
@@ -236,9 +243,5 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
         .careProviderId(dto.getVardgivareId() != null ? dto.getVardgivareId().getExtension() : null)
         .careProviderName(dto.getVardgivarnamn())
         .build();
-  }
-
-  private static String normalize(final String personId) {
-    return personId == null ? null : personId.replace("-", "");
   }
 }

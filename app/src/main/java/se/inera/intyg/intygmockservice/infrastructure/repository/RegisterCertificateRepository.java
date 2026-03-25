@@ -3,6 +3,7 @@ package se.inera.intyg.intygmockservice.infrastructure.repository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.config.properties.AppProperties;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 
@@ -29,15 +30,12 @@ public class RegisterCertificateRepository
         .filter(
             t ->
                 normalizedPersonId.equals(
-                    normalize(t.getIntyg().getPatient().getPersonId().getExtension())))
+                    PersonId.of(t.getIntyg().getPatient().getPersonId().getExtension())
+                        .normalized()))
         .toList();
   }
 
   public void deleteById(final String certificateId) {
     removeIf(t -> certificateId.equals(t.getIntyg().getIntygsId().getExtension()));
-  }
-
-  private static String normalize(final String personId) {
-    return personId == null ? null : personId.replace("-", "");
   }
 }

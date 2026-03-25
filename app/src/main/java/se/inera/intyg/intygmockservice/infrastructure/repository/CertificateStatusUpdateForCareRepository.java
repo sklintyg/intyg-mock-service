@@ -2,6 +2,7 @@ package se.inera.intyg.intygmockservice.infrastructure.repository;
 
 import java.util.List;
 import org.springframework.stereotype.Repository;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.config.properties.AppProperties;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
 
@@ -29,7 +30,8 @@ public class CertificateStatusUpdateForCareRepository
         .filter(
             t ->
                 normalizedPersonId.equals(
-                    normalize(t.getIntyg().getPatient().getPersonId().getExtension())))
+                    PersonId.of(t.getIntyg().getPatient().getPersonId().getExtension())
+                        .normalized()))
         .toList();
   }
 
@@ -41,9 +43,5 @@ public class CertificateStatusUpdateForCareRepository
 
   public void deleteByCertificateId(final String certificateId) {
     removeIf(t -> certificateId.equals(t.getIntyg().getIntygsId().getExtension()));
-  }
-
-  private static String normalize(final String personId) {
-    return personId == null ? null : personId.replace("-", "");
   }
 }
