@@ -1,7 +1,5 @@
 package se.inera.intyg.intygmockservice.domain.behavior.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,7 +10,6 @@ import se.inera.intyg.intygmockservice.domain.behavior.service.DelayApplier;
 
 @Getter
 @Builder(toBuilder = true)
-@JsonDeserialize(builder = BehaviorRule.BehaviorRuleBuilder.class)
 public class BehaviorRule {
   private final UUID id;
   private final ServiceName serviceName;
@@ -94,7 +91,4 @@ public class BehaviorRule {
 
     return Optional.empty();
   }
-
-  @JsonPOJOBuilder(withPrefix = "")
-  public static final class BehaviorRuleBuilder {}
 }

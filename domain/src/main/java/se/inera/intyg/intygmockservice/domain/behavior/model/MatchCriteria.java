@@ -1,14 +1,11 @@
 package se.inera.intyg.intygmockservice.domain.behavior.model;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import lombok.Builder;
 import lombok.Value;
 import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 
 @Value
 @Builder
-@JsonDeserialize(builder = MatchCriteria.MatchCriteriaBuilder.class)
 public class MatchCriteria {
   String logicalAddress;
   String certificateId;
@@ -47,7 +44,4 @@ public class MatchCriteria {
     }
     return PersonId.of(personId).matchesIgnoringHyphens(PersonId.of(contextPersonId));
   }
-
-  @JsonPOJOBuilder(withPrefix = "")
-  public static final class MatchCriteriaBuilder {}
 }
