@@ -2,7 +2,6 @@ package se.inera.intyg.intygmockservice.infrastructure.delay;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.domain.behavior.service.DelayApplier;
 
 @Component
 @Slf4j

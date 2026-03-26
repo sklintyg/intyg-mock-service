@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
-import se.inera.intyg.intygmockservice.domain.behavior.service.BehaviorEventLogger;
-import se.inera.intyg.intygmockservice.domain.behavior.service.DelayApplier;
+import se.inera.intyg.intygmockservice.infrastructure.delay.DelayApplier;
+import se.inera.intyg.intygmockservice.infrastructure.logging.BehaviorEventLogger;
 
 @Repository
 @RequiredArgsConstructor
@@ -47,7 +47,19 @@ public class BehaviorRuleRepository {
                 .thenComparing(BehaviorRule::getCreatedAt))
         .map(
             rule -> {
-              rule.wire(delayApplier, eventLogger, () -> delete(rule.getId()));
+              rule.wire(
+                  evaluation -> {
+                    if (evaluation.delayRequested()) {
+                      delayApplier.apply(evaluation.delayMillis());
+                      eventLogger.logDelayApplied(evaluation);
+                    }
+                    if (evaluation.exhausted()) {
+                      delete(evaluation.ruleId());
+                    }
+                    if (evaluation.errorResult().isPresent()) {
+                      eventLogger.logErrorSkipped(evaluation);
+                    }
+                  });
               return rule;
             });
   }

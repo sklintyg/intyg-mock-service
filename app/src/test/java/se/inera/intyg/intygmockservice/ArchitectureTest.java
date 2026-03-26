@@ -162,7 +162,18 @@ class ArchitectureTest {
           .should()
           .resideInAPackage("..application..");
 
-  // F. Concrete repositories must extend AbstractInMemoryRepository, except
+  // F. domain.behavior.model must not re-introduce dependencies on domain.behavior.service.
+
+  @ArchTest
+  static final ArchRule domain_behavior_model_must_not_depend_on_domain_behavior_service =
+      noClasses()
+          .that()
+          .resideInAPackage("..domain.behavior.model..")
+          .should()
+          .dependOnClassesThat()
+          .resideInAPackage("..domain.behavior.service..");
+
+  // G. Concrete repositories must extend AbstractInMemoryRepository, except
   // BehaviorRuleRepository which uses ConcurrentHashMap directly.
 
   @ArchTest

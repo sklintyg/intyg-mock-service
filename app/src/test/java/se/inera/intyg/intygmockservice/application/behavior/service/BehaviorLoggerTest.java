@@ -1,9 +1,10 @@
 package se.inera.intyg.intygmockservice.application.behavior.service;
 
-import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.RuleEvaluation;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.logging.BehaviorLogger;
 
@@ -11,39 +12,37 @@ class BehaviorLoggerTest {
 
   private final BehaviorLogger logger = new BehaviorLogger();
 
-  private BehaviorRule errorRule() {
-    return BehaviorRule.builder()
-        .id(UUID.fromString("550e8400-e29b-41d4-a716-446655440000"))
-        .serviceName(ServiceName.REGISTER_CERTIFICATE)
-        .resultCode("ERROR")
-        .errorId("VALIDATION_ERROR")
-        .triggerCount(0)
-        .createdAt(Instant.now())
-        .build();
+  private final UUID ruleId = UUID.fromString("550e8400-e29b-41d4-a716-446655440000");
+
+  private RuleEvaluation errorEvaluation(String certificateId) {
+    return new RuleEvaluation(
+        ruleId,
+        ServiceName.REGISTER_CERTIFICATE,
+        certificateId,
+        Optional.of(
+            EvaluationResult.builder().resultCode("ERROR").errorId("VALIDATION_ERROR").build()),
+        false,
+        null,
+        false);
   }
 
-  private BehaviorRule delayRule() {
-    return BehaviorRule.builder()
-        .id(UUID.fromString("550e8400-e29b-41d4-a716-446655440001"))
-        .serviceName(ServiceName.REGISTER_CERTIFICATE)
-        .delayMillis(100L)
-        .triggerCount(0)
-        .createdAt(Instant.now())
-        .build();
+  private RuleEvaluation delayEvaluation() {
+    return new RuleEvaluation(
+        ruleId, ServiceName.REGISTER_CERTIFICATE, "abc-123", Optional.empty(), true, 100L, false);
   }
 
   @Test
   void shouldLogErrorSkippedWithoutException() {
-    logger.logErrorSkipped(ServiceName.REGISTER_CERTIFICATE, "abc-123", errorRule());
+    logger.logErrorSkipped(errorEvaluation("abc-123"));
   }
 
   @Test
   void shouldLogDelayAppliedWithoutException() {
-    logger.logDelayApplied(ServiceName.REGISTER_CERTIFICATE, "abc-123", delayRule());
+    logger.logDelayApplied(delayEvaluation());
   }
 
   @Test
   void shouldLogErrorSkippedWithNullCertificateId() {
-    logger.logErrorSkipped(ServiceName.REGISTER_CERTIFICATE, null, errorRule());
+    logger.logErrorSkipped(errorEvaluation(null));
   }
 }

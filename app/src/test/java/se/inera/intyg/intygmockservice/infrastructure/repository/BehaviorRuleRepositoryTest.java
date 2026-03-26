@@ -16,8 +16,8 @@ import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MatchCriteria;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
-import se.inera.intyg.intygmockservice.domain.behavior.service.BehaviorEventLogger;
-import se.inera.intyg.intygmockservice.domain.behavior.service.DelayApplier;
+import se.inera.intyg.intygmockservice.infrastructure.delay.DelayApplier;
+import se.inera.intyg.intygmockservice.infrastructure.logging.BehaviorEventLogger;
 
 @ExtendWith(MockitoExtension.class)
 class BehaviorRuleRepositoryTest {
@@ -218,7 +218,7 @@ class BehaviorRuleRepositoryTest {
   }
 
   @Test
-  void shouldDeleteExhaustedRuleViaOnExhaustedCallback() {
+  void shouldDeleteExhaustedRuleWhenHandlerFires() {
     final var rule =
         BehaviorRule.builder()
             .id(UUID.randomUUID())

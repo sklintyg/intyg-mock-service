@@ -77,7 +77,7 @@ Prerequisites: none
 
 ---
 
-### DDD-02 — Decouple BehaviorRule from infrastructure collaborators
+### ~~DDD-02 — Decouple BehaviorRule from infrastructure collaborators~~ ✓ Done
 
 **Finding:** A-1 (High) + A-3 (Medium) + L-1 (Medium) — `BehaviorRule` holds `DelayApplier`,
 `BehaviorEventLogger`, and `Runnable onExhausted` as fields wired post-construction via `wire()`.

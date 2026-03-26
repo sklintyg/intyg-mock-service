@@ -5,8 +5,6 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.Builder;
 import lombok.Getter;
-import se.inera.intyg.intygmockservice.domain.behavior.service.BehaviorEventLogger;
-import se.inera.intyg.intygmockservice.domain.behavior.service.DelayApplier;
 
 @Getter
 @Builder(toBuilder = true)
@@ -28,9 +26,7 @@ public class BehaviorRule {
           maxTriggerCount,
           triggerCount,
           createdAt,
-          delayApplier,
-          eventLogger,
-          onExhausted);
+          effectHandler);
     }
   }
 
@@ -45,15 +41,10 @@ public class BehaviorRule {
   private int triggerCount;
   private final Instant createdAt;
 
-  private DelayApplier delayApplier;
-  private BehaviorEventLogger eventLogger;
-  private Runnable onExhausted;
+  private RuleEffectHandler effectHandler;
 
-  public void wire(
-      DelayApplier delayApplier, BehaviorEventLogger eventLogger, Runnable onExhausted) {
-    this.delayApplier = delayApplier;
-    this.eventLogger = eventLogger;
-    this.onExhausted = onExhausted;
+  public void wire(RuleEffectHandler handler) {
+    this.effectHandler = handler;
   }
 
   public boolean matches(MatchContext context) {
@@ -88,30 +79,30 @@ public class BehaviorRule {
   }
 
   public Optional<EvaluationResult> evaluate(MatchContext context) {
-    if (eventLogger == null) {
+    if (effectHandler == null) {
       throw new IllegalStateException("BehaviorRule must be wired before evaluation");
     }
-    if (hasDelay()) {
-      delayApplier.apply(delayMillis);
-      eventLogger.logDelayApplied(serviceName, context.getCertificateId(), this);
-    }
-
+    final var delayRequested = hasDelay();
     trigger();
-
-    if (isExhausted() && onExhausted != null) {
-      onExhausted.run();
-    }
-
-    if (hasErrorEffect()) {
-      eventLogger.logErrorSkipped(serviceName, context.getCertificateId(), this);
-      return Optional.of(
-          EvaluationResult.builder()
-              .resultCode(resultCode)
-              .errorId(errorId)
-              .resultText(resultText)
-              .build());
-    }
-
-    return Optional.empty();
+    final var exhausted = isExhausted();
+    final var errorResult =
+        hasErrorEffect()
+            ? Optional.of(
+                EvaluationResult.builder()
+                    .resultCode(resultCode)
+                    .errorId(errorId)
+                    .resultText(resultText)
+                    .build())
+            : Optional.<EvaluationResult>empty();
+    effectHandler.handle(
+        new RuleEvaluation(
+            id,
+            serviceName,
+            context.getCertificateId(),
+            errorResult,
+            delayRequested,
+            delayMillis,
+            exhausted));
+    return errorResult;
   }
 }

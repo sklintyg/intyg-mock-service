@@ -4,8 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.never;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 
 import java.time.Instant;
@@ -14,15 +13,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygmockservice.domain.behavior.service.BehaviorEventLogger;
-import se.inera.intyg.intygmockservice.domain.behavior.service.DelayApplier;
 
 @ExtendWith(MockitoExtension.class)
 class BehaviorRuleTest {
 
-  @Mock private DelayApplier delayApplier;
-  @Mock private BehaviorEventLogger eventLogger;
-  @Mock private Runnable onExhausted;
+  @Mock private RuleEffectHandler effectHandler;
 
   private final MatchContext context =
       MatchContext.builder().logicalAddress("addr").certificateId("cert-1").build();
@@ -140,38 +135,16 @@ class BehaviorRuleTest {
   @Test
   void evaluateReturnsEmptyForDelayOnlyRule() {
     final var rule = baseRule().delayMillis(50L).build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
+    rule.wire(effectHandler);
 
-    final var result = rule.evaluate(context);
-
-    assertTrue(result.isEmpty());
-  }
-
-  @Test
-  void evaluateAppliesDelayWhenRuleHasDelay() {
-    final var rule = baseRule().delayMillis(50L).build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
-
-    rule.evaluate(context);
-
-    verify(delayApplier).apply(50L);
-  }
-
-  @Test
-  void evaluateDoesNotApplyDelayWhenNoDelay() {
-    final var rule = baseRule().resultCode("ERROR").build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
-
-    rule.evaluate(context);
-
-    verify(delayApplier, never()).apply(anyLong());
+    assertTrue(rule.evaluate(context).isEmpty());
   }
 
   @Test
   void evaluateReturnsResultForErrorRule() {
     final var rule =
         baseRule().resultCode("ERROR").errorId("VALIDATION_ERROR").resultText("msg").build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
+    rule.wire(effectHandler);
 
     final var result = rule.evaluate(context);
 
@@ -184,7 +157,7 @@ class BehaviorRuleTest {
   @Test
   void evaluateIncrementsTriggerCount() {
     final var rule = baseRule().build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
+    rule.wire(effectHandler);
 
     rule.evaluate(context);
 
@@ -192,42 +165,40 @@ class BehaviorRuleTest {
   }
 
   @Test
-  void evaluateLogsDelayApplied() {
-    final var rule = baseRule().delayMillis(100L).build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
+  void evaluateCallsHandlerWithDelayRequestedWhenRuleHasDelay() {
+    final var rule = baseRule().delayMillis(50L).build();
+    rule.wire(effectHandler);
 
     rule.evaluate(context);
 
-    verify(eventLogger).logDelayApplied(ServiceName.REGISTER_CERTIFICATE, "cert-1", rule);
+    verify(effectHandler).handle(argThat(e -> e.delayRequested() && e.delayMillis() == 50L));
   }
 
   @Test
-  void evaluateLogsErrorSkipped() {
-    final var rule = baseRule().resultCode("ERROR").build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
-
-    rule.evaluate(context);
-
-    verify(eventLogger).logErrorSkipped(ServiceName.REGISTER_CERTIFICATE, "cert-1", rule);
-  }
-
-  @Test
-  void evaluateFiresOnExhaustedCallbackWhenExhausted() {
+  void evaluateCallsHandlerWithExhaustedTrueWhenExhausted() {
     final var rule = baseRule().resultCode("ERROR").maxTriggerCount(1).build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
+    rule.wire(effectHandler);
 
     rule.evaluate(context);
 
-    verify(onExhausted).run();
+    verify(effectHandler).handle(argThat(RuleEvaluation::exhausted));
   }
 
   @Test
-  void evaluateDoesNotFireOnExhaustedCallbackWhenNotExhausted() {
+  void evaluateCallsHandlerWithExhaustedFalseWhenNotExhausted() {
     final var rule = baseRule().resultCode("ERROR").maxTriggerCount(2).build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
+    rule.wire(effectHandler);
 
     rule.evaluate(context);
 
-    verify(onExhausted, never()).run();
+    verify(effectHandler).handle(argThat(e -> !e.exhausted()));
+  }
+
+  @Test
+  void evaluateThrowsWhenNotWired() {
+    final var rule = baseRule().build();
+
+    final var exception = assertThrows(IllegalStateException.class, () -> rule.evaluate(context));
+    assertTrue(exception.getMessage().contains("wired before evaluation"));
   }
 }

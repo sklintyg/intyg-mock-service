@@ -2,9 +2,8 @@ package se.inera.intyg.intygmockservice.domain.behavior.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.never;
+import static org.mockito.ArgumentCaptor.forClass;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -14,19 +13,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygmockservice.domain.behavior.service.BehaviorEventLogger;
-import se.inera.intyg.intygmockservice.domain.behavior.service.DelayApplier;
 
 @ExtendWith(MockitoExtension.class)
 class BehaviorRuleEvaluationTest {
 
-  @Mock private DelayApplier delayApplier;
-  @Mock private BehaviorEventLogger eventLogger;
-  @Mock private Runnable onExhausted;
-
-  @Mock private DelayApplier secondDelayApplier;
-  @Mock private BehaviorEventLogger secondEventLogger;
-  @Mock private Runnable secondOnExhausted;
+  @Mock private RuleEffectHandler effectHandler;
+  @Mock private RuleEffectHandler secondEffectHandler;
 
   private final MatchContext context =
       MatchContext.builder().logicalAddress("addr").certificateId("cert-1").build();
@@ -40,48 +32,122 @@ class BehaviorRuleEvaluationTest {
   }
 
   @Test
-  void evaluatingUnwiredRuleWithDelayRejectsWithClearMessage() {
+  void delayOnlyRulePassesDelayRequestedAndNoErrorResult() {
     final var rule = baseRule().delayMillis(100L).build();
+    rule.wire(effectHandler);
 
-    final var exception = assertThrows(IllegalStateException.class, () -> rule.evaluate(context));
-    assertTrue(exception.getMessage().contains("wired before evaluation"));
+    rule.evaluate(context);
+
+    final var captor = forClass(RuleEvaluation.class);
+    verify(effectHandler).handle(captor.capture());
+    final var evaluation = captor.getValue();
+    assertTrue(evaluation.delayRequested());
+    assertEquals(100L, evaluation.delayMillis());
+    assertTrue(evaluation.errorResult().isEmpty());
   }
 
   @Test
-  void evaluatingUnwiredRuleWithErrorEffectRejectsWithClearMessage() {
-    final var rule = baseRule().resultCode("ERROR").build();
-
-    final var exception = assertThrows(IllegalStateException.class, () -> rule.evaluate(context));
-    assertTrue(exception.getMessage().contains("wired before evaluation"));
-  }
-
-  @Test
-  void buildingRuleWithBothResultCodeAndErrorIdSucceeds() {
+  void errorOnlyRulePassesErrorResultAndNoDelay() {
     final var rule = baseRule().resultCode("ERROR").errorId("VALIDATION_ERROR").build();
-    assertTrue(rule.hasErrorEffect());
+    rule.wire(effectHandler);
+
+    rule.evaluate(context);
+
+    final var captor = forClass(RuleEvaluation.class);
+    verify(effectHandler).handle(captor.capture());
+    final var evaluation = captor.getValue();
+    assertFalse(evaluation.delayRequested());
+    assertTrue(evaluation.errorResult().isPresent());
+    assertEquals("ERROR", evaluation.errorResult().get().getResultCode());
   }
 
   @Test
-  void ruleWithDelayAndErrorAppliesBothEffects() {
+  void combinedRulePassesBothDelayAndError() {
     final var rule = baseRule().delayMillis(50L).resultCode("ERROR").build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
+    rule.wire(effectHandler);
 
-    final var result = rule.evaluate(context);
+    rule.evaluate(context);
 
-    verify(delayApplier).apply(50L);
-    assertTrue(result.isPresent());
+    final var captor = forClass(RuleEvaluation.class);
+    verify(effectHandler).handle(captor.capture());
+    final var evaluation = captor.getValue();
+    assertTrue(evaluation.delayRequested());
+    assertTrue(evaluation.errorResult().isPresent());
   }
 
   @Test
-  void ruleWithNoEffectsStillIncrementsTriggerCount() {
+  void noEffectRulePassesNoDelayNoErrorNotExhausted() {
     final var rule = baseRule().build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
+    rule.wire(effectHandler);
 
-    final var result = rule.evaluate(context);
+    rule.evaluate(context);
 
-    assertEquals(1, rule.getTriggerCount());
-    assertFalse(result.isPresent());
-    verify(delayApplier, never()).apply(50L);
+    final var captor = forClass(RuleEvaluation.class);
+    verify(effectHandler).handle(captor.capture());
+    final var evaluation = captor.getValue();
+    assertFalse(evaluation.delayRequested());
+    assertTrue(evaluation.errorResult().isEmpty());
+    assertFalse(evaluation.exhausted());
+  }
+
+  @Test
+  void exhaustedFlagSetWhenTriggerCountReachesMax() {
+    final var rule = baseRule().resultCode("ERROR").maxTriggerCount(1).build();
+    rule.wire(effectHandler);
+
+    rule.evaluate(context);
+
+    final var captor = forClass(RuleEvaluation.class);
+    verify(effectHandler).handle(captor.capture());
+    assertTrue(captor.getValue().exhausted());
+  }
+
+  @Test
+  void exhaustedFlagNotSetBeforeMaxReached() {
+    final var rule = baseRule().resultCode("ERROR").maxTriggerCount(2).build();
+    rule.wire(effectHandler);
+
+    rule.evaluate(context);
+
+    final var captor = forClass(RuleEvaluation.class);
+    verify(effectHandler).handle(captor.capture());
+    assertFalse(captor.getValue().exhausted());
+  }
+
+  @Test
+  void handlerCalledOnEveryEvaluationAfterExhaustion() {
+    final var rule = baseRule().resultCode("ERROR").maxTriggerCount(1).build();
+    rule.wire(effectHandler);
+
+    rule.evaluate(context);
+    rule.evaluate(context);
+
+    verify(effectHandler, times(2)).handle(org.mockito.ArgumentMatchers.any());
+  }
+
+  @Test
+  void rewiringOverwritesPreviousHandler() {
+    final var rule = baseRule().delayMillis(50L).build();
+    rule.wire(effectHandler);
+    rule.wire(secondEffectHandler);
+
+    rule.evaluate(context);
+
+    verify(secondEffectHandler).handle(org.mockito.ArgumentMatchers.any());
+    verify(effectHandler, org.mockito.Mockito.never()).handle(org.mockito.ArgumentMatchers.any());
+  }
+
+  @Test
+  void evaluationContainsCorrectServiceNameAndCertificateId() {
+    final var rule = baseRule().build();
+    rule.wire(effectHandler);
+
+    rule.evaluate(context);
+
+    final var captor = forClass(RuleEvaluation.class);
+    verify(effectHandler).handle(captor.capture());
+    assertEquals(ServiceName.REGISTER_CERTIFICATE, captor.getValue().serviceName());
+    assertEquals("cert-1", captor.getValue().certificateId());
   }
 
   @Test
@@ -109,25 +175,8 @@ class BehaviorRuleEvaluationTest {
   }
 
   @Test
-  void exhaustionCallbackFiresOnEveryEvaluationAfterExhaustion() {
-    final var rule = baseRule().resultCode("ERROR").maxTriggerCount(1).build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
-
-    rule.evaluate(context);
-    rule.evaluate(context);
-
-    verify(onExhausted, times(2)).run();
-  }
-
-  @Test
-  void rewiringOverwritesPreviousDependencies() {
-    final var rule = baseRule().delayMillis(50L).build();
-    rule.wire(delayApplier, eventLogger, onExhausted);
-    rule.wire(secondDelayApplier, secondEventLogger, secondOnExhausted);
-
-    rule.evaluate(context);
-
-    verify(secondDelayApplier).apply(50L);
-    verify(delayApplier, never()).apply(50L);
+  void buildingRuleWithBothResultCodeAndErrorIdSucceeds() {
+    final var rule = baseRule().resultCode("ERROR").errorId("VALIDATION_ERROR").build();
+    assertTrue(rule.hasErrorEffect());
   }
 }
