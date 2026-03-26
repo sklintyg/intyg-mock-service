@@ -43,8 +43,8 @@ public class MessageNavigationRepositoryImpl implements MessageNavigationReposit
   }
 
   @Override
-  public List<Message> findByPersonId(final String normalizedPersonId) {
-    return sendMessageToRecipientRepository.findByPersonId(normalizedPersonId).stream()
+  public List<Message> findByPersonId(final PersonId personId) {
+    return sendMessageToRecipientRepository.findByPersonId(personId.normalized()).stream()
         .map(sendMessageToRecipientConverter::convert)
         .map(this::toMessage)
         .toList();
@@ -63,7 +63,7 @@ public class MessageNavigationRepositoryImpl implements MessageNavigationReposit
         .certificateId(dto.getIntygsId() != null ? dto.getIntygsId().getExtension() : null)
         .personId(
             dto.getPatientPersonId() != null
-                ? PersonId.of(dto.getPatientPersonId().getExtension()).normalized()
+                ? PersonId.of(dto.getPatientPersonId().getExtension())
                 : null)
         .recipient(dto.getLogiskAdressMottagare())
         .subject(dto.getAmne() != null ? dto.getAmne().getCode() : null)

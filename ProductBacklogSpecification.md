@@ -140,7 +140,7 @@ Prerequisites: DDD-01
 
 ---
 
-### DDD-03 — PersonId value object in navigation models
+### ~~DDD-03 — PersonId value object in navigation models~~ ✓ Done
 
 **Finding:** V-1 (High) + L-3 (Medium) — `Patient.personId`, `Message.personId`,
 `Revocation.personId`, and `StatusUpdate.personId` are raw `String` fields. `PersonId` already

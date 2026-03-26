@@ -7,7 +7,7 @@ import lombok.Value;
 @Builder
 public class Patient {
 
-  String personId;
+  PersonId personId;
   String firstName;
   String lastName;
   String streetAddress;

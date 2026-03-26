@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 
 class PatientAssemblerTest {
 
@@ -51,7 +52,7 @@ class PatientAssemblerTest {
   void toModel_ShouldMapAllPatientFields() {
     final var patient =
         Patient.builder()
-            .personId("191212121212")
+            .personId(PersonId.of("191212121212"))
             .firstName("Test")
             .lastName("Testsson")
             .streetAddress("Testgatan 1")
@@ -80,6 +81,6 @@ class PatientAssemblerTest {
   }
 
   private static Patient patient(final String personId) {
-    return Patient.builder().personId(personId).build();
+    return Patient.builder().personId(PersonId.of(personId)).build();
   }
 }

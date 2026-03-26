@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.CertificateNavigationRepository;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.PatientNavigationRepository;
 
@@ -21,7 +22,7 @@ public class PatientNavigationService {
   }
 
   public Optional<Patient> findByPersonId(final String normalizedPersonId) {
-    return patientNavigationRepository.findByPersonId(normalizedPersonId);
+    return patientNavigationRepository.findByPersonId(PersonId.of(normalizedPersonId));
   }
 
   public List<Certificate> findCertificatesByPersonId(final String normalizedPersonId) {

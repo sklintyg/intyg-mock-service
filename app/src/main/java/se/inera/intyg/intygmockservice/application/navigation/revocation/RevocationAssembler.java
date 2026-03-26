@@ -25,7 +25,8 @@ public class RevocationAssembler {
     }
 
     if (revocation.getPersonId() != null) {
-      model.add(Link.of("/api/navigate/patients/" + revocation.getPersonId(), "patient"));
+      model.add(
+          Link.of("/api/navigate/patients/" + revocation.getPersonId().normalized(), "patient"));
     }
 
     return model;
@@ -34,7 +35,7 @@ public class RevocationAssembler {
   private RevocationResponse toResponse(final Revocation revocation) {
     return new RevocationResponse(
         revocation.getCertificateId(),
-        revocation.getPersonId(),
+        revocation.getPersonId() != null ? revocation.getPersonId().normalized() : null,
         revocation.getRevokedAt(),
         revocation.getReason(),
         revocation.getRevokedByStaffId(),

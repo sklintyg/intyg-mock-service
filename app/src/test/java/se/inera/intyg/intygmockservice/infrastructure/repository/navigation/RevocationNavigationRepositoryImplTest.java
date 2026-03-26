@@ -13,9 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO.IntygsId;
-import se.inera.intyg.intygmockservice.application.common.dto.PatientDTO.PersonId;
 import se.inera.intyg.intygmockservice.application.revokecertificate.converter.RevokeCertificateConverter;
 import se.inera.intyg.intygmockservice.application.revokecertificate.dto.RevokeCertificateDTO;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 
@@ -34,7 +34,10 @@ class RevocationNavigationRepositoryImplTest {
   private static RevokeCertificateDTO dto(final String certificateId, final String personId) {
     return RevokeCertificateDTO.builder()
         .intygsId(IntygsId.builder().extension(certificateId).build())
-        .patientPersonId(PersonId.builder().extension(personId).build())
+        .patientPersonId(
+            se.inera.intyg.intygmockservice.application.common.dto.PatientDTO.PersonId.builder()
+                .extension(personId)
+                .build())
         .skickatTidpunkt(LocalDateTime.of(2024, 11, 9, 7, 40, 13))
         .meddelande("Revoked reason")
         .build();
@@ -52,7 +55,7 @@ class RevocationNavigationRepositoryImplTest {
 
     assertTrue(result.isPresent());
     assertEquals("cert-001", result.get().getCertificateId());
-    assertEquals("191212121212", result.get().getPersonId());
+    assertEquals(PersonId.of("191212121212"), result.get().getPersonId());
     assertEquals("Revoked reason", result.get().getReason());
   }
 
@@ -73,18 +76,18 @@ class RevocationNavigationRepositoryImplTest {
     when(revokeCertificateRepository.findByPersonId("191212121212")).thenReturn(List.of(soap));
     when(revokeCertificateConverter.convert(soap)).thenReturn(dto);
 
-    final var result = repository.findByPersonId("191212121212");
+    final var result = repository.findByPersonId(PersonId.of("191212121212"));
 
     assertEquals(1, result.size());
     assertEquals("cert-001", result.get(0).getCertificateId());
-    assertEquals("191212121212", result.get(0).getPersonId());
+    assertEquals(PersonId.of("191212121212"), result.get(0).getPersonId());
   }
 
   @Test
   void findByPersonId_ShouldReturnEmptyWhenNoMatches() {
     when(revokeCertificateRepository.findByPersonId("191212121212")).thenReturn(List.of());
 
-    final var result = repository.findByPersonId("191212121212");
+    final var result = repository.findByPersonId(PersonId.of("191212121212"));
 
     assertTrue(result.isEmpty());
   }
@@ -100,6 +103,6 @@ class RevocationNavigationRepositoryImplTest {
     final var result = repository.findByCertificateId("cert-001");
 
     assertTrue(result.isPresent());
-    assertEquals("191212121212", result.get().getPersonId());
+    assertEquals(PersonId.of("19121212-1212"), result.get().getPersonId());
   }
 }

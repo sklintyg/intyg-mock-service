@@ -14,7 +14,7 @@ public class PatientAssembler {
 
   public EntityModel<PatientResponse> toModel(final Patient patient) {
     final var response = toResponse(patient);
-    final var personId = patient.getPersonId();
+    final var personId = patient.getPersonId().normalized();
 
     final var self =
         linkTo(methodOn(PatientController.class).getPatientByPersonId(personId)).withSelfRel();
@@ -36,7 +36,7 @@ public class PatientAssembler {
 
   private PatientResponse toResponse(final Patient patient) {
     return new PatientResponse(
-        patient.getPersonId(),
+        patient.getPersonId().normalized(),
         patient.getFirstName(),
         patient.getLastName(),
         patient.getStreetAddress(),

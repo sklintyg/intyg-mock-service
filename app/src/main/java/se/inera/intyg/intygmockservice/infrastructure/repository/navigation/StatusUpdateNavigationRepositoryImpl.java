@@ -37,8 +37,8 @@ public class StatusUpdateNavigationRepositoryImpl implements StatusUpdateNavigat
   }
 
   @Override
-  public List<StatusUpdate> findByPersonId(final String normalizedPersonId) {
-    return statusUpdateRepository.findByPersonId(normalizedPersonId).stream()
+  public List<StatusUpdate> findByPersonId(final PersonId personId) {
+    return statusUpdateRepository.findByPersonId(personId.normalized()).stream()
         .map(converter::convert)
         .map(this::toStatusUpdate)
         .toList();
@@ -52,7 +52,7 @@ public class StatusUpdateNavigationRepositoryImpl implements StatusUpdateNavigat
         intyg != null && intyg.getIntygsId() != null ? intyg.getIntygsId().getExtension() : null;
     final var personId =
         intyg != null && intyg.getPatient() != null && intyg.getPatient().getPersonId() != null
-            ? PersonId.of(intyg.getPatient().getPersonId().getExtension()).normalized()
+            ? PersonId.of(intyg.getPatient().getPersonId().getExtension())
             : null;
     final var eventCode =
         handelse != null && handelse.getHandelsekod() != null

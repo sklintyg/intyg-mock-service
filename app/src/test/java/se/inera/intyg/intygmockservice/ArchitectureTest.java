@@ -3,6 +3,7 @@ package se.inera.intyg.intygmockservice;
 import static com.tngtech.archunit.base.DescribedPredicate.alwaysTrue;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
+import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RestController;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.repository.AbstractInMemoryRepository;
 
 @AnalyzeClasses(packages = "se.inera.intyg.intygmockservice")
@@ -191,4 +193,17 @@ class ArchitectureTest {
           .doNotHaveSimpleName("BehaviorRuleRepository")
           .should()
           .beAssignableTo(AbstractInMemoryRepository.class);
+
+  // H. Navigation model personId fields must use the PersonId value object.
+
+  @ArchTest
+  static final ArchRule navigation_model_person_id_fields_must_be_typed_as_person_id =
+      fields()
+          .that()
+          .haveName("personId")
+          .and()
+          .areDeclaredInClassesThat()
+          .resideInAPackage("..domain.navigation.model..")
+          .should()
+          .haveRawType(PersonId.class);
 }

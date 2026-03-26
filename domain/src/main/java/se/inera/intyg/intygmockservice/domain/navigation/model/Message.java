@@ -10,7 +10,7 @@ public class Message {
 
   String messageId;
   String certificateId;
-  String personId;
+  PersonId personId;
   String recipient;
   String subject;
   String heading;

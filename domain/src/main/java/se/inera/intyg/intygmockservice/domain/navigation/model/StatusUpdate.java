@@ -9,7 +9,7 @@ import lombok.Value;
 public class StatusUpdate {
 
   String certificateId;
-  String personId;
+  PersonId personId;
   String eventCode;
   String eventDisplayName;
   LocalDateTime eventTimestamp;

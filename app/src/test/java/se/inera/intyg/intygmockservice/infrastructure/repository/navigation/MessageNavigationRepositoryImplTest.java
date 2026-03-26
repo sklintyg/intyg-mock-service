@@ -12,9 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO.IntygsId;
-import se.inera.intyg.intygmockservice.application.common.dto.PatientDTO.PersonId;
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.converter.SendMessageToRecipientConverter;
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.repository.SendMessageToRecipientRepository;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 
@@ -35,7 +35,10 @@ class MessageNavigationRepositoryImplTest {
     return SendMessageToRecipientDTO.builder()
         .meddelandeId(messageId)
         .intygsId(IntygsId.builder().extension(certificateId).build())
-        .patientPersonId(PersonId.builder().extension(personId).build())
+        .patientPersonId(
+            se.inera.intyg.intygmockservice.application.common.dto.PatientDTO.PersonId.builder()
+                .extension(personId)
+                .build())
         .build();
   }
 
@@ -52,7 +55,7 @@ class MessageNavigationRepositoryImplTest {
     assertEquals(1, result.size());
     assertEquals("msg-001", result.get(0).getMessageId());
     assertEquals("cert-001", result.get(0).getCertificateId());
-    assertEquals("191212121212", result.get(0).getPersonId());
+    assertEquals(PersonId.of("191212121212"), result.get(0).getPersonId());
   }
 
   @Test
@@ -110,9 +113,9 @@ class MessageNavigationRepositoryImplTest {
     when(sendMessageToRecipientRepository.findByPersonId("191212121212")).thenReturn(List.of(soap));
     when(sendMessageToRecipientConverter.convert(soap)).thenReturn(dto);
 
-    final var result = repository.findByPersonId("191212121212");
+    final var result = repository.findByPersonId(PersonId.of("191212121212"));
 
     assertEquals(1, result.size());
-    assertEquals("191212121212", result.get(0).getPersonId());
+    assertEquals(PersonId.of("191212121212"), result.get(0).getPersonId());
   }
 }

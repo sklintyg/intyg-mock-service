@@ -27,8 +27,8 @@ public class RevocationNavigationRepositoryImpl implements RevocationNavigationR
   }
 
   @Override
-  public List<Revocation> findByPersonId(final String normalizedPersonId) {
-    return revokeCertificateRepository.findByPersonId(normalizedPersonId).stream()
+  public List<Revocation> findByPersonId(final PersonId personId) {
+    return revokeCertificateRepository.findByPersonId(personId.normalized()).stream()
         .map(revokeCertificateConverter::convert)
         .map(this::toRevocation)
         .toList();
@@ -46,7 +46,7 @@ public class RevocationNavigationRepositoryImpl implements RevocationNavigationR
         .certificateId(dto.getIntygsId() != null ? dto.getIntygsId().getExtension() : null)
         .personId(
             dto.getPatientPersonId() != null
-                ? PersonId.of(dto.getPatientPersonId().getExtension()).normalized()
+                ? PersonId.of(dto.getPatientPersonId().getExtension())
                 : null)
         .revokedAt(dto.getSkickatTidpunkt())
         .reason(dto.getMeddelande())

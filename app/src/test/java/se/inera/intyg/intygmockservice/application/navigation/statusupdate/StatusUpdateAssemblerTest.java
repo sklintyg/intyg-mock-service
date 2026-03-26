@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.model.StatusUpdate;
 
 class StatusUpdateAssemblerTest {
@@ -41,7 +42,7 @@ class StatusUpdateAssemblerTest {
 
   @Test
   void toModel_ShouldNotIncludeCertificateLinkWhenCertificateIdNull() {
-    final var update = StatusUpdate.builder().personId("191212121212").build();
+    final var update = StatusUpdate.builder().personId(PersonId.of("191212121212")).build();
 
     assertTrue(assembler.toModel(update).getLink("certificate").isEmpty());
   }
@@ -68,7 +69,7 @@ class StatusUpdateAssemblerTest {
     final var update =
         StatusUpdate.builder()
             .certificateId("cert-001")
-            .personId("191212121212")
+            .personId(PersonId.of("191212121212"))
             .eventCode("SKAPAT")
             .eventDisplayName("Intyg skapat")
             .eventTimestamp(timestamp)
@@ -106,6 +107,9 @@ class StatusUpdateAssemblerTest {
   }
 
   private static StatusUpdate statusUpdate(final String certificateId, final String personId) {
-    return StatusUpdate.builder().certificateId(certificateId).personId(personId).build();
+    return StatusUpdate.builder()
+        .certificateId(certificateId)
+        .personId(PersonId.of(personId))
+        .build();
   }
 }

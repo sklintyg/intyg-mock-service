@@ -30,7 +30,7 @@ public class MessageAssembler {
     }
 
     if (message.getPersonId() != null) {
-      model.add(Link.of("/api/navigate/patients/" + message.getPersonId(), "patient"));
+      model.add(Link.of("/api/navigate/patients/" + message.getPersonId().normalized(), "patient"));
     }
 
     return model;
@@ -47,7 +47,7 @@ public class MessageAssembler {
     return new MessageResponse(
         message.getMessageId(),
         message.getCertificateId(),
-        message.getPersonId(),
+        message.getPersonId() != null ? message.getPersonId().normalized() : null,
         message.getRecipient(),
         message.getSubject(),
         message.getHeading(),

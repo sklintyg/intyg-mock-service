@@ -24,6 +24,7 @@ import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO.IntygsId;
 import se.inera.intyg.intygmockservice.application.common.dto.PatientDTO;
 import se.inera.intyg.intygmockservice.application.registercertificate.converter.RegisterCertificateConverter;
 import se.inera.intyg.intygmockservice.application.registercertificate.dto.RegisterCertificateDTO;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.repository.CertificateStatusUpdateForCareRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RegisterCertificateRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
@@ -62,7 +63,7 @@ class CertificateNavigationRepositoryImplTest {
     assertEquals(1, result.size());
     assertEquals("cert-001", result.get(0).getCertificateId());
     assertNotNull(result.get(0).getPatient());
-    assertEquals("191212121212", result.get(0).getPatient().getPersonId());
+    assertEquals(PersonId.of("191212121212"), result.get(0).getPatient().getPersonId());
   }
 
   @Test
@@ -98,7 +99,7 @@ class CertificateNavigationRepositoryImplTest {
     assertEquals(1, result.size());
     assertEquals("cert-revoke-only", result.get(0).getCertificateId());
     assertNotNull(result.get(0).getPatient());
-    assertEquals("191212121212", result.get(0).getPatient().getPersonId());
+    assertEquals(PersonId.of("191212121212"), result.get(0).getPatient().getPersonId());
     assertNull(result.get(0).getIssuedBy());
   }
 
@@ -113,7 +114,7 @@ class CertificateNavigationRepositoryImplTest {
 
     final var result = repository.findAll();
 
-    assertEquals("191212121212", result.get(0).getPatient().getPersonId());
+    assertEquals(PersonId.of("19121212-1212"), result.get(0).getPatient().getPersonId());
   }
 
   @Test
@@ -248,7 +249,7 @@ class CertificateNavigationRepositoryImplTest {
     assertEquals(1, result.size());
     assertEquals("cert-from-log-001", result.get(0).getCertificateId());
     assertNotNull(result.get(0).getPatient());
-    assertEquals("191212121212", result.get(0).getPatient().getPersonId());
+    assertEquals(PersonId.of("191212121212"), result.get(0).getPatient().getPersonId());
   }
 
   // --- helpers ---

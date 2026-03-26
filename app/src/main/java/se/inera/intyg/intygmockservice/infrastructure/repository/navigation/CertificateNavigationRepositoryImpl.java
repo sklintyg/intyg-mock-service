@@ -47,7 +47,10 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
   public List<Certificate> findByPersonId(final String normalizedPersonId) {
     return buildMergedMap().values().stream()
         .filter(
-            c -> c.getPatient() != null && normalizedPersonId.equals(c.getPatient().getPersonId()))
+            c ->
+                c.getPatient() != null
+                    && c.getPatient().getPersonId() != null
+                    && normalizedPersonId.equals(c.getPatient().getPersonId().normalized()))
         .toList();
   }
 
@@ -92,7 +95,7 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
         .forEach(
             r -> {
               final var certId = r.getIntygsId().getExtension();
-              final var personId = PersonId.of(r.getPatientPersonId().getExtension()).normalized();
+              final var personId = PersonId.of(r.getPatientPersonId().getExtension());
               map.put(
                   certId,
                   Certificate.builder()
@@ -107,7 +110,7 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
         .forEach(
             m -> {
               final var certId = m.getIntygsId().getExtension();
-              final var personId = PersonId.of(m.getPatientPersonId().getExtension()).normalized();
+              final var personId = PersonId.of(m.getPatientPersonId().getExtension());
               map.put(
                   certId,
                   Certificate.builder()
@@ -123,7 +126,7 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
             s -> {
               final var certId = s.getIntyg().getIntygsId().getExtension();
               final var personId =
-                  PersonId.of(s.getIntyg().getPatient().getPersonId().getExtension()).normalized();
+                  PersonId.of(s.getIntyg().getPatient().getPersonId().getExtension());
               map.put(
                   certId,
                   Certificate.builder()
@@ -149,10 +152,7 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
                       ? log.getResources().getResource().stream()
                           .filter(r -> r.getPatient() != null)
                           .findFirst()
-                          .map(
-                              r ->
-                                  PersonId.of(r.getPatient().getPatientId().getExtension())
-                                      .normalized())
+                          .map(r -> PersonId.of(r.getPatient().getPatientId().getExtension()))
                           .orElse(null)
                       : null;
               map.put(
@@ -190,10 +190,7 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
       return null;
     }
     return Patient.builder()
-        .personId(
-            dto.getPersonId() != null
-                ? PersonId.of(dto.getPersonId().getExtension()).normalized()
-                : null)
+        .personId(dto.getPersonId() != null ? PersonId.of(dto.getPersonId().getExtension()) : null)
         .firstName(dto.getFornamn())
         .lastName(dto.getEfternamn())
         .streetAddress(dto.getPostadress())

@@ -9,7 +9,7 @@ import lombok.Value;
 public class Revocation {
 
   String certificateId;
-  String personId;
+  PersonId personId;
   LocalDateTime revokedAt;
   String reason;
   String revokedByStaffId;
