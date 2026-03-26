@@ -11,6 +11,29 @@ import se.inera.intyg.intygmockservice.domain.behavior.service.DelayApplier;
 @Getter
 @Builder(toBuilder = true)
 public class BehaviorRule {
+
+  public static class BehaviorRuleBuilder {
+    public BehaviorRule build() {
+      if (errorId != null && resultCode == null) {
+        throw new IllegalArgumentException("BehaviorRule requires resultCode when errorId is set");
+      }
+      return new BehaviorRule(
+          id,
+          serviceName,
+          resultCode,
+          errorId,
+          resultText,
+          delayMillis,
+          matchCriteria,
+          maxTriggerCount,
+          triggerCount,
+          createdAt,
+          delayApplier,
+          eventLogger,
+          onExhausted);
+    }
+  }
+
   private final UUID id;
   private final ServiceName serviceName;
   private final String resultCode;

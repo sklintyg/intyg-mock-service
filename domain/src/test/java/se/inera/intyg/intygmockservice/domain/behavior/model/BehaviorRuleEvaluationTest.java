@@ -56,6 +56,12 @@ class BehaviorRuleEvaluationTest {
   }
 
   @Test
+  void buildingRuleWithBothResultCodeAndErrorIdSucceeds() {
+    final var rule = baseRule().resultCode("ERROR").errorId("VALIDATION_ERROR").build();
+    assertTrue(rule.hasErrorEffect());
+  }
+
+  @Test
   void ruleWithDelayAndErrorAppliesBothEffects() {
     final var rule = baseRule().delayMillis(50L).resultCode("ERROR").build();
     rule.wire(delayApplier, eventLogger, onExhausted);

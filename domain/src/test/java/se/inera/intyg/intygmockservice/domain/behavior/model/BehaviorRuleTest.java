@@ -2,6 +2,7 @@ package se.inera.intyg.intygmockservice.domain.behavior.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.never;
@@ -74,6 +75,12 @@ class BehaviorRuleTest {
   @Test
   void hasErrorEffectReturnsFalseWhenResultCodeNull() {
     assertFalse(baseRule().build().hasErrorEffect());
+  }
+
+  @Test
+  void buildingRuleWithErrorIdButNoResultCodeThrowsIllegalArgumentException() {
+    assertThrows(
+        IllegalArgumentException.class, () -> baseRule().errorId("VALIDATION_ERROR").build());
   }
 
   @Test
