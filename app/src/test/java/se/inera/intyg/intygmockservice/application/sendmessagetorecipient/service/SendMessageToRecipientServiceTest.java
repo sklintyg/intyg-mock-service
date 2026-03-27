@@ -24,8 +24,8 @@ import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.conver
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
 import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
+import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.SendMessageToRecipientPassthroughClient;
-import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.SendMessageToRecipientRepository;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
@@ -224,10 +224,7 @@ class SendMessageToRecipientServiceTest {
     when(rule.evaluate(any()))
         .thenReturn(
             Optional.of(
-                MockResponse.builder()
-                    .resultCode("ERROR")
-                    .errorId("VALIDATION_ERROR")
-                    .build()));
+                MockResponse.builder().resultCode("ERROR").errorId("VALIDATION_ERROR").build()));
     return rule;
   }
 

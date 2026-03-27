@@ -26,8 +26,8 @@ import se.inera.intyg.intygmockservice.application.revokecertificate.service.Rev
 import se.inera.intyg.intygmockservice.application.revokecertificate.service.RevokeCertificateService;
 import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
+import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RevokeCertificatePassthroughClient;
-import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
@@ -212,10 +212,7 @@ class RevokeCertificateServiceTest {
     when(rule.evaluate(any()))
         .thenReturn(
             Optional.of(
-                MockResponse.builder()
-                    .resultCode("ERROR")
-                    .errorId("VALIDATION_ERROR")
-                    .build()));
+                MockResponse.builder().resultCode("ERROR").errorId("VALIDATION_ERROR").build()));
     return rule;
   }
 

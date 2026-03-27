@@ -13,9 +13,9 @@ import se.inera.intyg.intygmockservice.application.registercertificate.converter
 import se.inera.intyg.intygmockservice.application.registercertificate.dto.RegisterCertificateDTO;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RegisterCertificatePassthroughClient;
-import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RegisterCertificateRepository;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;

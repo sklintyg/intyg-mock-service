@@ -176,7 +176,7 @@ class ArchitectureTest {
           .resideInAPackage("..domain.behavior.service..");
 
   // G. Concrete repositories must extend AbstractInMemoryRepository, except
-  // BehaviorRuleRepository which uses ConcurrentHashMap directly.
+  // InMemoryBehaviorRuleRepository which uses ConcurrentHashMap directly.
 
   @ArchTest
   static final ArchRule repositories_must_extend_abstract_or_be_behavior_rule_repository =
@@ -190,7 +190,7 @@ class ArchitectureTest {
           .and()
           .doNotHaveSimpleName("AbstractInMemoryRepository")
           .and()
-          .doNotHaveSimpleName("BehaviorRuleRepository")
+          .doNotHaveSimpleName("InMemoryBehaviorRuleRepository")
           .should()
           .beAssignableTo(AbstractInMemoryRepository.class);
 

@@ -13,9 +13,9 @@ import se.inera.intyg.intygmockservice.application.revokecertificate.converter.R
 import se.inera.intyg.intygmockservice.application.revokecertificate.dto.RevokeCertificateDTO;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RevokeCertificatePassthroughClient;
-import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;

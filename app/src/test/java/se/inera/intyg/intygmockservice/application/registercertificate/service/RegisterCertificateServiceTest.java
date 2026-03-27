@@ -25,8 +25,8 @@ import se.inera.intyg.intygmockservice.application.registercertificate.converter
 import se.inera.intyg.intygmockservice.application.registercertificate.dto.RegisterCertificateDTO;
 import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
+import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RegisterCertificatePassthroughClient;
-import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RegisterCertificateRepository;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
@@ -132,10 +132,7 @@ class RegisterCertificateServiceTest {
     when(rule.evaluate(any()))
         .thenReturn(
             Optional.of(
-                MockResponse.builder()
-                    .resultCode("ERROR")
-                    .errorId("VALIDATION_ERROR")
-                    .build()));
+                MockResponse.builder().resultCode("ERROR").errorId("VALIDATION_ERROR").build()));
     return rule;
   }
 

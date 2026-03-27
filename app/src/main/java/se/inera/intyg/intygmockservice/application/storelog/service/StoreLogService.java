@@ -13,8 +13,8 @@ import se.inera.intyg.intygmockservice.application.storelog.converter.StoreLogTy
 import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.StoreLogPassthroughClient;
-import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.StoreLogTypeRepository;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.ObjectFactory;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogResponseType;

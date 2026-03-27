@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.infrastructure.repository;
+package se.inera.intyg.intygmockservice.infrastructure.repository.behavior;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -21,16 +21,16 @@ import se.inera.intyg.intygmockservice.infrastructure.delay.DelayApplier;
 import se.inera.intyg.intygmockservice.infrastructure.logging.BehaviorEventLogger;
 
 @ExtendWith(MockitoExtension.class)
-class BehaviorRuleRepositoryTest {
+class InMemoryBehaviorRuleRepositoryTest {
 
   @Mock private DelayApplier delayApplier;
   @Mock private BehaviorEventLogger eventLogger;
 
-  private BehaviorRuleRepository repository;
+  private InMemoryBehaviorRuleRepository repository;
 
   @BeforeEach
   void setUp() {
-    repository = new BehaviorRuleRepository(delayApplier, eventLogger);
+    repository = new InMemoryBehaviorRuleRepository(delayApplier, eventLogger);
   }
 
   private BehaviorRule rule(ServiceName serviceName) {

@@ -12,7 +12,7 @@ import se.inera.intyg.intygmockservice.application.behavior.dto.CreateBehaviorRu
 import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MatchCriteria;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
-import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
+import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 
 @Service
 @RequiredArgsConstructor
