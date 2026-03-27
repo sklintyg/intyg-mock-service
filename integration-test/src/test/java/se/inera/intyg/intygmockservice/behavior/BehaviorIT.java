@@ -21,7 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import se.inera.intyg.intygmockservice.IntygMockServiceApplication;
 import se.inera.intyg.intygmockservice.application.common.dto.CountResponse;
-import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
 
 @ActiveProfiles("integration-test")
 @SpringBootTest(classes = IntygMockServiceApplication.class, webEnvironment = RANDOM_PORT)
@@ -84,7 +83,7 @@ class BehaviorIT {
 
     restTemplate.delete("/api/reset");
 
-    final var rules = restTemplate.getForEntity(BEHAVIOR_PATH, BehaviorRule[].class).getBody();
+    final var rules = restTemplate.getForEntity(BEHAVIOR_PATH, Map[].class).getBody();
     assertEquals(0, rules.length);
   }
 

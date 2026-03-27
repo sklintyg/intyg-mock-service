@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 
 class MessageAssemblerTest {
 
@@ -46,7 +47,8 @@ class MessageAssemblerTest {
 
   @Test
   void toModel_ShouldIncludePatientLinkWhenPersonIdPresent() {
-    final var msg = Message.builder().messageId("msg-001").personId("191212121212").build();
+    final var msg =
+        Message.builder().messageId("msg-001").personId(PersonId.of("191212121212")).build();
 
     final var model = assembler.toModel(msg);
 
@@ -69,7 +71,7 @@ class MessageAssemblerTest {
         Message.builder()
             .messageId("msg-001")
             .certificateId("cert-001")
-            .personId("191212121212")
+            .personId(PersonId.of("191212121212"))
             .recipient("FK")
             .subject("OVRIGT")
             .heading("Test rubrik")

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.CertificateNavigationRepository;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.PatientNavigationRepository;
 
@@ -27,8 +28,8 @@ public class PatientNavigationRepositoryImpl implements PatientNavigationReposit
   }
 
   @Override
-  public Optional<Patient> findByPersonId(final String normalizedPersonId) {
-    return certificateNavigationRepository.findByPersonId(normalizedPersonId).stream()
+  public Optional<Patient> findByPersonId(final PersonId personId) {
+    return certificateNavigationRepository.findByPersonId(personId.normalized()).stream()
         .map(c -> c.getPatient())
         .filter(p -> p != null)
         .findFirst();

@@ -3,6 +3,7 @@ package se.inera.intyg.intygmockservice.application.navigation.statusupdate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.model.StatusUpdate;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.StatusUpdateNavigationRepository;
 
@@ -21,6 +22,6 @@ public class StatusUpdateNavigationService {
   }
 
   public List<StatusUpdate> findByPersonId(final String normalizedPersonId) {
-    return statusUpdateNavigationRepository.findByPersonId(normalizedPersonId);
+    return statusUpdateNavigationRepository.findByPersonId(PersonId.of(normalizedPersonId));
   }
 }

@@ -2,41 +2,44 @@ package se.inera.intyg.intygmockservice.infrastructure.logging;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
+import se.inera.intyg.intygmockservice.domain.behavior.model.RuleEvaluation;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
-import se.inera.intyg.intygmockservice.domain.behavior.service.BehaviorEventLogger;
 
 @Component
 @Slf4j
 public class BehaviorLogger implements BehaviorEventLogger {
 
-  public void logErrorSkipped(ServiceName serviceName, String certificateId, BehaviorRule rule) {
+  public void logErrorSkipped(RuleEvaluation evaluation) {
+    final var result = evaluation.errorResult().orElseThrow();
     log.atInfo()
         .setMessage(
             "%s with certificateId '%s' not stored due to simulated %s behavior (rule %s)"
                 .formatted(
-                    toDisplayName(serviceName),
-                    certificateId,
-                    rule.getErrorId() != null ? rule.getErrorId() : rule.getResultCode(),
-                    rule.getId()))
-        .addKeyValue("behavior.rule.id", rule.getId())
-        .addKeyValue("behavior.rule.result_code", rule.getResultCode())
-        .addKeyValue("behavior.rule.error_id", rule.getErrorId())
-        .addKeyValue("event.service", serviceName.name())
-        .addKeyValue("event.certificate.id", certificateId)
+                    toDisplayName(evaluation.serviceName()),
+                    evaluation.certificateId(),
+                    result.getErrorId() != null ? result.getErrorId() : result.getResultCode(),
+                    evaluation.ruleId()))
+        .addKeyValue("behavior.rule.id", evaluation.ruleId())
+        .addKeyValue("behavior.rule.result_code", result.getResultCode())
+        .addKeyValue("behavior.rule.error_id", result.getErrorId())
+        .addKeyValue("event.service", evaluation.serviceName().name())
+        .addKeyValue("event.certificate.id", evaluation.certificateId())
         .log();
   }
 
-  public void logDelayApplied(ServiceName serviceName, String certificateId, BehaviorRule rule) {
+  public void logDelayApplied(RuleEvaluation evaluation) {
     log.atInfo()
         .setMessage(
             "%s with certificateId '%s' delayed %d ms by behavior rule (rule %s)"
                 .formatted(
-                    toDisplayName(serviceName), certificateId, rule.getDelayMillis(), rule.getId()))
-        .addKeyValue("behavior.rule.id", rule.getId())
-        .addKeyValue("behavior.rule.delay_millis", rule.getDelayMillis())
-        .addKeyValue("event.service", serviceName.name())
-        .addKeyValue("event.certificate.id", certificateId)
+                    toDisplayName(evaluation.serviceName()),
+                    evaluation.certificateId(),
+                    evaluation.delayMillis(),
+                    evaluation.ruleId()))
+        .addKeyValue("behavior.rule.id", evaluation.ruleId())
+        .addKeyValue("behavior.rule.delay_millis", evaluation.delayMillis())
+        .addKeyValue("event.service", evaluation.serviceName().name())
+        .addKeyValue("event.certificate.id", evaluation.certificateId())
         .log();
   }
 

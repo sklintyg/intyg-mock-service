@@ -23,6 +23,7 @@ import se.inera.intyg.intygmockservice.application.navigation.message.MessageRes
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 
 @ExtendWith(MockitoExtension.class)
 class PatientControllerTest {
@@ -37,7 +38,7 @@ class PatientControllerTest {
 
   @Test
   void getPatientByPersonId_ShouldReturn200WhenFound() {
-    final var patient = Patient.builder().personId("191212121212").build();
+    final var patient = Patient.builder().personId(PersonId.of("191212121212")).build();
     final var entityModel =
         EntityModel.of(new PatientResponse("191212121212", null, null, null, null, null));
 

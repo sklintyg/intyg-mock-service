@@ -13,8 +13,9 @@ import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.conver
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.SendMessageToRecipientPassthroughClient;
-import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.SendMessageToRecipientRepository;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.ObjectFactory;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
@@ -107,8 +108,9 @@ public class SendMessageToRecipientService {
   }
 
   public List<SendMessageToRecipientDTO> getByPersonId(final String personId) {
-    final var normalized = normalizePersonId(personId);
-    return repository.findByPersonId(normalized).stream().map(converter::convert).toList();
+    return repository.findByPersonId(PersonId.of(personId).normalized()).stream()
+        .map(converter::convert)
+        .toList();
   }
 
   public List<SendMessageToRecipientDTO> getByLogicalAddress(final String logicalAddress) {
@@ -127,10 +129,6 @@ public class SendMessageToRecipientService {
 
   public void deleteAll() {
     repository.deleteAll();
-  }
-
-  private static String normalizePersonId(final String personId) {
-    return personId == null ? null : personId.replace("-", "");
   }
 
   private String marshalToXml(final SendMessageToRecipientType type) {

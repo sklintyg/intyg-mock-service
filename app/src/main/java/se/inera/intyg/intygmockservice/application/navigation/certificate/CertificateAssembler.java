@@ -52,7 +52,9 @@ public class CertificateAssembler {
 
     if (certificate.getPatient() != null && certificate.getPatient().getPersonId() != null) {
       final var patientLink =
-          Link.of("/api/navigate/patients/" + certificate.getPatient().getPersonId(), "patient");
+          Link.of(
+              "/api/navigate/patients/" + certificate.getPatient().getPersonId().normalized(),
+              "patient");
       model.add(patientLink);
     }
 
@@ -144,7 +146,7 @@ public class CertificateAssembler {
       return null;
     }
     return new PatientData(
-        patient.getPersonId(),
+        patient.getPersonId() != null ? patient.getPersonId().normalized() : null,
         patient.getFirstName(),
         patient.getLastName(),
         patient.getStreetAddress(),

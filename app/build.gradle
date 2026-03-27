@@ -36,6 +36,7 @@ tasks.named('bootJar') {
 def applicationDir = "${rootProject.projectDir}/devops/dev"
 
 dependencies {
+    implementation project(':domain')
     implementation 'com.fasterxml.jackson.core:jackson-databind'
 
     implementation "org.apache.cxf:cxf-spring-boot-starter-jaxws:${cxfVersion}"

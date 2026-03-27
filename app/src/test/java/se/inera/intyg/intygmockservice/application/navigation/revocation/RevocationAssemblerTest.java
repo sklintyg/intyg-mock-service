@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Revocation;
 
 class RevocationAssemblerTest {
@@ -41,7 +42,7 @@ class RevocationAssemblerTest {
 
   @Test
   void toModel_ShouldNotIncludeCertificateLinkWhenCertificateIdNull() {
-    final var rev = Revocation.builder().personId("191212121212").build();
+    final var rev = Revocation.builder().personId(PersonId.of("191212121212")).build();
 
     final var model = assembler.toModel(rev);
 
@@ -72,7 +73,7 @@ class RevocationAssemblerTest {
     final var rev =
         Revocation.builder()
             .certificateId("cert-001")
-            .personId("191212121212")
+            .personId(PersonId.of("191212121212"))
             .revokedAt(revokedAt)
             .reason("Felaktig uppgift")
             .revokedByStaffId("TSTNMT2321000156-DRAA")
@@ -102,6 +103,9 @@ class RevocationAssemblerTest {
   }
 
   private static Revocation revocation(final String certificateId, final String personId) {
-    return Revocation.builder().certificateId(certificateId).personId(personId).build();
+    return Revocation.builder()
+        .certificateId(certificateId)
+        .personId(PersonId.of(personId))
+        .build();
   }
 }

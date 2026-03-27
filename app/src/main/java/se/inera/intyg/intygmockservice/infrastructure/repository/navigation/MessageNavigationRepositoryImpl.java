@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.converter.SendMessageToRecipientConverter;
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.MessageNavigationRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.SendMessageToRecipientRepository;
 
@@ -42,8 +43,8 @@ public class MessageNavigationRepositoryImpl implements MessageNavigationReposit
   }
 
   @Override
-  public List<Message> findByPersonId(final String normalizedPersonId) {
-    return sendMessageToRecipientRepository.findByPersonId(normalizedPersonId).stream()
+  public List<Message> findByPersonId(final PersonId personId) {
+    return sendMessageToRecipientRepository.findByPersonId(personId.normalized()).stream()
         .map(sendMessageToRecipientConverter::convert)
         .map(this::toMessage)
         .toList();
@@ -62,7 +63,7 @@ public class MessageNavigationRepositoryImpl implements MessageNavigationReposit
         .certificateId(dto.getIntygsId() != null ? dto.getIntygsId().getExtension() : null)
         .personId(
             dto.getPatientPersonId() != null
-                ? normalize(dto.getPatientPersonId().getExtension())
+                ? PersonId.of(dto.getPatientPersonId().getExtension())
                 : null)
         .recipient(dto.getLogiskAdressMottagare())
         .subject(dto.getAmne() != null ? dto.getAmne().getCode() : null)
@@ -72,9 +73,5 @@ public class MessageNavigationRepositoryImpl implements MessageNavigationReposit
         .sentByStaffId(staffId)
         .sentByFullName(staffName)
         .build();
-  }
-
-  private static String normalize(final String personId) {
-    return personId == null ? null : personId.replace("-", "");
   }
 }

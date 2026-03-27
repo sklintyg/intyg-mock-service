@@ -13,8 +13,9 @@ import se.inera.intyg.intygmockservice.application.statusupdates.converter.Certi
 import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MatchContext;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
+import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.CertificateStatusUpdateForCarePassthroughClient;
-import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.CertificateStatusUpdateForCareRepository;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
@@ -103,8 +104,9 @@ public class CertificateStatusUpdateForCareService {
   }
 
   public List<CertificateStatusUpdateForCareDTO> getByPersonId(final String personId) {
-    final var normalized = normalizePersonId(personId);
-    return repository.findByPersonId(normalized).stream().map(converter::convert).toList();
+    return repository.findByPersonId(PersonId.of(personId).normalized()).stream()
+        .map(converter::convert)
+        .toList();
   }
 
   public List<CertificateStatusUpdateForCareDTO> getByEventCode(final String eventCode) {
@@ -136,10 +138,6 @@ public class CertificateStatusUpdateForCareService {
 
   public void deleteByCertificateId(final String certificateId) {
     repository.deleteByCertificateId(certificateId);
-  }
-
-  private static String normalizePersonId(final String personId) {
-    return personId == null ? null : personId.replace("-", "");
   }
 
   private String marshalFragmentToXml(final CertificateStatusUpdateForCareType type) {

@@ -22,8 +22,8 @@ import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryR
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageAssembler;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageNavigationService;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageResponse;
+import se.inera.intyg.intygmockservice.domain.navigation.model.AuditLogEntry;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
-import se.inera.intyg.intygmockservice.domain.navigation.model.LogEntry;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
 import se.inera.intyg.intygmockservice.domain.navigation.model.PageResult;
 
@@ -99,7 +99,7 @@ class CertificateControllerTest {
 
   @Test
   void getCertificateLogEntries_ShouldDelegateToServiceAndAssembler() {
-    final var entry = LogEntry.builder().logId("it-log-001").certificateId("cert-001").build();
+    final var entry = AuditLogEntry.builder().logId("it-log-001").certificateId("cert-001").build();
     final var collectionModel = CollectionModel.<EntityModel<LogEntryResponse>>empty();
 
     when(logEntryNavigationService.findByCertificateId("cert-001")).thenReturn(List.of(entry));

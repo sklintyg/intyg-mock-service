@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.MessageNavigationRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,12 +59,14 @@ class MessageNavigationServiceTest {
 
   @Test
   void findByPersonId_ShouldDelegateToRepository() {
-    final var message = Message.builder().messageId("msg-001").personId("191212121212").build();
-    when(messageNavigationRepository.findByPersonId("191212121212")).thenReturn(List.of(message));
+    final var message =
+        Message.builder().messageId("msg-001").personId(PersonId.of("191212121212")).build();
+    when(messageNavigationRepository.findByPersonId(PersonId.of("191212121212")))
+        .thenReturn(List.of(message));
 
     final var result = service.findByPersonId("191212121212");
 
     assertEquals(1, result.size());
-    verify(messageNavigationRepository).findByPersonId("191212121212");
+    verify(messageNavigationRepository).findByPersonId(PersonId.of("191212121212"));
   }
 }

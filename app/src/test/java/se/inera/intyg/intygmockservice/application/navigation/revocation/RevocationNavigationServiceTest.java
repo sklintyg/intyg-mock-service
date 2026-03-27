@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Revocation;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.RevocationNavigationRepository;
 
@@ -45,19 +46,20 @@ class RevocationNavigationServiceTest {
 
   @Test
   void findByPersonId_ShouldDelegateToRepository() {
-    final var revocation = Revocation.builder().personId("191212121212").build();
-    when(revocationNavigationRepository.findByPersonId("191212121212"))
+    final var revocation = Revocation.builder().personId(PersonId.of("191212121212")).build();
+    when(revocationNavigationRepository.findByPersonId(PersonId.of("191212121212")))
         .thenReturn(List.of(revocation));
 
     final var result = service.findByPersonId("191212121212");
 
     assertEquals(1, result.size());
-    assertEquals("191212121212", result.get(0).getPersonId());
+    assertEquals(PersonId.of("191212121212"), result.get(0).getPersonId());
   }
 
   @Test
   void findByPersonId_ShouldReturnEmptyWhenNoMatches() {
-    when(revocationNavigationRepository.findByPersonId("191212121212")).thenReturn(List.of());
+    when(revocationNavigationRepository.findByPersonId(PersonId.of("191212121212")))
+        .thenReturn(List.of());
 
     final var result = service.findByPersonId("191212121212");
 

@@ -1,0 +1,7 @@
+dependencies {
+    annotationProcessor "org.projectlombok:lombok"
+    testAnnotationProcessor "org.projectlombok:lombok"
+    testCompileOnly "org.projectlombok:lombok"
+
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+}

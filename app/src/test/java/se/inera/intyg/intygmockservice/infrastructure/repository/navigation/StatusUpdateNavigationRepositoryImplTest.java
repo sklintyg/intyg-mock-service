@@ -17,6 +17,7 @@ import se.inera.intyg.intygmockservice.application.statusupdates.dto.Certificate
 import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Fragor;
 import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse;
 import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse.Handelsekod;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.repository.CertificateStatusUpdateForCareRepository;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
 
@@ -66,7 +67,7 @@ class StatusUpdateNavigationRepositoryImplTest {
 
     assertEquals(1, result.size());
     assertEquals("cert-001", result.get(0).getCertificateId());
-    assertEquals("191212121212", result.get(0).getPersonId());
+    assertEquals(PersonId.of("191212121212"), result.get(0).getPersonId());
     assertEquals("SKAPAT", result.get(0).getEventCode());
     assertEquals("Intyg skapat", result.get(0).getEventDisplayName());
     assertEquals(2, result.get(0).getQuestionsSentTotal());
@@ -109,18 +110,18 @@ class StatusUpdateNavigationRepositoryImplTest {
     when(statusUpdateRepository.findByPersonId("191212121212")).thenReturn(List.of(soap));
     when(converter.convert(soap)).thenReturn(dto);
 
-    final var result = repository.findByPersonId("191212121212");
+    final var result = repository.findByPersonId(PersonId.of("191212121212"));
 
     assertEquals(1, result.size());
     assertEquals("cert-001", result.get(0).getCertificateId());
-    assertEquals("191212121212", result.get(0).getPersonId());
+    assertEquals(PersonId.of("191212121212"), result.get(0).getPersonId());
   }
 
   @Test
   void findByPersonId_ShouldReturnEmptyWhenNoMatches() {
     when(statusUpdateRepository.findByPersonId("191212121212")).thenReturn(List.of());
 
-    assertTrue(repository.findByPersonId("191212121212").isEmpty());
+    assertTrue(repository.findByPersonId(PersonId.of("191212121212")).isEmpty());
   }
 
   @Test
@@ -133,6 +134,6 @@ class StatusUpdateNavigationRepositoryImplTest {
 
     final var result = repository.findByCertificateId("cert-001");
 
-    assertEquals("191212121212", result.get(0).getPersonId());
+    assertEquals(PersonId.of("19121212-1212"), result.get(0).getPersonId());
   }
 }

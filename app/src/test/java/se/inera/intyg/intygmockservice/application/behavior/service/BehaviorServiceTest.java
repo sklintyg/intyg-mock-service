@@ -15,7 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygmockservice.application.behavior.dto.CreateBehaviorRuleRequest;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
-import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
+import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 
 @ExtendWith(MockitoExtension.class)
 class BehaviorServiceTest {

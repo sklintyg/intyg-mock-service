@@ -27,9 +27,9 @@ import se.inera.intyg.intygmockservice.application.statusupdates.dto.Certificate
 import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse;
 import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse.Handelsekod;
 import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
+import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.CertificateStatusUpdateForCarePassthroughClient;
-import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.CertificateStatusUpdateForCareRepository;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
@@ -102,7 +102,7 @@ class CertificateStatusUpdateForCareServiceTest {
     final var rule = errorRule();
     final var errorResponse = errorResponse();
     when(behaviorRuleRepository.findBestMatch(any(), any())).thenReturn(Optional.of(rule));
-    when(responseFactory.create(any(EvaluationResult.class))).thenReturn(errorResponse);
+    when(responseFactory.create(any(MockResponse.class))).thenReturn(errorResponse);
 
     final var result = service.store(LOGICAL_ADDRESS, new CertificateStatusUpdateForCareType());
 
@@ -225,10 +225,7 @@ class CertificateStatusUpdateForCareServiceTest {
     when(rule.evaluate(any()))
         .thenReturn(
             Optional.of(
-                EvaluationResult.builder()
-                    .resultCode("ERROR")
-                    .errorId("VALIDATION_ERROR")
-                    .build()));
+                MockResponse.builder().resultCode("ERROR").errorId("VALIDATION_ERROR").build()));
     return rule;
   }
 

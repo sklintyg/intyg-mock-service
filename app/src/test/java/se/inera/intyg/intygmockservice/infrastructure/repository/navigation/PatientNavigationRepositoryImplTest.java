@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.CertificateNavigationRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -24,17 +25,21 @@ class PatientNavigationRepositoryImplTest {
   @Test
   void findByPersonId_ShouldReturnPatientFromFirstMatchingCertificate() {
     final var patient =
-        Patient.builder().personId("191212121212").firstName("Test").lastName("Testsson").build();
+        Patient.builder()
+            .personId(PersonId.of("191212121212"))
+            .firstName("Test")
+            .lastName("Testsson")
+            .build();
     final var certificate =
         Certificate.builder().certificateId("cert-001").patient(patient).build();
 
     when(certificateNavigationRepository.findByPersonId("191212121212"))
         .thenReturn(List.of(certificate));
 
-    final var result = repository.findByPersonId("191212121212");
+    final var result = repository.findByPersonId(PersonId.of("191212121212"));
 
     assertTrue(result.isPresent());
-    assertEquals("191212121212", result.get().getPersonId());
+    assertEquals(PersonId.of("191212121212"), result.get().getPersonId());
     assertEquals("Test", result.get().getFirstName());
   }
 
@@ -42,7 +47,7 @@ class PatientNavigationRepositoryImplTest {
   void findByPersonId_ShouldReturnEmptyWhenNoCertificatesFound() {
     when(certificateNavigationRepository.findByPersonId("unknown")).thenReturn(List.of());
 
-    final var result = repository.findByPersonId("unknown");
+    final var result = repository.findByPersonId(PersonId.of("unknown"));
 
     assertTrue(result.isEmpty());
   }
@@ -54,7 +59,7 @@ class PatientNavigationRepositoryImplTest {
     when(certificateNavigationRepository.findByPersonId("191212121212"))
         .thenReturn(List.of(certificate));
 
-    final var result = repository.findByPersonId("191212121212");
+    final var result = repository.findByPersonId(PersonId.of("191212121212"));
 
     assertTrue(result.isEmpty());
   }

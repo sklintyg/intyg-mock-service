@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
-import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.riv.informationsecurity.auditing.log.v2.ResultCodeType;
 
 class StoreLogResponseFactoryTest {
@@ -12,8 +12,8 @@ class StoreLogResponseFactoryTest {
   private final StoreLogResponseFactory factory = new StoreLogResponseFactory();
 
   @Test
-  void shouldSetResultCodeFromEvaluationResult() {
-    final var result = EvaluationResult.builder().resultCode("VALIDATION_ERROR").build();
+  void shouldSetResultCodeFromMockResponse() {
+    final var result = MockResponse.builder().resultCode("VALIDATION_ERROR").build();
 
     final var response = factory.create(result);
 
@@ -22,7 +22,7 @@ class StoreLogResponseFactoryTest {
 
   @Test
   void shouldNotSetResultTextWhenNull() {
-    final var result = EvaluationResult.builder().resultCode("OK").resultText(null).build();
+    final var result = MockResponse.builder().resultCode("OK").resultText(null).build();
 
     final var response = factory.create(result);
 
@@ -32,7 +32,7 @@ class StoreLogResponseFactoryTest {
   @Test
   void shouldSetResultTextWhenPresent() {
     final var result =
-        EvaluationResult.builder()
+        MockResponse.builder()
             .resultCode("VALIDATION_ERROR")
             .resultText("Something went wrong")
             .build();

@@ -1,7 +1,7 @@
 package se.inera.intyg.intygmockservice.application.storelog.service;
 
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogResponseType;
 import se.riv.informationsecurity.auditing.log.v2.ResultCodeType;
 import se.riv.informationsecurity.auditing.log.v2.ResultType;
@@ -9,7 +9,7 @@ import se.riv.informationsecurity.auditing.log.v2.ResultType;
 @Component
 public class StoreLogResponseFactory {
 
-  public StoreLogResponseType create(EvaluationResult result) {
+  public StoreLogResponseType create(MockResponse result) {
     final var response = new StoreLogResponseType();
     final var resultType = new ResultType();
     resultType.setResultCode(ResultCodeType.valueOf(result.getResultCode()));

@@ -5,6 +5,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.MessageNavigationRepository;
 
 @Service
@@ -26,6 +27,6 @@ public class MessageNavigationService {
   }
 
   public List<Message> findByPersonId(final String normalizedPersonId) {
-    return messageNavigationRepository.findByPersonId(normalizedPersonId);
+    return messageNavigationRepository.findByPersonId(PersonId.of(normalizedPersonId));
   }
 }

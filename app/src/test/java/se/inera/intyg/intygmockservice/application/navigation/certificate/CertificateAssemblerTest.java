@@ -67,7 +67,12 @@ class CertificateAssemblerTest {
     final var certificate =
         Certificate.builder()
             .certificateId("cert-001")
-            .patient(Patient.builder().personId("191212121212").build())
+            .patient(
+                Patient.builder()
+                    .personId(
+                        se.inera.intyg.intygmockservice.domain.navigation.model.PersonId.of(
+                            "191212121212"))
+                    .build())
             .build();
 
     final var model = assembler.toModel(certificate);
@@ -147,7 +152,9 @@ class CertificateAssemblerTest {
             .certificateId("cert-001")
             .patient(
                 Patient.builder()
-                    .personId("191212121212")
+                    .personId(
+                        se.inera.intyg.intygmockservice.domain.navigation.model.PersonId.of(
+                            "191212121212"))
                     .firstName("Test")
                     .lastName("Testsson")
                     .streetAddress("Testgatan 1")

@@ -28,7 +28,8 @@ public class StatusUpdateAssembler {
     }
 
     if (statusUpdate.getPersonId() != null) {
-      model.add(Link.of("/api/navigate/patients/" + statusUpdate.getPersonId(), "patient"));
+      model.add(
+          Link.of("/api/navigate/patients/" + statusUpdate.getPersonId().normalized(), "patient"));
     }
 
     return model;
@@ -45,7 +46,7 @@ public class StatusUpdateAssembler {
   private StatusUpdateResponse toResponse(final StatusUpdate statusUpdate) {
     return new StatusUpdateResponse(
         statusUpdate.getCertificateId(),
-        statusUpdate.getPersonId(),
+        statusUpdate.getPersonId() != null ? statusUpdate.getPersonId().normalized() : null,
         statusUpdate.getEventCode(),
         statusUpdate.getEventDisplayName(),
         statusUpdate.getEventTimestamp(),

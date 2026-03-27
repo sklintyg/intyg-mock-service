@@ -3,6 +3,7 @@ package se.inera.intyg.intygmockservice.infrastructure.repository;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Repository;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.config.properties.AppProperties;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 
@@ -25,15 +26,14 @@ public class RevokeCertificateRepository extends AbstractInMemoryRepository<Revo
 
   public List<RevokeCertificateType> findByPersonId(final String normalizedPersonId) {
     return findAll().stream()
-        .filter(t -> normalizedPersonId.equals(normalize(t.getPatientPersonId().getExtension())))
+        .filter(
+            t ->
+                normalizedPersonId.equals(
+                    PersonId.of(t.getPatientPersonId().getExtension()).normalized()))
         .toList();
   }
 
   public void deleteById(final String certificateId) {
     removeIf(t -> certificateId.equals(t.getIntygsId().getExtension()));
-  }
-
-  private static String normalize(final String personId) {
-    return personId == null ? null : personId.replace("-", "");
   }
 }

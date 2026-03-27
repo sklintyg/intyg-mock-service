@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;
+import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.CertificateNavigationRepository;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.PatientNavigationRepository;
 
@@ -27,15 +28,15 @@ class PatientNavigationServiceTest {
 
   @Test
   void findByPersonId_ShouldDelegateToRepository() {
-    final var patient = Patient.builder().personId("191212121212").build();
-    when(patientNavigationRepository.findByPersonId("191212121212"))
+    final var patient = Patient.builder().personId(PersonId.of("191212121212")).build();
+    when(patientNavigationRepository.findByPersonId(PersonId.of("191212121212")))
         .thenReturn(Optional.of(patient));
 
     final var result = service.findByPersonId("191212121212");
 
     assertTrue(result.isPresent());
-    assertEquals("191212121212", result.get().getPersonId());
-    verify(patientNavigationRepository).findByPersonId("191212121212");
+    assertEquals(PersonId.of("191212121212"), result.get().getPersonId());
+    verify(patientNavigationRepository).findByPersonId(PersonId.of("191212121212"));
   }
 
   @Test
