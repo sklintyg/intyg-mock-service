@@ -19,8 +19,7 @@ class BehaviorLoggerTest {
         ruleId,
         ServiceName.REGISTER_CERTIFICATE,
         certificateId,
-        Optional.of(
-            MockResponse.builder().resultCode("ERROR").errorId("VALIDATION_ERROR").build()),
+        Optional.of(MockResponse.builder().resultCode("ERROR").errorId("VALIDATION_ERROR").build()),
         false,
         null,
         false);

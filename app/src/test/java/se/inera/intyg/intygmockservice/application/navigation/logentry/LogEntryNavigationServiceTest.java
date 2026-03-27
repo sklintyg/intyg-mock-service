@@ -42,7 +42,8 @@ class LogEntryNavigationServiceTest {
   @Test
   void findByCertificateId_ShouldDelegateToRepository() {
     final var entry = AuditLogEntry.builder().logId("it-log-001").certificateId("cert-001").build();
-    when(auditLogEntryNavigationRepository.findByCertificateId("cert-001")).thenReturn(List.of(entry));
+    when(auditLogEntryNavigationRepository.findByCertificateId("cert-001"))
+        .thenReturn(List.of(entry));
 
     final var result = service.findByCertificateId("cert-001");
 

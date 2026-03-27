@@ -22,8 +22,8 @@ import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryR
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageAssembler;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageNavigationService;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageResponse;
-import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.AuditLogEntry;
+import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
 import se.inera.intyg.intygmockservice.domain.navigation.model.PageResult;
 
