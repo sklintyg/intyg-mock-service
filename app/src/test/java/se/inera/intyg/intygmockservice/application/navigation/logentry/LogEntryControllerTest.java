@@ -13,7 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
-import se.inera.intyg.intygmockservice.domain.navigation.model.LogEntry;
+import se.inera.intyg.intygmockservice.domain.navigation.model.AuditLogEntry;
 
 @ExtendWith(MockitoExtension.class)
 class LogEntryControllerTest {
@@ -25,7 +25,7 @@ class LogEntryControllerTest {
 
   @Test
   void getAllLogEntries_ShouldReturnCollectionFromAssembler() {
-    final var entries = List.of(LogEntry.builder().logId("it-log-001").build());
+    final var entries = List.of(AuditLogEntry.builder().logId("it-log-001").build());
     final var expected = CollectionModel.<EntityModel<LogEntryResponse>>empty();
 
     when(service.findAll()).thenReturn(entries);
@@ -36,7 +36,7 @@ class LogEntryControllerTest {
 
   @Test
   void getLogEntryById_ShouldReturn200WithModelWhenFound() {
-    final var entry = LogEntry.builder().logId("it-log-001").build();
+    final var entry = AuditLogEntry.builder().logId("it-log-001").build();
     final var model =
         EntityModel.of(
             new LogEntryResponse(

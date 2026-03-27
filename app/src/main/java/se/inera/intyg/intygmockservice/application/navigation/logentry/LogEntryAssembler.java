@@ -8,12 +8,12 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
-import se.inera.intyg.intygmockservice.domain.navigation.model.LogEntry;
+import se.inera.intyg.intygmockservice.domain.navigation.model.AuditLogEntry;
 
 @Component
 public class LogEntryAssembler {
 
-  public EntityModel<LogEntryResponse> toModel(final LogEntry logEntry) {
+  public EntityModel<LogEntryResponse> toModel(final AuditLogEntry logEntry) {
     final var response = toResponse(logEntry);
 
     final var self =
@@ -36,14 +36,14 @@ public class LogEntryAssembler {
   }
 
   public CollectionModel<EntityModel<LogEntryResponse>> toCollectionModel(
-      final List<LogEntry> logEntries) {
+      final List<AuditLogEntry> logEntries) {
     final var items = logEntries.stream().map(this::toModel).toList();
     final var selfLink =
         linkTo(methodOn(LogEntryController.class).getAllLogEntries()).withSelfRel();
     return CollectionModel.of(items, selfLink);
   }
 
-  private LogEntryResponse toResponse(final LogEntry logEntry) {
+  private LogEntryResponse toResponse(final AuditLogEntry logEntry) {
     return new LogEntryResponse(
         logEntry.getLogId(),
         logEntry.getSystemId(),

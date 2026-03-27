@@ -6,52 +6,52 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import se.inera.intyg.intygmockservice.application.storelog.converter.StoreLogTypeConverter;
 import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO;
-import se.inera.intyg.intygmockservice.domain.navigation.model.LogEntry;
-import se.inera.intyg.intygmockservice.domain.navigation.repository.LogEntryNavigationRepository;
+import se.inera.intyg.intygmockservice.domain.navigation.model.AuditLogEntry;
+import se.inera.intyg.intygmockservice.domain.navigation.repository.AuditLogEntryNavigationRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.StoreLogTypeRepository;
 
 @Repository
 @RequiredArgsConstructor
-public class LogEntryNavigationRepositoryImpl implements LogEntryNavigationRepository {
+public class AuditLogEntryNavigationRepositoryImpl implements AuditLogEntryNavigationRepository {
 
   private final StoreLogTypeRepository storeLogTypeRepository;
   private final StoreLogTypeConverter converter;
 
   @Override
-  public List<LogEntry> findAll() {
+  public List<AuditLogEntry> findAll() {
     return storeLogTypeRepository.findAll().stream()
         .flatMap(storeLogType -> converter.convertToLogTypeDTO(storeLogType).stream())
-        .map(this::toLogEntry)
+        .map(this::toAuditLogEntry)
         .toList();
   }
 
   @Override
-  public Optional<LogEntry> findById(final String logId) {
+  public Optional<AuditLogEntry> findById(final String logId) {
     return storeLogTypeRepository.findAll().stream()
         .flatMap(storeLogType -> converter.convertToLogTypeDTO(storeLogType).stream())
         .filter(dto -> logId.equals(dto.getLogId()))
-        .map(this::toLogEntry)
+        .map(this::toAuditLogEntry)
         .findFirst();
   }
 
   @Override
-  public List<LogEntry> findByCertificateId(final String certificateId) {
+  public List<AuditLogEntry> findByCertificateId(final String certificateId) {
     return storeLogTypeRepository.findAll().stream()
         .flatMap(storeLogType -> converter.convertToLogTypeDTO(storeLogType).stream())
         .filter(
             dto ->
                 dto.getActivity() != null
                     && certificateId.equals(dto.getActivity().getActivityLevel()))
-        .map(this::toLogEntry)
+        .map(this::toAuditLogEntry)
         .toList();
   }
 
-  private LogEntry toLogEntry(final LogTypeDTO dto) {
+  private AuditLogEntry toAuditLogEntry(final LogTypeDTO dto) {
     final var system = dto.getSystem();
     final var activity = dto.getActivity();
     final var user = dto.getUser();
 
-    return LogEntry.builder()
+    return AuditLogEntry.builder()
         .logId(dto.getLogId())
         .systemId(system != null ? system.getSystemId() : null)
         .systemName(system != null ? system.getSystemName() : null)

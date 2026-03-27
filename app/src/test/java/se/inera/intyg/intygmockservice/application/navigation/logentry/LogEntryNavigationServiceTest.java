@@ -11,20 +11,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygmockservice.domain.navigation.model.LogEntry;
-import se.inera.intyg.intygmockservice.domain.navigation.repository.LogEntryNavigationRepository;
+import se.inera.intyg.intygmockservice.domain.navigation.model.AuditLogEntry;
+import se.inera.intyg.intygmockservice.domain.navigation.repository.AuditLogEntryNavigationRepository;
 
 @ExtendWith(MockitoExtension.class)
 class LogEntryNavigationServiceTest {
 
-  @Mock private LogEntryNavigationRepository logEntryNavigationRepository;
+  @Mock private AuditLogEntryNavigationRepository auditLogEntryNavigationRepository;
 
   @InjectMocks private LogEntryNavigationService service;
 
   @Test
   void findAll_ShouldDelegateToRepository() {
-    final var entry = LogEntry.builder().logId("it-log-001").certificateId("cert-001").build();
-    when(logEntryNavigationRepository.findAll()).thenReturn(List.of(entry));
+    final var entry = AuditLogEntry.builder().logId("it-log-001").certificateId("cert-001").build();
+    when(auditLogEntryNavigationRepository.findAll()).thenReturn(List.of(entry));
 
     final var result = service.findAll();
 
@@ -34,15 +34,15 @@ class LogEntryNavigationServiceTest {
 
   @Test
   void findAll_ShouldReturnEmptyWhenNoData() {
-    when(logEntryNavigationRepository.findAll()).thenReturn(List.of());
+    when(auditLogEntryNavigationRepository.findAll()).thenReturn(List.of());
 
     assertTrue(service.findAll().isEmpty());
   }
 
   @Test
   void findByCertificateId_ShouldDelegateToRepository() {
-    final var entry = LogEntry.builder().logId("it-log-001").certificateId("cert-001").build();
-    when(logEntryNavigationRepository.findByCertificateId("cert-001")).thenReturn(List.of(entry));
+    final var entry = AuditLogEntry.builder().logId("it-log-001").certificateId("cert-001").build();
+    when(auditLogEntryNavigationRepository.findByCertificateId("cert-001")).thenReturn(List.of(entry));
 
     final var result = service.findByCertificateId("cert-001");
 
@@ -52,8 +52,8 @@ class LogEntryNavigationServiceTest {
 
   @Test
   void findById_ShouldDelegateToRepository() {
-    final var entry = LogEntry.builder().logId("it-log-001").certificateId("cert-001").build();
-    when(logEntryNavigationRepository.findById("it-log-001")).thenReturn(Optional.of(entry));
+    final var entry = AuditLogEntry.builder().logId("it-log-001").certificateId("cert-001").build();
+    when(auditLogEntryNavigationRepository.findById("it-log-001")).thenReturn(Optional.of(entry));
 
     final var result = service.findById("it-log-001");
 
@@ -63,14 +63,14 @@ class LogEntryNavigationServiceTest {
 
   @Test
   void findById_ShouldReturnEmptyWhenNotFound() {
-    when(logEntryNavigationRepository.findById("unknown")).thenReturn(Optional.empty());
+    when(auditLogEntryNavigationRepository.findById("unknown")).thenReturn(Optional.empty());
 
     assertTrue(service.findById("unknown").isEmpty());
   }
 
   @Test
   void findByCertificateId_ShouldReturnEmptyWhenNoMatches() {
-    when(logEntryNavigationRepository.findByCertificateId("unknown")).thenReturn(List.of());
+    when(auditLogEntryNavigationRepository.findByCertificateId("unknown")).thenReturn(List.of());
 
     assertTrue(service.findByCertificateId("unknown").isEmpty());
   }

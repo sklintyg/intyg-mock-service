@@ -22,7 +22,7 @@ class LogEntryNavigationRepositoryImplTest {
   @Mock private StoreLogTypeRepository storeLogTypeRepository;
   @Mock private StoreLogTypeConverter converter;
 
-  @InjectMocks private LogEntryNavigationRepositoryImpl repository;
+  @InjectMocks private AuditLogEntryNavigationRepositoryImpl repository;
 
   private static StoreLogType soapLog() {
     return new StoreLogType();

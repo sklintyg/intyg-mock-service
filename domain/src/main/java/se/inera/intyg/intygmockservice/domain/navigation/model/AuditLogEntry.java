@@ -6,7 +6,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class LogEntry {
+public class AuditLogEntry {
 
   String logId;
   String systemId;

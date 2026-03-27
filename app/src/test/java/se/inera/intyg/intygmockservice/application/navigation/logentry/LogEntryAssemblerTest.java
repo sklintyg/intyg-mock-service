@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import se.inera.intyg.intygmockservice.domain.navigation.model.LogEntry;
+import se.inera.intyg.intygmockservice.domain.navigation.model.AuditLogEntry;
 
 class LogEntryAssemblerTest {
 
@@ -24,7 +24,7 @@ class LogEntryAssemblerTest {
 
   @Test
   void toModel_ShouldIncludeSelfLinkPointingToAllLogEntriesWhenLogIdNull() {
-    final var entry = LogEntry.builder().certificateId("cert-001").build();
+    final var entry = AuditLogEntry.builder().certificateId("cert-001").build();
 
     assertTrue(
         assembler
@@ -50,7 +50,7 @@ class LogEntryAssemblerTest {
 
   @Test
   void toModel_ShouldNotIncludeCertificateLinkWhenCertificateIdNull() {
-    final var entry = LogEntry.builder().logId("it-log-001").build();
+    final var entry = AuditLogEntry.builder().logId("it-log-001").build();
 
     assertTrue(assembler.toModel(entry).getLink("certificate").isEmpty());
   }
@@ -59,7 +59,7 @@ class LogEntryAssemblerTest {
   void toModel_ShouldMapAllFields() {
     final var timestamp = LocalDateTime.of(2024, 11, 9, 7, 40, 13);
     final var entry =
-        LogEntry.builder()
+        AuditLogEntry.builder()
             .logId("it-log-001")
             .systemId("WEBCERT")
             .systemName("Webcert")
@@ -104,7 +104,7 @@ class LogEntryAssemblerTest {
     assertEquals(2, assembler.toCollectionModel(entries).getContent().size());
   }
 
-  private static LogEntry logEntry(final String certificateId) {
-    return LogEntry.builder().logId("it-log-001").certificateId(certificateId).build();
+  private static AuditLogEntry logEntry(final String certificateId) {
+    return AuditLogEntry.builder().logId("it-log-001").certificateId(certificateId).build();
   }
 }

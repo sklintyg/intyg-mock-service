@@ -265,7 +265,7 @@ after that structure is in place to avoid two passes).
 
 ---
 
-### DDD-07 — Rename `LogEntry` to `AuditLogEntry`
+### ~~DDD-07 — Rename `LogEntry` to `AuditLogEntry`~~ ✓ Done
 
 **Finding:** L-5 (Low) — `LogEntry` is ambiguous (could refer to application logging). The
 domain concept is an audit log entry originating from the StoreLog SOAP service. `AuditLogEntry`
