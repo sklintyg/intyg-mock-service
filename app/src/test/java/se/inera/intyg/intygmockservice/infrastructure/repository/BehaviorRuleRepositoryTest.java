@@ -2,6 +2,7 @@ package se.inera.intyg.intygmockservice.infrastructure.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
@@ -119,6 +120,34 @@ class BehaviorRuleRepositoryTest {
 
     assertTrue(repository.findByServiceName(ServiceName.REGISTER_CERTIFICATE).isEmpty());
     assertEquals(1, repository.findByServiceName(ServiceName.REVOKE_CERTIFICATE).size());
+  }
+
+  @Test
+  void findBestMatchWithContextThrowsWhenContextIsNull() {
+    assertThrows(
+        NullPointerException.class,
+        () -> repository.findBestMatch(ServiceName.REGISTER_CERTIFICATE, null));
+  }
+
+  @Test
+  void findBestMatchWithoutContextReturnsCatchAllRule() {
+    final var catchAll = rule(ServiceName.REGISTER_CERTIFICATE);
+    final var specific =
+        BehaviorRule.builder()
+            .id(UUID.randomUUID())
+            .serviceName(ServiceName.REGISTER_CERTIFICATE)
+            .resultCode("ERROR")
+            .matchCriteria(MatchCriteria.builder().certificateId("cert-123").build())
+            .triggerCount(0)
+            .createdAt(Instant.now())
+            .build();
+    repository.save(catchAll);
+    repository.save(specific);
+
+    final var result = repository.findBestMatch(ServiceName.REGISTER_CERTIFICATE);
+
+    assertTrue(result.isPresent());
+    assertEquals(catchAll.getId(), result.get().getId());
   }
 
   @Test

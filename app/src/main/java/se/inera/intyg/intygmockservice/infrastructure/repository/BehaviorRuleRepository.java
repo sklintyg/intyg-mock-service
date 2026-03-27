@@ -2,6 +2,7 @@ package se.inera.intyg.intygmockservice.infrastructure.repository;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,7 +39,12 @@ public class BehaviorRuleRepository {
     return rules.values().stream().filter(r -> r.getServiceName() == serviceName).toList();
   }
 
+  public Optional<BehaviorRule> findBestMatch(ServiceName serviceName) {
+    return findBestMatch(serviceName, MatchContext.builder().build());
+  }
+
   public Optional<BehaviorRule> findBestMatch(ServiceName serviceName, MatchContext context) {
+    Objects.requireNonNull(context, "context must not be null");
     return rules.values().stream()
         .filter(rule -> rule.getServiceName() == serviceName)
         .filter(rule -> rule.matches(context))

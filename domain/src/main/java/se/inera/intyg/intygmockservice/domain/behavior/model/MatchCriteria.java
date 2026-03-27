@@ -7,6 +7,17 @@ import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 @Value
 @Builder
 public class MatchCriteria {
+
+  public static class MatchCriteriaBuilder {
+    public MatchCriteria build() {
+      if (logicalAddress == null && certificateId == null && personId == null) {
+        throw new IllegalArgumentException(
+            "MatchCriteria requires at least one non-null field; use null criteria for catch-all");
+      }
+      return new MatchCriteria(logicalAddress, certificateId, personId);
+    }
+  }
+
   String logicalAddress;
   String certificateId;
   String personId;

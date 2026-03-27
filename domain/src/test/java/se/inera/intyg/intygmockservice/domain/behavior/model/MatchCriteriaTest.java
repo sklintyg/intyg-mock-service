@@ -2,6 +2,7 @@ package se.inera.intyg.intygmockservice.domain.behavior.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -17,10 +18,8 @@ class MatchCriteriaTest {
   }
 
   @Test
-  void allNullCriteriaMatchesAnyContext() {
-    final var criteria = MatchCriteria.builder().build();
-
-    assertTrue(criteria.matches(context("any-address", "any-cert", "any-person")));
+  void allNullCriteriaThrowsIllegalArgumentException() {
+    assertThrows(IllegalArgumentException.class, () -> MatchCriteria.builder().build());
   }
 
   @Test
@@ -84,7 +83,6 @@ class MatchCriteriaTest {
 
   @Test
   void specificityCountsNonNullFields() {
-    assertEquals(0, MatchCriteria.builder().build().specificity());
     assertEquals(1, MatchCriteria.builder().logicalAddress("a").build().specificity());
     assertEquals(
         2, MatchCriteria.builder().logicalAddress("a").certificateId("b").build().specificity());

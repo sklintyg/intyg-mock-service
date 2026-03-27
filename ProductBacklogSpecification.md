@@ -184,7 +184,7 @@ Prerequisites: none (independent of DDD-01 and DDD-02)
 
 ---
 
-### DDD-04 — MatchCriteria all-null guard
+### ~~DDD-04 — MatchCriteria all-null guard~~ ✓ Done
 
 **Finding:** V-3 (Low) — `MatchCriteria` with all fields null is semantically identical to a
 `null` criteria reference on `BehaviorRule`, but is a distinct object. Callers can accidentally
