@@ -61,11 +61,11 @@ public class BehaviorRule {
     return matchCriteria.specificity();
   }
 
-  public boolean hasErrorEffect() {
+  public boolean returnsError() {
     return resultCode != null;
   }
 
-  public boolean hasDelay() {
+  public boolean appliesDelay() {
     return delayMillis != null;
   }
 
@@ -82,11 +82,11 @@ public class BehaviorRule {
     if (effectHandler == null) {
       throw new IllegalStateException("BehaviorRule must be wired before evaluation");
     }
-    final var delayRequested = hasDelay();
+    final var delayRequested = appliesDelay();
     trigger();
     final var exhausted = isExhausted();
     final var errorResult =
-        hasErrorEffect()
+        returnsError()
             ? Optional.of(
                 EvaluationResult.builder()
                     .resultCode(resultCode)

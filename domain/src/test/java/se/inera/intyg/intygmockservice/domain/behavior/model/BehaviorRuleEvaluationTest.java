@@ -177,6 +177,6 @@ class BehaviorRuleEvaluationTest {
   @Test
   void buildingRuleWithBothResultCodeAndErrorIdSucceeds() {
     final var rule = baseRule().resultCode("ERROR").errorId("VALIDATION_ERROR").build();
-    assertTrue(rule.hasErrorEffect());
+    assertTrue(rule.returnsError());
   }
 }

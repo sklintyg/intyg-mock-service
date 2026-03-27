@@ -63,13 +63,13 @@ class BehaviorRuleTest {
   }
 
   @Test
-  void hasErrorEffectReturnsTrueWhenResultCodeSet() {
-    assertTrue(baseRule().resultCode("ERROR").build().hasErrorEffect());
+  void returnsErrorReturnsTrueWhenResultCodeSet() {
+    assertTrue(baseRule().resultCode("ERROR").build().returnsError());
   }
 
   @Test
-  void hasErrorEffectReturnsFalseWhenResultCodeNull() {
-    assertFalse(baseRule().build().hasErrorEffect());
+  void returnsErrorReturnsFalseWhenResultCodeNull() {
+    assertFalse(baseRule().build().returnsError());
   }
 
   @Test
@@ -79,13 +79,13 @@ class BehaviorRuleTest {
   }
 
   @Test
-  void hasDelayReturnsTrueWhenDelayMillisSet() {
-    assertTrue(baseRule().delayMillis(100L).build().hasDelay());
+  void appliesDelayReturnsTrueWhenDelayMillisSet() {
+    assertTrue(baseRule().delayMillis(100L).build().appliesDelay());
   }
 
   @Test
-  void hasDelayReturnsFalseWhenDelayMillisNull() {
-    assertFalse(baseRule().build().hasDelay());
+  void appliesDelayReturnsFalseWhenDelayMillisNull() {
+    assertFalse(baseRule().build().appliesDelay());
   }
 
   @Test

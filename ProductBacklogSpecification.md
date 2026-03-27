@@ -215,7 +215,7 @@ Prerequisites: none
 
 ---
 
-### DDD-05 — BehaviorRule semantic method renames
+### ~~DDD-05 — BehaviorRule semantic method renames~~ ✓ Done
 
 **Finding:** L-4 (Low) — `BehaviorRule.hasErrorEffect()` and `BehaviorRule.hasDelay()` describe
 internal state using predicate naming (`has*`) rather than expressing the rule's intended effect
