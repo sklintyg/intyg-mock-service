@@ -240,7 +240,7 @@ these predicates; doing renames after the structure is stable avoids renaming tw
 
 ---
 
-### DDD-06 — Rename `EvaluationResult` to `MockResponse`
+### ~~DDD-06 — Rename `EvaluationResult` to `MockResponse`~~ ✓ Done
 
 **Finding:** L-2 (Low) — `EvaluationResult` names a computation outcome rather than the domain
 concept: what a mock service is configured to return to a SOAP caller. `MockResponse` expresses

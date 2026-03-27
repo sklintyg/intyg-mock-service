@@ -24,7 +24,7 @@ import se.inera.intyg.intygmockservice.application.common.dto.PatientDTO;
 import se.inera.intyg.intygmockservice.application.registercertificate.converter.RegisterCertificateConverter;
 import se.inera.intyg.intygmockservice.application.registercertificate.dto.RegisterCertificateDTO;
 import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RegisterCertificatePassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RegisterCertificateRepository;
@@ -107,7 +107,7 @@ class RegisterCertificateServiceTest {
     final var rule = errorRule();
     final var errorResponse = errorResponse();
     when(behaviorRuleRepository.findBestMatch(any(), any())).thenReturn(Optional.of(rule));
-    when(responseFactory.create(any(EvaluationResult.class))).thenReturn(errorResponse);
+    when(responseFactory.create(any(MockResponse.class))).thenReturn(errorResponse);
 
     final var result = service.store(LOGICAL_ADDRESS, new RegisterCertificateType());
 
@@ -132,7 +132,7 @@ class RegisterCertificateServiceTest {
     when(rule.evaluate(any()))
         .thenReturn(
             Optional.of(
-                EvaluationResult.builder()
+                MockResponse.builder()
                     .resultCode("ERROR")
                     .errorId("VALIDATION_ERROR")
                     .build()));

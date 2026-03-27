@@ -23,7 +23,7 @@ import se.inera.intyg.intygmockservice.application.common.dto.PatientDTO.PersonI
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.converter.SendMessageToRecipientConverter;
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.dto.SendMessageToRecipientDTO;
 import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.SendMessageToRecipientPassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.SendMessageToRecipientRepository;
@@ -97,7 +97,7 @@ class SendMessageToRecipientServiceTest {
     final var rule = errorRule();
     final var errorResponse = errorResponse();
     when(behaviorRuleRepository.findBestMatch(any(), any())).thenReturn(Optional.of(rule));
-    when(responseFactory.create(any(EvaluationResult.class))).thenReturn(errorResponse);
+    when(responseFactory.create(any(MockResponse.class))).thenReturn(errorResponse);
 
     final var result = service.store(LOGICAL_ADDRESS, new SendMessageToRecipientType());
 
@@ -224,7 +224,7 @@ class SendMessageToRecipientServiceTest {
     when(rule.evaluate(any()))
         .thenReturn(
             Optional.of(
-                EvaluationResult.builder()
+                MockResponse.builder()
                     .resultCode("ERROR")
                     .errorId("VALIDATION_ERROR")
                     .build()));

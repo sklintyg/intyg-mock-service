@@ -78,7 +78,7 @@ public class BehaviorRule {
     return maxTriggerCount != null && triggerCount >= maxTriggerCount;
   }
 
-  public Optional<EvaluationResult> evaluate(MatchContext context) {
+  public Optional<MockResponse> evaluate(MatchContext context) {
     if (effectHandler == null) {
       throw new IllegalStateException("BehaviorRule must be wired before evaluation");
     }
@@ -88,12 +88,12 @@ public class BehaviorRule {
     final var errorResult =
         returnsError()
             ? Optional.of(
-                EvaluationResult.builder()
+                MockResponse.builder()
                     .resultCode(resultCode)
                     .errorId(errorId)
                     .resultText(resultText)
                     .build())
-            : Optional.<EvaluationResult>empty();
+            : Optional.<MockResponse>empty();
     effectHandler.handle(
         new RuleEvaluation(
             id,

@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Value
 @Builder
-public class EvaluationResult {
+public class MockResponse {
   String resultCode;
   String errorId;
   String resultText;

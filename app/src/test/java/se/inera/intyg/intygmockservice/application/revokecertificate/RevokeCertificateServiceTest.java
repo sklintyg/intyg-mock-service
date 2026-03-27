@@ -25,7 +25,7 @@ import se.inera.intyg.intygmockservice.application.revokecertificate.dto.RevokeC
 import se.inera.intyg.intygmockservice.application.revokecertificate.service.RevokeCertificateResponseFactory;
 import se.inera.intyg.intygmockservice.application.revokecertificate.service.RevokeCertificateService;
 import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
-import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RevokeCertificatePassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
@@ -98,7 +98,7 @@ class RevokeCertificateServiceTest {
     final var rule = errorRule();
     final var errorResponse = errorResponse();
     when(behaviorRuleRepository.findBestMatch(any(), any())).thenReturn(Optional.of(rule));
-    when(responseFactory.create(any(EvaluationResult.class))).thenReturn(errorResponse);
+    when(responseFactory.create(any(MockResponse.class))).thenReturn(errorResponse);
 
     final var result = service.store(LOGICAL_ADDRESS, new RevokeCertificateType());
 
@@ -212,7 +212,7 @@ class RevokeCertificateServiceTest {
     when(rule.evaluate(any()))
         .thenReturn(
             Optional.of(
-                EvaluationResult.builder()
+                MockResponse.builder()
                     .resultCode("ERROR")
                     .errorId("VALIDATION_ERROR")
                     .build()));

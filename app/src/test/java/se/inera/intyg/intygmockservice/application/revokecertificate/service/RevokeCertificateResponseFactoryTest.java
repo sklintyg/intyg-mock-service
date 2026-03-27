@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
-import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ErrorIdType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
 
@@ -13,8 +13,8 @@ class RevokeCertificateResponseFactoryTest {
   private final RevokeCertificateResponseFactory factory = new RevokeCertificateResponseFactory();
 
   @Test
-  void shouldSetResultCodeFromEvaluationResult() {
-    final var result = EvaluationResult.builder().resultCode("ERROR").build();
+  void shouldSetResultCodeFromMockResponse() {
+    final var result = MockResponse.builder().resultCode("ERROR").build();
 
     final var response = factory.create(result);
 
@@ -23,7 +23,7 @@ class RevokeCertificateResponseFactoryTest {
 
   @Test
   void shouldNotSetErrorIdWhenNull() {
-    final var result = EvaluationResult.builder().resultCode("OK").errorId(null).build();
+    final var result = MockResponse.builder().resultCode("OK").errorId(null).build();
 
     final var response = factory.create(result);
 
@@ -33,7 +33,7 @@ class RevokeCertificateResponseFactoryTest {
   @Test
   void shouldSetErrorIdWhenPresent() {
     final var result =
-        EvaluationResult.builder().resultCode("ERROR").errorId("VALIDATION_ERROR").build();
+        MockResponse.builder().resultCode("ERROR").errorId("VALIDATION_ERROR").build();
 
     final var response = factory.create(result);
 
@@ -42,7 +42,7 @@ class RevokeCertificateResponseFactoryTest {
 
   @Test
   void shouldNotSetResultTextWhenNull() {
-    final var result = EvaluationResult.builder().resultCode("OK").resultText(null).build();
+    final var result = MockResponse.builder().resultCode("OK").resultText(null).build();
 
     final var response = factory.create(result);
 
@@ -52,7 +52,7 @@ class RevokeCertificateResponseFactoryTest {
   @Test
   void shouldSetResultTextWhenPresent() {
     final var result =
-        EvaluationResult.builder().resultCode("ERROR").resultText("Something went wrong").build();
+        MockResponse.builder().resultCode("ERROR").resultText("Something went wrong").build();
 
     final var response = factory.create(result);
 

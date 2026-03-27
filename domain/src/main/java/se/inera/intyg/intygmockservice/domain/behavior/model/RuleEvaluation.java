@@ -7,7 +7,7 @@ public record RuleEvaluation(
     UUID ruleId,
     ServiceName serviceName,
     String certificateId,
-    Optional<EvaluationResult> errorResult,
+    Optional<MockResponse> errorResult,
     boolean delayRequested,
     Long delayMillis,
     boolean exhausted) {}

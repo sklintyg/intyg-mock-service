@@ -3,7 +3,7 @@ package se.inera.intyg.intygmockservice.application.behavior.service;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import se.inera.intyg.intygmockservice.domain.behavior.model.EvaluationResult;
+import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.inera.intyg.intygmockservice.domain.behavior.model.RuleEvaluation;
 import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 import se.inera.intyg.intygmockservice.infrastructure.logging.BehaviorLogger;
@@ -20,7 +20,7 @@ class BehaviorLoggerTest {
         ServiceName.REGISTER_CERTIFICATE,
         certificateId,
         Optional.of(
-            EvaluationResult.builder().resultCode("ERROR").errorId("VALIDATION_ERROR").build()),
+            MockResponse.builder().resultCode("ERROR").errorId("VALIDATION_ERROR").build()),
         false,
         null,
         false);
