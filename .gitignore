@@ -27,7 +27,7 @@ replay_pid*
 build
 out
 
-CLAUDE.md
-/.claude/
+/.claude/settings.local.json
+/.claude/memory/
 frontend/node_modules/
 app/src/main/resources/static/

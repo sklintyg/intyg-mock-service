@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew build*)",
+      "Bash(./gradlew spotlessApply*)",
+      "Bash(./gradlew spotlessCheck*)",
+      "Bash(./gradlew :app:test*)",
+      "Bash(./gradlew :integration-test:integrationTest*)",
+      "Bash(./gradlew compileJava*)",
+      "Bash(git*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "jq -r '.tool_input.file_path // .tool_response.filePath // \"\"' | { read -r f; case \"$f\" in *.java) ./gradlew spotlessApply --quiet 2>&1 | tail -5;; esac; } 2>/dev/null || true",
+            "statusMessage": "Applying Google Java Format..."
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./gradlew compileJava spotlessCheck --quiet 2>&1 | tail -10",
+            "if": "Bash(git commit*)",
+            "statusMessage": "Running pre-commit gate (compile + format check)..."
+          }
+        ]
+      }
+    ]
+  }
+}
