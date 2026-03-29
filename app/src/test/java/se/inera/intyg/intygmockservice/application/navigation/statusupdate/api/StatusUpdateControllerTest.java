@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.navigation.statusupdate;
+package se.inera.intyg.intygmockservice.application.navigation.statusupdate.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -11,6 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import se.inera.intyg.intygmockservice.application.navigation.statusupdate.StatusUpdateAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.statusupdate.StatusUpdateNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.statusupdate.StatusUpdateResponse;
 import se.inera.intyg.intygmockservice.domain.navigation.model.StatusUpdate;
 
 @ExtendWith(MockitoExtension.class)

@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.navigation.patient;
+package se.inera.intyg.intygmockservice.application.navigation.patient.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -20,6 +20,9 @@ import se.inera.intyg.intygmockservice.application.navigation.certificate.Certif
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageAssembler;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageNavigationService;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageResponse;
+import se.inera.intyg.intygmockservice.application.navigation.patient.PatientAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.patient.PatientNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.patient.PatientResponse;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;

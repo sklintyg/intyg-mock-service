@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.revokecertificate;
+package se.inera.intyg.intygmockservice.application.revokecertificate.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

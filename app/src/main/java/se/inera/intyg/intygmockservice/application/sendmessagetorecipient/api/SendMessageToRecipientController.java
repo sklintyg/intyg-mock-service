@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.sendmessagetorecipient;
+package se.inera.intyg.intygmockservice.application.sendmessagetorecipient.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.navigation;
+package se.inera.intyg.intygmockservice.application.navigation.api;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -9,13 +9,13 @@ import org.springframework.hateoas.RepresentationModel;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateController;
-import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryController;
-import se.inera.intyg.intygmockservice.application.navigation.message.MessageController;
-import se.inera.intyg.intygmockservice.application.navigation.patient.PatientController;
-import se.inera.intyg.intygmockservice.application.navigation.staff.StaffController;
-import se.inera.intyg.intygmockservice.application.navigation.statusupdate.StatusUpdateController;
-import se.inera.intyg.intygmockservice.application.navigation.unit.UnitController;
+import se.inera.intyg.intygmockservice.application.navigation.certificate.api.CertificateController;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.api.LogEntryController;
+import se.inera.intyg.intygmockservice.application.navigation.message.api.MessageController;
+import se.inera.intyg.intygmockservice.application.navigation.patient.api.PatientController;
+import se.inera.intyg.intygmockservice.application.navigation.staff.api.StaffController;
+import se.inera.intyg.intygmockservice.application.navigation.statusupdate.api.StatusUpdateController;
+import se.inera.intyg.intygmockservice.application.navigation.unit.api.UnitController;
 
 @RestController
 @RequestMapping("/api/navigate")

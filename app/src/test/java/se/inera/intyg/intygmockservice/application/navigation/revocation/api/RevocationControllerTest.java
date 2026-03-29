@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.navigation.revocation;
+package se.inera.intyg.intygmockservice.application.navigation.revocation.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -11,6 +11,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import se.inera.intyg.intygmockservice.application.navigation.revocation.RevocationAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.revocation.RevocationNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.revocation.RevocationResponse;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Revocation;
 
 @ExtendWith(MockitoExtension.class)

@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.storelog;
+package se.inera.intyg.intygmockservice.application.storelog.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

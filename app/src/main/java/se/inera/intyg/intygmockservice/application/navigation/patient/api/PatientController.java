@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.navigation.patient;
+package se.inera.intyg.intygmockservice.application.navigation.patient.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,6 +15,9 @@ import se.inera.intyg.intygmockservice.application.navigation.certificate.Certif
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageAssembler;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageNavigationService;
 import se.inera.intyg.intygmockservice.application.navigation.message.MessageResponse;
+import se.inera.intyg.intygmockservice.application.navigation.patient.PatientAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.patient.PatientNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.patient.PatientResponse;
 
 @RestController
 @RequestMapping("/api/navigate/patients")

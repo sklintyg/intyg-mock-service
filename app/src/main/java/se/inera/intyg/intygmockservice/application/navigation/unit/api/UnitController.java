@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.navigation.unit;
+package se.inera.intyg.intygmockservice.application.navigation.unit.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateAssembler;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateResponse;
+import se.inera.intyg.intygmockservice.application.navigation.unit.UnitAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.unit.UnitNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.unit.UnitResponse;
 
 @RestController
 @RequestMapping("/api/navigate/units")

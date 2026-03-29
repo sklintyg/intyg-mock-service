@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.registercertificate;
+package se.inera.intyg.intygmockservice.application.registercertificate.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

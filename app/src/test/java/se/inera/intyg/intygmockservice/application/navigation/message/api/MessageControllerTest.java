@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.navigation.message;
+package se.inera.intyg.intygmockservice.application.navigation.message.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -15,6 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import se.inera.intyg.intygmockservice.application.navigation.message.MessageAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.message.MessageNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.message.MessageResponse;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
 
 @ExtendWith(MockitoExtension.class)

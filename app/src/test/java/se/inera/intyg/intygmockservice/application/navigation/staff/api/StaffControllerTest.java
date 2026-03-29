@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.navigation.staff;
+package se.inera.intyg.intygmockservice.application.navigation.staff.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -17,6 +17,9 @@ import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateAssembler;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateResponse;
+import se.inera.intyg.intygmockservice.application.navigation.staff.StaffAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.staff.StaffNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.staff.StaffResponse;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Staff;
 

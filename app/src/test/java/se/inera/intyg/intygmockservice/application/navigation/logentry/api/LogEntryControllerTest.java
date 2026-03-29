@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.navigation.logentry;
+package se.inera.intyg.intygmockservice.application.navigation.logentry.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
@@ -13,6 +13,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryResponse;
 import se.inera.intyg.intygmockservice.domain.navigation.model.AuditLogEntry;
 
 @ExtendWith(MockitoExtension.class)

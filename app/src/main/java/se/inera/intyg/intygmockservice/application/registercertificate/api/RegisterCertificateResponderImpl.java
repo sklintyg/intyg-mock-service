@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.registercertificate;
+package se.inera.intyg.intygmockservice.application.registercertificate.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

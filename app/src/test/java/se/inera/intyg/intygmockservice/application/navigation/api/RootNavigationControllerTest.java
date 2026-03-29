@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.navigation;
+package se.inera.intyg.intygmockservice.application.navigation.api;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

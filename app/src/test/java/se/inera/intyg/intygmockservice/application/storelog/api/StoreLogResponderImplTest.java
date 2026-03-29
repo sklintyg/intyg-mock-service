@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.storelog;
+package se.inera.intyg.intygmockservice.application.storelog.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;

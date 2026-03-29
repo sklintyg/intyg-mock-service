@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.sendmessagetorecipient;
+package se.inera.intyg.intygmockservice.application.sendmessagetorecipient.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

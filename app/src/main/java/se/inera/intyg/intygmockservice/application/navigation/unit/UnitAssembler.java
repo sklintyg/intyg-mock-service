@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Component;
+import se.inera.intyg.intygmockservice.application.navigation.unit.api.UnitController;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Unit;
 
 @Component

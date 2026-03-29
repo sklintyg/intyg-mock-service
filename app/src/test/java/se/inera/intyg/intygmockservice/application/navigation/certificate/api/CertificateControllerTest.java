@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.navigation.certificate;
+package se.inera.intyg.intygmockservice.application.navigation.certificate.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,6 +16,9 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
+import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateResponse;
 import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryAssembler;
 import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryNavigationService;
 import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryResponse;

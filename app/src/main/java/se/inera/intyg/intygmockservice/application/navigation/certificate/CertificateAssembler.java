@@ -14,8 +14,9 @@ import se.inera.intyg.intygmockservice.application.navigation.certificate.Certif
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateResponse.PatientData;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateResponse.StaffData;
 import se.inera.intyg.intygmockservice.application.navigation.certificate.CertificateResponse.UnitData;
-import se.inera.intyg.intygmockservice.application.navigation.revocation.RevocationController;
-import se.inera.intyg.intygmockservice.application.navigation.statusupdate.StatusUpdateController;
+import se.inera.intyg.intygmockservice.application.navigation.certificate.api.CertificateController;
+import se.inera.intyg.intygmockservice.application.navigation.revocation.api.RevocationController;
+import se.inera.intyg.intygmockservice.application.navigation.statusupdate.api.StatusUpdateController;
 import se.inera.intyg.intygmockservice.domain.navigation.model.CareProvider;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.PageResult;

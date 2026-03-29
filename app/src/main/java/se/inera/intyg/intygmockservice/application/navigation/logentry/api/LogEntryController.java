@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.navigation.logentry;
+package se.inera.intyg.intygmockservice.application.navigation.logentry.api;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryAssembler;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryNavigationService;
+import se.inera.intyg.intygmockservice.application.navigation.logentry.LogEntryResponse;
 
 @RestController
 @RequestMapping("/api/navigate")

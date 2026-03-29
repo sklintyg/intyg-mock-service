@@ -1,4 +1,4 @@
-package se.inera.intyg.intygmockservice.application.revokecertificate;
+package se.inera.intyg.intygmockservice.application.revokecertificate.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
