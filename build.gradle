@@ -40,6 +40,16 @@ allprojects {
     }
 }
 
+tasks.register('installGitHooks', Copy) {
+    from '.githooks'
+    into '.git/hooks'
+    fileMode 0755
+}
+
+tasks.named('build') {
+    dependsOn 'installGitHooks'
+}
+
 subprojects {
     apply plugin: 'com.diffplug.spotless'
     apply plugin: 'jacoco'

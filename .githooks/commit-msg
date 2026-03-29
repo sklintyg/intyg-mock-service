@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+COMMIT_MSG_FILE="$1"
+
+# Strip comment lines before checking
+STRIPPED=$(grep -v '^#' "$COMMIT_MSG_FILE" || true)
+
+# Block Co-Authored-By (forbidden per project rules)
+if echo "$STRIPPED" | grep -qi '^Co-Authored-By:'; then
+  echo ""
+  echo "ERROR: Commit message contains 'Co-Authored-By' line, which is not allowed."
+  echo "       Remove it and try again."
+  echo ""
+  exit 1
+fi
+
+# Enforce format: K1J-NNNN: Description (must start with capital letter)
+# Pipeline commits starting with "(Jenkins2 pipeline)" are exempt from this check
+FIRST_LINE=$(echo "$STRIPPED" | head -n 1)
+if echo "$FIRST_LINE" | grep -qE '^\(Jenkins2 pipeline\)'; then
+  exit 0
+fi
+if ! echo "$FIRST_LINE" | grep -qE '^K1J-[0-9]+: [A-Z]'; then
+  echo ""
+  echo "ERROR: Commit message does not match required format."
+  echo ""
+  echo "  Required:  K1J-<number>: <Description starting with capital letter>"
+  echo "  Example:   K1J-1927: Added a git hook that verifies commit messages"
+  echo ""
+  echo "  Got:       $FIRST_LINE"
+  echo ""
+  exit 1
+fi
+
+exit 0
