@@ -1,7 +1,9 @@
 package se.inera.intyg.intygmockservice;
 
 import static com.tngtech.archunit.base.DescribedPredicate.alwaysTrue;
+import static com.tngtech.archunit.base.DescribedPredicate.not;
 import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.simpleNameEndingWith;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.fields;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
@@ -206,4 +208,54 @@ class ArchitectureTest {
           .resideInAPackage("..domain.navigation.model..")
           .should()
           .haveRawType(PersonId.class);
+
+  // I. Additional hexagonal isolation rules.
+
+  @ArchTest
+  static final ArchRule services_must_not_use_spring_web_or_messaging =
+      noClasses()
+          .that()
+          .haveSimpleNameEndingWith("Service")
+          .and()
+          .resideInAPackage("..application..")
+          .should()
+          .dependOnClassesThat()
+          .resideInAnyPackage("org.springframework.web..", "org.springframework.messaging..");
+
+  @ArchTest
+  static final ArchRule api_classes_must_not_depend_on_domain =
+      noClasses()
+          .that(resideInAPackage("..application..api..").and(not(simpleNameEndingWith("Test"))))
+          .should()
+          .dependOnClassesThat()
+          .resideInAPackage("..domain..");
+
+  @ArchTest
+  static final ArchRule infrastructure_must_not_depend_on_application =
+      noClasses()
+          .that()
+          .resideInAPackage("..infrastructure..")
+          .and()
+          .doNotHaveSimpleName("CxfConfig")
+          .should()
+          .dependOnClassesThat()
+          .resideInAPackage("..application..");
+
+  @ArchTest
+  static final ArchRule controllers_in_application_must_reside_in_api_subpackage =
+      classes()
+          .that()
+          .haveSimpleNameEndingWith("Controller")
+          .and()
+          .resideInAPackage("..application..")
+          .should()
+          .resideInAPackage("..application..api..");
+
+  @ArchTest
+  static final ArchRule responders_must_reside_in_api_subpackage =
+      classes()
+          .that()
+          .haveSimpleNameEndingWith("ResponderImpl")
+          .should()
+          .resideInAPackage("..application..api..");
 }
