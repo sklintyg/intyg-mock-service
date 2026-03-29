@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import se.inera.intyg.intygmockservice.application.registercertificate.converter.RegisterCertificateConverter;
 import se.inera.intyg.intygmockservice.domain.navigation.model.CareProvider;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Certificate;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Patient;
@@ -19,6 +18,8 @@ import se.inera.intyg.intygmockservice.infrastructure.repository.RegisterCertifi
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.SendMessageToRecipientRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.StoreLogTypeRepository;
+import se.inera.intyg.intygmockservice.infrastructure.xml.JaxbXmlMarshaller;
+import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 
 @Repository
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
   private final SendMessageToRecipientRepository sendMessageToRecipientRepository;
   private final CertificateStatusUpdateForCareRepository statusUpdateRepository;
   private final StoreLogTypeRepository storeLogTypeRepository;
-  private final RegisterCertificateConverter registerCertificateConverter;
+  private final JaxbXmlMarshaller xmlMarshaller;
 
   @Override
   public List<Certificate> findAll() {
@@ -81,12 +82,12 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
     final Map<String, Certificate> map = new LinkedHashMap<>();
 
     // Richest source first — full patient, staff, unit data available
-    registerCertificateRepository.findAll().stream()
-        .map(registerCertificateConverter::convert)
+    registerCertificateRepository
+        .findAll()
         .forEach(
-            dto -> {
-              final var certId = dto.getIntyg().getIntygsId().getExtension();
-              map.put(certId, toCertificate(dto));
+            source -> {
+              final var certId = source.getIntyg().getIntygsId().getExtension();
+              map.put(certId, toCertificate(source));
             });
 
     // Revocations — add stub for certificate IDs not yet registered
@@ -167,11 +168,8 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
     return map;
   }
 
-  private Certificate toCertificate(
-      final se.inera.intyg.intygmockservice.application.registercertificate.dto
-              .RegisterCertificateDTO
-          dto) {
-    final var intyg = dto.getIntyg();
+  private Certificate toCertificate(final RegisterCertificateType source) {
+    final var intyg = source.getIntyg();
     return Certificate.builder()
         .certificateId(intyg.getIntygsId().getExtension())
         .certificateType(intyg.getTyp() != null ? intyg.getTyp().getCode() : null)
@@ -181,64 +179,62 @@ public class CertificateNavigationRepositoryImpl implements CertificateNavigatio
         .version(intyg.getVersion())
         .patient(toPatient(intyg.getPatient()))
         .issuedBy(toStaff(intyg.getSkapadAv()))
+        .sourceXml(xmlMarshaller.marshal(source))
         .build();
   }
 
-  private Patient toPatient(
-      final se.inera.intyg.intygmockservice.application.common.dto.PatientDTO dto) {
-    if (dto == null) {
+  private Patient toPatient(final se.riv.clinicalprocess.healthcond.certificate.v3.Patient source) {
+    if (source == null) {
       return null;
     }
     return Patient.builder()
-        .personId(dto.getPersonId() != null ? PersonId.of(dto.getPersonId().getExtension()) : null)
-        .firstName(dto.getFornamn())
-        .lastName(dto.getEfternamn())
-        .streetAddress(dto.getPostadress())
-        .postalCode(dto.getPostnummer())
-        .city(dto.getPostort())
+        .personId(
+            source.getPersonId() != null ? PersonId.of(source.getPersonId().getExtension()) : null)
+        .firstName(source.getFornamn())
+        .lastName(source.getEfternamn())
+        .streetAddress(source.getPostadress())
+        .postalCode(source.getPostnummer())
+        .city(source.getPostort())
         .build();
   }
 
-  private Staff toStaff(
-      final se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO dto) {
-    if (dto == null) {
+  private Staff toStaff(final se.riv.clinicalprocess.healthcond.certificate.v3.HosPersonal source) {
+    if (source == null) {
       return null;
     }
     return Staff.builder()
-        .staffId(dto.getPersonalId() != null ? dto.getPersonalId().getExtension() : null)
-        .fullName(dto.getFullstandigtNamn())
-        .prescriptionCode(dto.getForskrivarkod())
-        .unit(toUnit(dto.getEnhet()))
+        .staffId(source.getPersonalId() != null ? source.getPersonalId().getExtension() : null)
+        .fullName(source.getFullstandigtNamn())
+        .prescriptionCode(source.getForskrivarkod())
+        .unit(toUnit(source.getEnhet()))
         .build();
   }
 
-  private Unit toUnit(
-      final se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO.EnhetDTO dto) {
-    if (dto == null) {
+  private Unit toUnit(final se.riv.clinicalprocess.healthcond.certificate.v3.Enhet source) {
+    if (source == null) {
       return null;
     }
     return Unit.builder()
-        .unitId(dto.getEnhetsId() != null ? dto.getEnhetsId().getExtension() : null)
-        .unitName(dto.getEnhetsnamn())
-        .streetAddress(dto.getPostadress())
-        .postalCode(dto.getPostnummer())
-        .city(dto.getPostort())
-        .phone(dto.getTelefonnummer())
-        .email(dto.getEpost())
-        .careProvider(toCareProvider(dto.getVardgivare()))
+        .unitId(source.getEnhetsId() != null ? source.getEnhetsId().getExtension() : null)
+        .unitName(source.getEnhetsnamn())
+        .streetAddress(source.getPostadress())
+        .postalCode(source.getPostnummer())
+        .city(source.getPostort())
+        .phone(source.getTelefonnummer())
+        .email(source.getEpost())
+        .careProvider(toCareProvider(source.getVardgivare()))
         .build();
   }
 
   private CareProvider toCareProvider(
-      final se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO.EnhetDTO
-              .VardgivareDTO
-          dto) {
-    if (dto == null) {
+      final se.riv.clinicalprocess.healthcond.certificate.v3.Vardgivare source) {
+    if (source == null) {
       return null;
     }
     return CareProvider.builder()
-        .careProviderId(dto.getVardgivareId() != null ? dto.getVardgivareId().getExtension() : null)
-        .careProviderName(dto.getVardgivarnamn())
+        .careProviderId(
+            source.getVardgivareId() != null ? source.getVardgivareId().getExtension() : null)
+        .careProviderName(source.getVardgivarnamn())
         .build();
   }
 }

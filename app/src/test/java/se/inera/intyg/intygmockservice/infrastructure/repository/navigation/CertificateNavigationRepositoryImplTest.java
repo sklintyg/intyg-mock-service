@@ -14,25 +14,22 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO;
-import se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO.EnhetDTO;
-import se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO.EnhetDTO.HsaIdDTO;
-import se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO.EnhetDTO.VardgivareDTO;
-import se.inera.intyg.intygmockservice.application.common.dto.HoSPersonalDTO.PersonalIdDTO;
-import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO;
-import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO.IntygsId;
-import se.inera.intyg.intygmockservice.application.common.dto.PatientDTO;
-import se.inera.intyg.intygmockservice.application.registercertificate.converter.RegisterCertificateConverter;
-import se.inera.intyg.intygmockservice.application.registercertificate.dto.RegisterCertificateDTO;
 import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.repository.CertificateStatusUpdateForCareRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RegisterCertificateRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.SendMessageToRecipientRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.StoreLogTypeRepository;
+import se.inera.intyg.intygmockservice.infrastructure.xml.JaxbXmlMarshaller;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.HsaId;
 import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Enhet;
+import se.riv.clinicalprocess.healthcond.certificate.v3.HosPersonal;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Patient;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Vardgivare;
 
 @ExtendWith(MockitoExtension.class)
 class CertificateNavigationRepositoryImplTest {
@@ -42,17 +39,15 @@ class CertificateNavigationRepositoryImplTest {
   @Mock private SendMessageToRecipientRepository sendMessageToRecipientRepository;
   @Mock private CertificateStatusUpdateForCareRepository statusUpdateRepository;
   @Mock private StoreLogTypeRepository storeLogTypeRepository;
-  @Mock private RegisterCertificateConverter registerCertificateConverter;
+  @Mock private JaxbXmlMarshaller xmlMarshaller;
 
   @InjectMocks private CertificateNavigationRepositoryImpl repository;
 
   @Test
   void findAll_ShouldReturnCertificateFromRegistration() {
-    final var rawType = new RegisterCertificateType();
-    final var dto = buildRegisterCertificateDTO("cert-001", "191212121212");
-
-    when(registerCertificateRepository.findAll()).thenReturn(List.of(rawType));
-    when(registerCertificateConverter.convert(any(RegisterCertificateType.class))).thenReturn(dto);
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(registerCertificateRepository.findAll())
+        .thenReturn(List.of(buildRegisterCertificateType("cert-001", "191212121212")));
     when(revokeCertificateRepository.findAll()).thenReturn(List.of());
     when(sendMessageToRecipientRepository.findAll()).thenReturn(List.of());
     when(statusUpdateRepository.findAll()).thenReturn(List.of());
@@ -68,11 +63,9 @@ class CertificateNavigationRepositoryImplTest {
 
   @Test
   void findAll_ShouldDeduplicateWhenCertificateIsInBothRegistrationAndRevocation() {
-    final var rawType = new RegisterCertificateType();
-    final var dto = buildRegisterCertificateDTO("cert-001", "191212121212");
-
-    when(registerCertificateRepository.findAll()).thenReturn(List.of(rawType));
-    when(registerCertificateConverter.convert(any(RegisterCertificateType.class))).thenReturn(dto);
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(registerCertificateRepository.findAll())
+        .thenReturn(List.of(buildRegisterCertificateType("cert-001", "191212121212")));
     when(revokeCertificateRepository.findAll())
         .thenReturn(List.of(buildRevokeType("cert-001", "191212121212")));
     when(sendMessageToRecipientRepository.findAll()).thenReturn(List.of());
@@ -174,11 +167,9 @@ class CertificateNavigationRepositoryImplTest {
 
   @Test
   void findByUnitId_ShouldReturnCertificatesForMatchingUnit() {
-    final var rawType = new RegisterCertificateType();
-    final var dto = buildRegisterCertificateDTO("cert-001", "191212121212");
-
-    when(registerCertificateRepository.findAll()).thenReturn(List.of(rawType));
-    when(registerCertificateConverter.convert(any(RegisterCertificateType.class))).thenReturn(dto);
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(registerCertificateRepository.findAll())
+        .thenReturn(List.of(buildRegisterCertificateType("cert-001", "191212121212")));
     when(revokeCertificateRepository.findAll()).thenReturn(List.of());
     when(sendMessageToRecipientRepository.findAll()).thenReturn(List.of());
     when(statusUpdateRepository.findAll()).thenReturn(List.of());
@@ -192,11 +183,9 @@ class CertificateNavigationRepositoryImplTest {
 
   @Test
   void findByUnitId_ShouldReturnEmptyWhenNoMatchingUnit() {
-    final var rawType = new RegisterCertificateType();
-    final var dto = buildRegisterCertificateDTO("cert-001", "191212121212");
-
-    when(registerCertificateRepository.findAll()).thenReturn(List.of(rawType));
-    when(registerCertificateConverter.convert(any(RegisterCertificateType.class))).thenReturn(dto);
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(registerCertificateRepository.findAll())
+        .thenReturn(List.of(buildRegisterCertificateType("cert-001", "191212121212")));
     when(revokeCertificateRepository.findAll()).thenReturn(List.of());
     when(sendMessageToRecipientRepository.findAll()).thenReturn(List.of());
     when(statusUpdateRepository.findAll()).thenReturn(List.of());
@@ -207,11 +196,9 @@ class CertificateNavigationRepositoryImplTest {
 
   @Test
   void findByStaffId_ShouldReturnCertificatesForMatchingStaff() {
-    final var rawType = new RegisterCertificateType();
-    final var dto = buildRegisterCertificateDTO("cert-001", "191212121212");
-
-    when(registerCertificateRepository.findAll()).thenReturn(List.of(rawType));
-    when(registerCertificateConverter.convert(any(RegisterCertificateType.class))).thenReturn(dto);
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(registerCertificateRepository.findAll())
+        .thenReturn(List.of(buildRegisterCertificateType("cert-001", "191212121212")));
     when(revokeCertificateRepository.findAll()).thenReturn(List.of());
     when(sendMessageToRecipientRepository.findAll()).thenReturn(List.of());
     when(statusUpdateRepository.findAll()).thenReturn(List.of());
@@ -254,37 +241,51 @@ class CertificateNavigationRepositoryImplTest {
 
   // --- helpers ---
 
-  private static RegisterCertificateDTO buildRegisterCertificateDTO(
+  private static RegisterCertificateType buildRegisterCertificateType(
       final String certId, final String personId) {
-    return RegisterCertificateDTO.builder()
-        .intyg(
-            IntygDTO.builder()
-                .intygsId(IntygsId.builder().extension(certId).build())
-                .signeringstidpunkt(LocalDateTime.of(2024, 1, 1, 10, 0))
-                .patient(
-                    PatientDTO.builder()
-                        .personId(PatientDTO.PersonId.builder().extension(personId).build())
-                        .fornamn("Test")
-                        .efternamn("Testsson")
-                        .build())
-                .skapadAv(
-                    HoSPersonalDTO.builder()
-                        .personalId(PersonalIdDTO.builder().extension("staff-hsa-001").build())
-                        .fullstandigtNamn("Dr Test")
-                        .enhet(
-                            EnhetDTO.builder()
-                                .enhetsId(HsaIdDTO.builder().extension("unit-hsa-001").build())
-                                .enhetsnamn("Test Unit")
-                                .vardgivare(
-                                    VardgivareDTO.builder()
-                                        .vardgivareId(
-                                            HsaIdDTO.builder().extension("vg-001").build())
-                                        .vardgivarnamn("Test Vardgivare")
-                                        .build())
-                                .build())
-                        .build())
-                .build())
-        .build();
+    final var intygsId = new IntygId();
+    intygsId.setExtension(certId);
+
+    final var pid = new se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId();
+    pid.setExtension(personId);
+
+    final var patient = new Patient();
+    patient.setPersonId(pid);
+    patient.setFornamn("Test");
+    patient.setEfternamn("Testsson");
+
+    final var staffId = new HsaId();
+    staffId.setExtension("staff-hsa-001");
+
+    final var unitId = new HsaId();
+    unitId.setExtension("unit-hsa-001");
+
+    final var careProviderId = new HsaId();
+    careProviderId.setExtension("vg-001");
+
+    final var vardgivare = new Vardgivare();
+    vardgivare.setVardgivareId(careProviderId);
+    vardgivare.setVardgivarnamn("Test Vardgivare");
+
+    final var enhet = new Enhet();
+    enhet.setEnhetsId(unitId);
+    enhet.setEnhetsnamn("Test Unit");
+    enhet.setVardgivare(vardgivare);
+
+    final var skapadAv = new HosPersonal();
+    skapadAv.setPersonalId(staffId);
+    skapadAv.setFullstandigtNamn("Dr Test");
+    skapadAv.setEnhet(enhet);
+
+    final var intyg = new Intyg();
+    intyg.setIntygsId(intygsId);
+    intyg.setPatient(patient);
+    intyg.setSkapadAv(skapadAv);
+    intyg.setSigneringstidpunkt(LocalDateTime.of(2024, 1, 1, 10, 0));
+
+    final var source = new RegisterCertificateType();
+    source.setIntyg(intyg);
+    return source;
   }
 
   private static se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType

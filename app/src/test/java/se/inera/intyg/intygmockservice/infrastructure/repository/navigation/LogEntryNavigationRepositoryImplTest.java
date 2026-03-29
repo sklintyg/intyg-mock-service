@@ -2,6 +2,7 @@ package se.inera.intyg.intygmockservice.infrastructure.repository.navigation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
@@ -11,60 +12,69 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygmockservice.application.storelog.converter.StoreLogTypeConverter;
-import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO;
 import se.inera.intyg.intygmockservice.infrastructure.repository.StoreLogTypeRepository;
+import se.inera.intyg.intygmockservice.infrastructure.xml.JaxbXmlMarshaller;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType;
+import se.riv.informationsecurity.auditing.log.v2.ActivityType;
+import se.riv.informationsecurity.auditing.log.v2.CareProviderType;
+import se.riv.informationsecurity.auditing.log.v2.CareUnitType;
+import se.riv.informationsecurity.auditing.log.v2.LogType;
+import se.riv.informationsecurity.auditing.log.v2.SystemType;
+import se.riv.informationsecurity.auditing.log.v2.UserType;
 
 @ExtendWith(MockitoExtension.class)
 class LogEntryNavigationRepositoryImplTest {
 
   @Mock private StoreLogTypeRepository storeLogTypeRepository;
-  @Mock private StoreLogTypeConverter converter;
+  @Mock private JaxbXmlMarshaller xmlMarshaller;
 
   @InjectMocks private AuditLogEntryNavigationRepositoryImpl repository;
 
-  private static StoreLogType soapLog() {
-    return new StoreLogType();
+  private static StoreLogType soapLog(final LogType... logs) {
+    final var storeLog = new StoreLogType();
+    for (final var log : logs) {
+      storeLog.getLog().add(log);
+    }
+    return storeLog;
   }
 
-  private static LogTypeDTO dto(final String certificateId) {
-    return LogTypeDTO.builder()
-        .logId("it-log-001")
-        .system(LogTypeDTO.SystemDTO.builder().systemId("WEBCERT").systemName("Webcert").build())
-        .activity(
-            LogTypeDTO.ActivityDTO.builder()
-                .activityType("Läsa")
-                .activityLevel(certificateId)
-                .purpose("CARE_TREATMENT")
-                .startDate(LocalDateTime.of(2024, 11, 9, 7, 40, 13))
-                .build())
-        .user(
-            LogTypeDTO.UserDTO.builder()
-                .userId("it-user-001")
-                .assignment("Läkare")
-                .careProvider(
-                    LogTypeDTO.CareProviderDTO.builder()
-                        .careProviderId("ALFA")
-                        .careProviderName("Alfa Regionen")
-                        .build())
-                .careUnit(
-                    LogTypeDTO.CareUnitDTO.builder()
-                        .careUnitId("ALMC")
-                        .careUnitName("Alfa Medicincentrum")
-                        .build())
-                .build())
-        .resources(List.of())
-        .build();
+  private static LogType logType(final String certificateId) {
+    final var system = new SystemType();
+    system.setSystemId("WEBCERT");
+    system.setSystemName("Webcert");
+
+    final var activity = new ActivityType();
+    activity.setActivityType("Läsa");
+    activity.setActivityLevel(certificateId);
+    activity.setPurpose("CARE_TREATMENT");
+    activity.setStartDate(LocalDateTime.of(2024, 11, 9, 7, 40, 13));
+
+    final var careProvider = new CareProviderType();
+    careProvider.setCareProviderId("ALFA");
+    careProvider.setCareProviderName("Alfa Regionen");
+
+    final var careUnit = new CareUnitType();
+    careUnit.setCareUnitId("ALMC");
+    careUnit.setCareUnitName("Alfa Medicincentrum");
+
+    final var user = new UserType();
+    user.setUserId("it-user-001");
+    user.setAssignment("Läkare");
+    user.setCareProvider(careProvider);
+    user.setCareUnit(careUnit);
+
+    final var log = new LogType();
+    log.setLogId("it-log-001");
+    log.setSystem(system);
+    log.setActivity(activity);
+    log.setUser(user);
+    return log;
   }
 
   @Test
   void findAll_ShouldReturnAllLogEntries() {
-    final var soap = soapLog();
-    final var dto = dto("cert-001");
-
-    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soap));
-    when(converter.convertToLogTypeDTO(soap)).thenReturn(List.of(dto));
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soapLog(logType("cert-001"))));
 
     final var result = repository.findAll();
 
@@ -83,10 +93,9 @@ class LogEntryNavigationRepositoryImplTest {
 
   @Test
   void findAll_ShouldFlatMapMultipleLogsPerStoreLogType() {
-    final var soap = soapLog();
-
-    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soap));
-    when(converter.convertToLogTypeDTO(soap)).thenReturn(List.of(dto("cert-001"), dto("cert-002")));
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(storeLogTypeRepository.findAll())
+        .thenReturn(List.of(soapLog(logType("cert-001"), logType("cert-002"))));
 
     assertEquals(2, repository.findAll().size());
   }
@@ -100,11 +109,8 @@ class LogEntryNavigationRepositoryImplTest {
 
   @Test
   void findByCertificateId_ShouldReturnMatchingLogEntries() {
-    final var soap = soapLog();
-    final var dto = dto("cert-001");
-
-    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soap));
-    when(converter.convertToLogTypeDTO(soap)).thenReturn(List.of(dto));
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soapLog(logType("cert-001"))));
 
     final var result = repository.findByCertificateId("cert-001");
 
@@ -114,10 +120,9 @@ class LogEntryNavigationRepositoryImplTest {
 
   @Test
   void findByCertificateId_ShouldFilterOutNonMatchingEntries() {
-    final var soap = soapLog();
-
-    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soap));
-    when(converter.convertToLogTypeDTO(soap)).thenReturn(List.of(dto("cert-001"), dto("cert-002")));
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(storeLogTypeRepository.findAll())
+        .thenReturn(List.of(soapLog(logType("cert-001"), logType("cert-002"))));
 
     final var result = repository.findByCertificateId("cert-001");
 
@@ -127,21 +132,15 @@ class LogEntryNavigationRepositoryImplTest {
 
   @Test
   void findByCertificateId_ShouldReturnEmptyWhenNoMatches() {
-    final var soap = soapLog();
-
-    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soap));
-    when(converter.convertToLogTypeDTO(soap)).thenReturn(List.of(dto("cert-001")));
+    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soapLog(logType("cert-001"))));
 
     assertTrue(repository.findByCertificateId("unknown").isEmpty());
   }
 
   @Test
   void findById_ShouldReturnMatchingLogEntry() {
-    final var soap = soapLog();
-    final var dto = dto("cert-001");
-
-    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soap));
-    when(converter.convertToLogTypeDTO(soap)).thenReturn(List.of(dto));
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soapLog(logType("cert-001"))));
 
     final var result = repository.findById("it-log-001");
 
@@ -151,10 +150,7 @@ class LogEntryNavigationRepositoryImplTest {
 
   @Test
   void findById_ShouldReturnEmptyWhenNotFound() {
-    final var soap = soapLog();
-
-    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soap));
-    when(converter.convertToLogTypeDTO(soap)).thenReturn(List.of(dto("cert-001")));
+    when(storeLogTypeRepository.findAll()).thenReturn(List.of(soapLog(logType("cert-001"))));
 
     assertTrue(repository.findById("unknown").isEmpty());
   }

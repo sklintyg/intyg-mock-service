@@ -5,12 +5,14 @@ import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
 import java.io.StringWriter;
+import javax.xml.namespace.QName;
 import org.springframework.stereotype.Component;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType;
+import se.riv.informationsecurity.auditing.log.v2.LogType;
 
 @Component
 public class JaxbXmlMarshaller {
@@ -73,6 +75,9 @@ public class JaxbXmlMarshaller {
       case StoreLogType t ->
           new se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.ObjectFactory()
               .createStoreLog(t);
+      case LogType t ->
+          new JAXBElement<>(
+              new QName("urn:riv:informationsecurity:auditing:log:2", "log"), LogType.class, t);
       default ->
           throw new IllegalArgumentException(
               "Unsupported JAXB type: " + jaxbType.getClass().getName());
