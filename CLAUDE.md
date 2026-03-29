@@ -40,5 +40,5 @@ Spring Boot app that mocks 5 RIV-TA SOAP services. Each received SOAP message is
 
 ## Workflow
 
-- **Commit messages:** No `Co-Authored-By` lines.
+- **Commit messages:** Must follow the format `K1J-NNNN: Description` where the description starts with a capital letter. Example: `K1J-1927: Added a git hook that verifies commit messages`. Never include `Co-Authored-By` lines.
 - **Product backlog:** When implementing items from `ProductBacklogSpecification.md`, mark them as done (strikethrough + ✓ Done) in the same commit.
