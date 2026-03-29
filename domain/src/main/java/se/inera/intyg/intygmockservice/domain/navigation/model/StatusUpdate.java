@@ -15,4 +15,5 @@ public class StatusUpdate {
   LocalDateTime eventTimestamp;
   int questionsSentTotal;
   int questionsReceivedTotal;
+  String sourceXml;
 }

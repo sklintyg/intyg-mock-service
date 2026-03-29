@@ -18,4 +18,5 @@ public class Message {
   LocalDateTime sentTimestamp;
   String sentByStaffId;
   String sentByFullName;
+  String sourceXml;
 }

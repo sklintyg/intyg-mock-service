@@ -17,4 +17,5 @@ public class Certificate {
   String logicalAddress;
   Patient patient;
   Staff issuedBy;
+  String sourceXml;
 }

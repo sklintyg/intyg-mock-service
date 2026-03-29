@@ -19,4 +19,5 @@ public class AuditLogEntry {
   String userAssignment;
   String careUnitId;
   String careProviderName;
+  String sourceXml;
 }
