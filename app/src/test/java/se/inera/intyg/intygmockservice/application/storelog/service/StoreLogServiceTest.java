@@ -23,6 +23,7 @@ import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.StoreLogPassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.StoreLogTypeRepository;
+import se.inera.intyg.intygmockservice.infrastructure.xml.JaxbXmlMarshaller;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogResponseType;
 import se.riv.informationsecurity.auditing.log.StoreLogResponder.v2.StoreLogType;
 import se.riv.informationsecurity.auditing.log.v2.ActivityType;
@@ -41,6 +42,7 @@ class StoreLogServiceTest {
   @Mock private StoreLogPassthroughClient passthroughClient;
   @Mock private BehaviorRuleRepository behaviorRuleRepository;
   @Mock private StoreLogResponseFactory responseFactory;
+  @Mock private JaxbXmlMarshaller xmlMarshaller;
 
   @InjectMocks private StoreLogService service;
 

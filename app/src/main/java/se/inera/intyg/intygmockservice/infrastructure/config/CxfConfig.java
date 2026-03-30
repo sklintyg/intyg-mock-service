@@ -5,15 +5,15 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import se.inera.intyg.intygmockservice.application.registercertificate.RegisterCertificateResponderImpl;
+import se.inera.intyg.intygmockservice.application.registercertificate.api.RegisterCertificateResponderImpl;
 import se.inera.intyg.intygmockservice.application.registercertificate.service.RegisterCertificateService;
-import se.inera.intyg.intygmockservice.application.revokecertificate.RevokeCertificateResponderImpl;
+import se.inera.intyg.intygmockservice.application.revokecertificate.api.RevokeCertificateResponderImpl;
 import se.inera.intyg.intygmockservice.application.revokecertificate.service.RevokeCertificateService;
-import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.SendMessageToRecipientResponderImpl;
+import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.api.SendMessageToRecipientResponderImpl;
 import se.inera.intyg.intygmockservice.application.sendmessagetorecipient.service.SendMessageToRecipientService;
-import se.inera.intyg.intygmockservice.application.statusupdates.CertificateStatusUpdateForCareResponderImpl;
+import se.inera.intyg.intygmockservice.application.statusupdates.api.CertificateStatusUpdateForCareResponderImpl;
 import se.inera.intyg.intygmockservice.application.statusupdates.service.CertificateStatusUpdateForCareService;
-import se.inera.intyg.intygmockservice.application.storelog.StoreLogResponderImpl;
+import se.inera.intyg.intygmockservice.application.storelog.api.StoreLogResponderImpl;
 import se.inera.intyg.intygmockservice.application.storelog.service.StoreLogService;
 
 @Configuration

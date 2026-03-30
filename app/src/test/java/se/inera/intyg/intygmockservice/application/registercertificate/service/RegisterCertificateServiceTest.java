@@ -28,6 +28,7 @@ import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RegisterCertificatePassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RegisterCertificateRepository;
+import se.inera.intyg.intygmockservice.infrastructure.xml.JaxbXmlMarshaller;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.registerCertificate.v3.RegisterCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
@@ -44,6 +45,7 @@ class RegisterCertificateServiceTest {
   @Mock private RegisterCertificatePassthroughClient passthroughClient;
   @Mock private BehaviorRuleRepository behaviorRuleRepository;
   @Mock private RegisterCertificateResponseFactory responseFactory;
+  @Mock private JaxbXmlMarshaller xmlMarshaller;
 
   @InjectMocks private RegisterCertificateService service;
 

@@ -29,6 +29,7 @@ import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.RevokeCertificatePassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
+import se.inera.intyg.intygmockservice.infrastructure.xml.JaxbXmlMarshaller;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
@@ -46,6 +47,7 @@ class RevokeCertificateServiceTest {
   @Mock private RevokeCertificatePassthroughClient passthroughClient;
   @Mock private BehaviorRuleRepository behaviorRuleRepository;
   @Mock private RevokeCertificateResponseFactory responseFactory;
+  @Mock private JaxbXmlMarshaller xmlMarshaller;
 
   @InjectMocks private RevokeCertificateService service;
 

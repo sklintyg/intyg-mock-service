@@ -31,6 +31,7 @@ import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.CertificateStatusUpdateForCarePassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.CertificateStatusUpdateForCareRepository;
+import se.inera.intyg.intygmockservice.infrastructure.xml.JaxbXmlMarshaller;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
@@ -50,6 +51,7 @@ class CertificateStatusUpdateForCareServiceTest {
   @Mock private CertificateStatusUpdateForCarePassthroughClient passthroughClient;
   @Mock private BehaviorRuleRepository behaviorRuleRepository;
   @Mock private CertificateStatusUpdateForCareResponseFactory responseFactory;
+  @Mock private JaxbXmlMarshaller xmlMarshaller;
 
   @InjectMocks private CertificateStatusUpdateForCareService service;
 

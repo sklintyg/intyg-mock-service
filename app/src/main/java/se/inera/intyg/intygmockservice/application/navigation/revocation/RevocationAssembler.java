@@ -6,6 +6,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
+import se.inera.intyg.intygmockservice.application.navigation.revocation.api.RevocationController;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Revocation;
 
 @Component

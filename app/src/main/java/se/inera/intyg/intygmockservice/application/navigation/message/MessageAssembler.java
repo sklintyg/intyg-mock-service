@@ -8,6 +8,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.stereotype.Component;
+import se.inera.intyg.intygmockservice.application.navigation.message.api.MessageController;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Message;
 
 @Component

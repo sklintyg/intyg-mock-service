@@ -4,54 +4,51 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import se.inera.intyg.intygmockservice.application.revokecertificate.converter.RevokeCertificateConverter;
-import se.inera.intyg.intygmockservice.application.revokecertificate.dto.RevokeCertificateDTO;
 import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.domain.navigation.model.Revocation;
 import se.inera.intyg.intygmockservice.domain.navigation.repository.RevocationNavigationRepository;
 import se.inera.intyg.intygmockservice.infrastructure.repository.RevokeCertificateRepository;
+import se.inera.intyg.intygmockservice.infrastructure.xml.JaxbXmlMarshaller;
+import se.riv.clinicalprocess.healthcond.certificate.revokeCertificate.v2.RevokeCertificateType;
 
 @Repository
 @RequiredArgsConstructor
 public class RevocationNavigationRepositoryImpl implements RevocationNavigationRepository {
 
   private final RevokeCertificateRepository revokeCertificateRepository;
-  private final RevokeCertificateConverter revokeCertificateConverter;
+  private final JaxbXmlMarshaller xmlMarshaller;
 
   @Override
   public Optional<Revocation> findByCertificateId(final String certificateId) {
-    return revokeCertificateRepository
-        .findByCertificateId(certificateId)
-        .map(revokeCertificateConverter::convert)
-        .map(this::toRevocation);
+    return revokeCertificateRepository.findByCertificateId(certificateId).map(this::toRevocation);
   }
 
   @Override
   public List<Revocation> findByPersonId(final PersonId personId) {
     return revokeCertificateRepository.findByPersonId(personId.normalized()).stream()
-        .map(revokeCertificateConverter::convert)
         .map(this::toRevocation)
         .toList();
   }
 
-  private Revocation toRevocation(final RevokeCertificateDTO dto) {
+  private Revocation toRevocation(final RevokeCertificateType source) {
+    final var skickatAv = source.getSkickatAv();
     final var staffId =
-        dto.getSkickadAv() != null && dto.getSkickadAv().getPersonalId() != null
-            ? dto.getSkickadAv().getPersonalId().getExtension()
+        skickatAv != null && skickatAv.getPersonalId() != null
+            ? skickatAv.getPersonalId().getExtension()
             : null;
-    final var staffName =
-        dto.getSkickadAv() != null ? dto.getSkickadAv().getFullstandigtNamn() : null;
+    final var staffName = skickatAv != null ? skickatAv.getFullstandigtNamn() : null;
 
     return Revocation.builder()
-        .certificateId(dto.getIntygsId() != null ? dto.getIntygsId().getExtension() : null)
+        .certificateId(source.getIntygsId() != null ? source.getIntygsId().getExtension() : null)
         .personId(
-            dto.getPatientPersonId() != null
-                ? PersonId.of(dto.getPatientPersonId().getExtension())
+            source.getPatientPersonId() != null
+                ? PersonId.of(source.getPatientPersonId().getExtension())
                 : null)
-        .revokedAt(dto.getSkickatTidpunkt())
-        .reason(dto.getMeddelande())
+        .revokedAt(source.getSkickatTidpunkt())
+        .reason(source.getMeddelande())
         .revokedByStaffId(staffId)
         .revokedByFullName(staffName)
+        .sourceXml(xmlMarshaller.marshal(source))
         .build();
   }
 }

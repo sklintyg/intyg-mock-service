@@ -14,4 +14,5 @@ public class Revocation {
   String reason;
   String revokedByStaffId;
   String revokedByFullName;
+  String sourceXml;
 }

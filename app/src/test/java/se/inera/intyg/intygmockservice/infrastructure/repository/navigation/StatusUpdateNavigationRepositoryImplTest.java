@@ -2,66 +2,77 @@ package se.inera.intyg.intygmockservice.infrastructure.repository.navigation;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import se.inera.intyg.intygmockservice.application.common.dto.IntygDTO;
-import se.inera.intyg.intygmockservice.application.common.dto.PatientDTO;
-import se.inera.intyg.intygmockservice.application.statusupdates.converter.CertificateStatusUpdateForCareConverter;
-import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO;
-import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Fragor;
-import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse;
-import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO.Handelse.Handelsekod;
 import se.inera.intyg.intygmockservice.domain.navigation.model.PersonId;
 import se.inera.intyg.intygmockservice.infrastructure.repository.CertificateStatusUpdateForCareRepository;
+import se.inera.intyg.intygmockservice.infrastructure.xml.JaxbXmlMarshaller;
 import se.riv.clinicalprocess.healthcond.certificate.certificatestatusupdateforcareresponder.v3.CertificateStatusUpdateForCareType;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.Handelsekod;
+import se.riv.clinicalprocess.healthcond.certificate.types.v3.IntygId;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Arenden;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Handelse;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Intyg;
+import se.riv.clinicalprocess.healthcond.certificate.v3.Patient;
 
 @ExtendWith(MockitoExtension.class)
 class StatusUpdateNavigationRepositoryImplTest {
 
   @Mock private CertificateStatusUpdateForCareRepository statusUpdateRepository;
-  @Mock private CertificateStatusUpdateForCareConverter converter;
+  @Mock private JaxbXmlMarshaller xmlMarshaller;
 
   @InjectMocks private StatusUpdateNavigationRepositoryImpl repository;
 
-  private static CertificateStatusUpdateForCareType soapUpdate() {
-    return new CertificateStatusUpdateForCareType();
-  }
-
-  private static CertificateStatusUpdateForCareDTO dto(
+  private static CertificateStatusUpdateForCareType statusUpdate(
       final String certificateId, final String personId) {
-    return CertificateStatusUpdateForCareDTO.builder()
-        .intyg(
-            IntygDTO.builder()
-                .intygsId(IntygDTO.IntygsId.builder().extension(certificateId).build())
-                .patient(
-                    PatientDTO.builder()
-                        .personId(PatientDTO.PersonId.builder().extension(personId).build())
-                        .build())
-                .build())
-        .handelse(
-            Handelse.builder()
-                .handelsekod(
-                    Handelsekod.builder().code("SKAPAT").displayName("Intyg skapat").build())
-                .tidpunkt("2024-11-09T07:40:13")
-                .build())
-        .skickadeFragor(Fragor.builder().totalt(2).ejBesvarade(0).besvarade(0).hanterade(0).build())
-        .mottagnaFragor(Fragor.builder().totalt(1).ejBesvarade(0).besvarade(0).hanterade(0).build())
-        .build();
+    final var intygsId = new IntygId();
+    intygsId.setExtension(certificateId);
+
+    final var pid = new se.riv.clinicalprocess.healthcond.certificate.types.v3.PersonId();
+    pid.setExtension(personId);
+
+    final var patient = new Patient();
+    patient.setPersonId(pid);
+
+    final var intyg = new Intyg();
+    intyg.setIntygsId(intygsId);
+    intyg.setPatient(patient);
+
+    final var handelsekod = new Handelsekod();
+    handelsekod.setCode("SKAPAT");
+    handelsekod.setDisplayName("Intyg skapat");
+
+    final var handelse = new Handelse();
+    handelse.setHandelsekod(handelsekod);
+    handelse.setTidpunkt(LocalDateTime.of(2024, 11, 9, 7, 40, 13));
+
+    final var skickadeFragor = new Arenden();
+    skickadeFragor.setTotalt(2);
+
+    final var mottagnaFragor = new Arenden();
+    mottagnaFragor.setTotalt(1);
+
+    final var update = new CertificateStatusUpdateForCareType();
+    update.setIntyg(intyg);
+    update.setHandelse(handelse);
+    update.setSkickadeFragor(skickadeFragor);
+    update.setMottagnaFragor(mottagnaFragor);
+    return update;
   }
 
   @Test
   void findAll_ShouldReturnAllStatusUpdates() {
-    final var soap = soapUpdate();
-    final var dto = dto("cert-001", "191212121212");
-
-    when(statusUpdateRepository.findAll()).thenReturn(List.of(soap));
-    when(converter.convert(soap)).thenReturn(dto);
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(statusUpdateRepository.findAll())
+        .thenReturn(List.of(statusUpdate("cert-001", "191212121212")));
 
     final var result = repository.findAll();
 
@@ -83,11 +94,9 @@ class StatusUpdateNavigationRepositoryImplTest {
 
   @Test
   void findByCertificateId_ShouldReturnMatchingStatusUpdates() {
-    final var soap = soapUpdate();
-    final var dto = dto("cert-001", "191212121212");
-
-    when(statusUpdateRepository.findByCertificateId("cert-001")).thenReturn(List.of(soap));
-    when(converter.convert(soap)).thenReturn(dto);
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(statusUpdateRepository.findByCertificateId("cert-001"))
+        .thenReturn(List.of(statusUpdate("cert-001", "191212121212")));
 
     final var result = repository.findByCertificateId("cert-001");
 
@@ -104,11 +113,9 @@ class StatusUpdateNavigationRepositoryImplTest {
 
   @Test
   void findByPersonId_ShouldReturnMatchingStatusUpdates() {
-    final var soap = soapUpdate();
-    final var dto = dto("cert-001", "191212121212");
-
-    when(statusUpdateRepository.findByPersonId("191212121212")).thenReturn(List.of(soap));
-    when(converter.convert(soap)).thenReturn(dto);
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(statusUpdateRepository.findByPersonId("191212121212"))
+        .thenReturn(List.of(statusUpdate("cert-001", "191212121212")));
 
     final var result = repository.findByPersonId(PersonId.of("191212121212"));
 
@@ -126,11 +133,9 @@ class StatusUpdateNavigationRepositoryImplTest {
 
   @Test
   void findByCertificateId_ShouldNormalizePersonId() {
-    final var soap = soapUpdate();
-    final var dto = dto("cert-001", "19121212-1212");
-
-    when(statusUpdateRepository.findByCertificateId("cert-001")).thenReturn(List.of(soap));
-    when(converter.convert(soap)).thenReturn(dto);
+    when(xmlMarshaller.marshal(any())).thenReturn("<xml/>");
+    when(statusUpdateRepository.findByCertificateId("cert-001"))
+        .thenReturn(List.of(statusUpdate("cert-001", "19121212-1212")));
 
     final var result = repository.findByCertificateId("cert-001");
 
