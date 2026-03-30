@@ -27,6 +27,7 @@ import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
 import se.inera.intyg.intygmockservice.infrastructure.passthrough.SendMessageToRecipientPassthroughClient;
 import se.inera.intyg.intygmockservice.infrastructure.repository.SendMessageToRecipientRepository;
+import se.inera.intyg.intygmockservice.infrastructure.xml.JaxbXmlMarshaller;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientResponseType;
 import se.riv.clinicalprocess.healthcond.certificate.sendMessageToRecipient.v2.SendMessageToRecipientType;
 import se.riv.clinicalprocess.healthcond.certificate.v3.ResultCodeType;
@@ -45,6 +46,7 @@ class SendMessageToRecipientServiceTest {
   @Mock private SendMessageToRecipientPassthroughClient passthroughClient;
   @Mock private BehaviorRuleRepository behaviorRuleRepository;
   @Mock private SendMessageToRecipientResponseFactory responseFactory;
+  @Mock private JaxbXmlMarshaller xmlMarshaller;
 
   @InjectMocks private SendMessageToRecipientService service;
 

@@ -51,6 +51,20 @@ public class JaxbXmlMarshaller {
     }
   }
 
+  public String marshalFragment(Object jaxbType) {
+    final var element = wrapWithElement(jaxbType);
+    try {
+      final var marshaller = JAXB_CONTEXT.createMarshaller();
+      marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+      marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+      final var sw = new StringWriter();
+      marshaller.marshal(element, sw);
+      return sw.toString();
+    } catch (JAXBException e) {
+      throw new IllegalStateException("Failed to marshal to XML", e);
+    }
+  }
+
   private JAXBElement<?> wrapWithElement(Object jaxbType) {
     return switch (jaxbType) {
       case RegisterCertificateType t ->
