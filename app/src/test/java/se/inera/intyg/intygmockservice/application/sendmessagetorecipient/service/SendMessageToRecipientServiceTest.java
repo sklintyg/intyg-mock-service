@@ -199,6 +199,26 @@ class SendMessageToRecipientServiceTest {
   }
 
   @Test
+  void shouldReturnXmlWhenGetAsXmlFound() {
+    final var type = new SendMessageToRecipientType();
+    when(repository.findByMessageId(MESSAGE_ID)).thenReturn(Optional.of(type));
+    when(xmlMarshaller.marshal(type)).thenReturn("<xml/>");
+
+    final var result = service.getAsXml(MESSAGE_ID);
+
+    assertEquals(Optional.of("<xml/>"), result);
+  }
+
+  @Test
+  void shouldReturnEmptyWhenGetAsXmlNotFound() {
+    when(repository.findByMessageId(MESSAGE_ID)).thenReturn(Optional.empty());
+
+    final var result = service.getAsXml(MESSAGE_ID);
+
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
   void shouldDelegateToRepositoryWhenDeleteAll() {
     service.deleteAll();
 

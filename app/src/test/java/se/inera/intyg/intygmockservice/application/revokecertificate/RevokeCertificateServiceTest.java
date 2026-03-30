@@ -188,6 +188,26 @@ class RevokeCertificateServiceTest {
   }
 
   @Test
+  void shouldReturnXmlWhenGetAsXmlFound() {
+    final var type = new RevokeCertificateType();
+    when(repository.findByCertificateId(CERTIFICATE_ID)).thenReturn(Optional.of(type));
+    when(xmlMarshaller.marshal(type)).thenReturn("<xml/>");
+
+    final var result = service.getAsXml(CERTIFICATE_ID);
+
+    assertEquals(Optional.of("<xml/>"), result);
+  }
+
+  @Test
+  void shouldReturnEmptyWhenGetAsXmlNotFound() {
+    when(repository.findByCertificateId(CERTIFICATE_ID)).thenReturn(Optional.empty());
+
+    final var result = service.getAsXml(CERTIFICATE_ID);
+
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
   void shouldDelegateToRepositoryWhenDeleteAll() {
     service.deleteAll();
 

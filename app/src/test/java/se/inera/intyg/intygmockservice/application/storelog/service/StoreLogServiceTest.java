@@ -8,6 +8,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import se.inera.intyg.intygmockservice.application.storelog.converter.StoreLogTypeConverter;
+import se.inera.intyg.intygmockservice.application.storelog.dto.LogTypeDTO;
 import se.inera.intyg.intygmockservice.domain.behavior.model.BehaviorRule;
 import se.inera.intyg.intygmockservice.domain.behavior.model.MockResponse;
 import se.inera.intyg.intygmockservice.domain.behavior.repository.BehaviorRuleRepository;
@@ -151,5 +153,40 @@ class StoreLogServiceTest {
     result.setResultCode(ResultCodeType.VALIDATION_ERROR);
     response.setResult(result);
     return response;
+  }
+
+  @Test
+  void shouldReturnConvertedDtosWhenGetAll() {
+    final var type = new StoreLogType();
+    final var dto = LogTypeDTO.builder().build();
+    when(repository.findAll()).thenReturn(List.of(type));
+    when(converter.convertToLogTypeDTO(type)).thenReturn(List.of(dto));
+
+    final var result = service.getAll();
+
+    assertEquals(List.of(dto), result);
+  }
+
+  @Test
+  void shouldReturnXmlWhenGetAsXmlFound() {
+    final var log = new LogType();
+    log.setLogId("log-123");
+    final var type = new StoreLogType();
+    type.getLog().add(log);
+    when(repository.findAll()).thenReturn(List.of(type));
+    when(xmlMarshaller.marshal(type)).thenReturn("<xml/>");
+
+    final var result = service.getAsXml("log-123");
+
+    assertEquals(Optional.of("<xml/>"), result);
+  }
+
+  @Test
+  void shouldReturnEmptyWhenGetAsXmlNotFound() {
+    when(repository.findAll()).thenReturn(List.of());
+
+    final var result = service.getAsXml("log-123");
+
+    assertTrue(result.isEmpty());
   }
 }

@@ -15,7 +15,7 @@ import se.inera.intyg.intygmockservice.application.common.dto.CountResponse;
 import se.inera.intyg.intygmockservice.application.statusupdates.dto.CertificateStatusUpdateForCareDTO;
 import se.inera.intyg.intygmockservice.application.statusupdates.service.CertificateStatusUpdateForCareService;
 
-@RestController()
+@RestController
 @RequestMapping("/api/certificate-status-for-care")
 @RequiredArgsConstructor
 @Tag(

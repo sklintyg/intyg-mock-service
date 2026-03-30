@@ -194,6 +194,27 @@ class CertificateStatusUpdateForCareServiceTest {
   }
 
   @Test
+  void shouldReturnXmlWhenGetAsXmlByCertificateIdFound() {
+    final var type = new CertificateStatusUpdateForCareType();
+    when(repository.findByCertificateId(CERTIFICATE_ID)).thenReturn(List.of(type));
+    when(xmlMarshaller.marshalFragment(type)).thenReturn("<fragment/>");
+
+    final var result = service.getAsXmlByCertificateId(CERTIFICATE_ID);
+
+    assertTrue(result.isPresent());
+    assertTrue(result.get().contains("<fragment/>"));
+  }
+
+  @Test
+  void shouldReturnEmptyWhenGetAsXmlByCertificateIdNotFound() {
+    when(repository.findByCertificateId(CERTIFICATE_ID)).thenReturn(List.of());
+
+    final var result = service.getAsXmlByCertificateId(CERTIFICATE_ID);
+
+    assertTrue(result.isEmpty());
+  }
+
+  @Test
   void shouldDelegateToRepositoryWhenDeleteAll() {
     service.deleteAll();
 
