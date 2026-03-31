@@ -54,6 +54,12 @@ tasks.named('build') {
     dependsOn 'installGitHooks'
 }
 
+tasks.register('qualityGate') {
+    dependsOn subprojects.collect { "${it.path}:check" }
+    dependsOn subprojects.collect { "${it.path}:spotlessCheck" }
+    dependsOn ':integration-test:integrationTest'
+}
+
 subprojects {
     apply plugin: 'com.diffplug.spotless'
     apply plugin: 'jacoco'
@@ -128,8 +134,6 @@ subprojects {
     }
 
     tasks.withType(JavaCompile).configureEach {
-        options.encoding = 'UTF-8'
-
         options.errorprone {
             error(
                     'ReferenceEquality',
@@ -144,13 +148,18 @@ subprojects {
                     'TimeUnitMismatch',
                     'DurationToLongTimeUnit',
                     'MisusedWeekYear',
-                    'ClassNewInstance'
+                    'ClassNewInstance',
+                    'InvalidPatternSyntax',
+                    'BadImport',
+                    'StringSplitter'
             )
 
             warn(
                     'EqualsGetClass',
                     'CatchAndPrintStackTrace',
-                    'EnumOrdinal'
+                    'EnumOrdinal',
+                    'AnnotationPosition',
+                    'UnusedVariable'
             )
 
             disableWarningsInGeneratedCode = true
@@ -163,6 +172,9 @@ subprojects {
 
     tasks.named('compileTestJava') {
         options.errorprone.enabled = true
+        options.errorprone {
+            disable('EmptyCatch')
+        }
     }
 
     spotbugs {
@@ -170,25 +182,21 @@ subprojects {
         showStackTraces = true
         showProgress = true
         maxHeapSize = '1g'
+        effort = 'max'
+        reportLevel = 'high'
     }
 
     tasks.named('spotbugsMain') {
         reports {
             html {
                 required = true
-                outputLocation = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+                outputLocation = layout.buildDirectory.file("reports/spotbugs/main/spotbugs.html")
                 stylesheet = 'fancy-hist.xsl'
             }
         }
     }
 
     tasks.named('spotbugsTest') {
-        enabled = false
-    }
-}
-
-project(':integration-test') {
-    tasks.withType(com.github.spotbugs.snom.SpotBugsTask).configureEach {
         enabled = false
     }
 }
