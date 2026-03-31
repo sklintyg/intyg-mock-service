@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.org.cyclonedx.bom)
     alias(libs.plugins.org.sonarqube)
     alias(libs.plugins.org.springframework.boot)
+    id("net.ltgt.errorprone") version "5.1.0"
+    id("com.github.spotbugs") version "6.4.8"
 }
 
 apply from: 'gradle/configureIntygBom.gradle'
@@ -14,6 +16,8 @@ ext {
 
     cxfVersion = "4.1.4"
     springdocVersion = "2.8.16"
+
+    errorProneVersion = "2.48.0"
 }
 
 springBoot {
@@ -50,9 +54,17 @@ tasks.named('build') {
     dependsOn 'installGitHooks'
 }
 
+tasks.register('qualityGate') {
+    dependsOn subprojects.collect { "${it.path}:check" }
+    dependsOn subprojects.collect { "${it.path}:spotlessCheck" }
+    dependsOn ':integration-test:integrationTest'
+}
+
 subprojects {
     apply plugin: 'com.diffplug.spotless'
     apply plugin: 'jacoco'
+    apply plugin: 'net.ltgt.errorprone'
+    apply plugin: 'com.github.spotbugs'
 
     java {
         toolchain {
@@ -89,6 +101,8 @@ subprojects {
         testAnnotationProcessor platform("se.inera.intyg.bom:platform:${intygBomVersion}")
         mockitoAgent platform("se.inera.intyg.bom:platform:${intygBomVersion}")
         mockitoAgent("org.mockito:mockito-core") { transitive = false }
+
+        errorprone "com.google.errorprone:error_prone_core:${errorProneVersion}"
     }
 
     test {
@@ -117,5 +131,72 @@ subprojects {
                 fileTree(dir: it, exclude: ["**/testability/**", "**/integrationtest/**"])
             }))
         }
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.errorprone {
+            error(
+                    'ReferenceEquality',
+                    'BoxedPrimitiveEquality',
+                    'EqualsHashCode',
+                    'EqualsIncompatibleType',
+                    'EqualsUnsafeCast',
+                    'FallThrough',
+                    'Finally',
+                    'EmptyCatch',
+                    'DefaultCharset',
+                    'TimeUnitMismatch',
+                    'DurationToLongTimeUnit',
+                    'MisusedWeekYear',
+                    'ClassNewInstance',
+                    'InvalidPatternSyntax',
+                    'BadImport',
+                    'StringSplitter'
+            )
+
+            warn(
+                    'EqualsGetClass',
+                    'CatchAndPrintStackTrace',
+                    'EnumOrdinal',
+                    'AnnotationPosition',
+                    'UnusedVariable'
+            )
+
+            disableWarningsInGeneratedCode = true
+        }
+    }
+
+    tasks.named('compileJava') {
+        options.errorprone.enabled = true
+    }
+
+    tasks.named('compileTestJava') {
+        options.errorprone.enabled = true
+        options.errorprone {
+            disable('EmptyCatch')
+        }
+    }
+
+    spotbugs {
+        ignoreFailures = false
+        showStackTraces = true
+        showProgress = true
+        maxHeapSize = '1g'
+        effort = 'max'
+        reportLevel = 'high'
+    }
+
+    tasks.named('spotbugsMain') {
+        reports {
+            html {
+                required = true
+                outputLocation = layout.buildDirectory.file("reports/spotbugs/main/spotbugs.html")
+                stylesheet = 'fancy-hist.xsl'
+            }
+        }
+    }
+
+    tasks.named('spotbugsTest') {
+        enabled = false
     }
 }

@@ -45,6 +45,7 @@ class RegisterCertificateServiceTest {
   @Mock private RegisterCertificatePassthroughClient passthroughClient;
   @Mock private BehaviorRuleRepository behaviorRuleRepository;
   @Mock private RegisterCertificateResponseFactory responseFactory;
+
   @Mock private JaxbXmlMarshaller xmlMarshaller;
 
   @InjectMocks private RegisterCertificateService service;
@@ -178,6 +179,17 @@ class RegisterCertificateServiceTest {
     final var result = service.getAsXml("cert-1");
 
     assertFalse(result.isPresent());
+  }
+
+  @Test
+  void shouldReturnXmlWhenGetAsXmlFound() {
+    final var type = new RegisterCertificateType();
+    when(repository.findByCertificateId("cert-1")).thenReturn(Optional.of(type));
+    when(xmlMarshaller.marshal(type)).thenReturn("<xml/>");
+
+    final var result = service.getAsXml("cert-1");
+
+    assertEquals(Optional.of("<xml/>"), result);
   }
 
   @Test

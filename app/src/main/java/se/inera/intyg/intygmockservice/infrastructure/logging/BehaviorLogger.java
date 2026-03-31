@@ -9,6 +9,7 @@ import se.inera.intyg.intygmockservice.domain.behavior.model.ServiceName;
 @Slf4j
 public class BehaviorLogger implements BehaviorEventLogger {
 
+  @Override
   public void logErrorSkipped(RuleEvaluation evaluation) {
     final var result = evaluation.errorResult().orElseThrow();
     log.atInfo()
@@ -27,6 +28,7 @@ public class BehaviorLogger implements BehaviorEventLogger {
         .log();
   }
 
+  @Override
   public void logDelayApplied(RuleEvaluation evaluation) {
     log.atInfo()
         .setMessage(
